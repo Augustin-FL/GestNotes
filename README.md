@@ -4,9 +4,9 @@ A note-manager written in C++. Actually not stable !
 
 ## How to build
 This programm use the following library :
-- SQLite (for the storage)
-- WxWidgets (for the windows)
-- Pthread (for the multithreading)
+- SQLite (for storage)
+- WxWidgets (for windows)
+- Pthread (for multithreading)
 
 g++ >= 4.9.x required (that mean : it don't work with Dev-Cpp of EFREI.)
 
