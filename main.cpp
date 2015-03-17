@@ -9,73 +9,57 @@ class App_GestNote : public wxApp
 	
 };
 DECLARE_APP(App_GestNote);
+IMPLEMENT_APP(App_GestNote);
 
 
 class Frame_login : public wxFrame
 {
     public:
-        Frame_login(const wxString& title) : wxFrame(NULL, wxID_ANY, title)
-		{
-				wxPanel *panelAffichage = new wxPanel(this, -1);// Création du panel d'affichage
-				wxBoxSizer *sizer_intermed = new wxBoxSizer(wxVERTICAL); // Création du wxBoxSizer intermédiaire  
-				wxStaticBoxSizer *cadre = new wxStaticBoxSizer(wxVERTICAL, panelAffichage, _T("Informations : ")); // Création du wxStaticBoxSizer pour le cadre
-				wxFlexGridSizer *grille = new wxFlexGridSizer(4, 2, 5, 5);// Création du wxFlexGridSizer
-    
-                wxStaticText *labelNom = new wxStaticText(panelAffichage, -1, _T("Nom :")); // wxStaticText pour le nom
-                grille->Add(labelNom, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
-            
-                wxTextCtrl *txtNom = new wxTextCtrl(panelAffichage, -1, _T("")); // wxTextCtrl pour le nom
-                grille->Add(txtNom, 0, wxEXPAND);
-               
-                wxStaticText *labelPrenom = new wxStaticText(panelAffichage, -1, _T("aaaaaaaaa :")); // wxStaticText pour le prénom
-                grille->Add(labelPrenom, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
-               
-                wxTextCtrl *txtPrenom = new wxTextCtrl(panelAffichage, -1, _T(""));
-                grille->Add(txtPrenom, 0, wxEXPAND); // wxTextCtrl pour le prénom
-          
-                wxStaticText *labelDate = new wxStaticText(panelAffichage, -1, _T("Date de naissance :")); // wxStaticText pour la date de naissance
-                grille->Add(labelDate, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
-        
-                wxTextCtrl *txtDate = new wxTextCtrl(panelAffichage, -1, _T(""));  // wxTextCtrl pour la date de naissance
-                grille->Add(txtDate, 0, wxEXPAND);
-      
-                wxStaticText *labelComm = new wxStaticText(panelAffichage, -1, _T("Commentaires :"));// wxStaticText pour les commentaires
-                grille->Add(labelComm, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
-     
-                wxTextCtrl *txtComm = new wxTextCtrl(panelAffichage, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-                grille->Add(txtComm, 0, wxEXPAND);// wxTextCtrl pour les commentaires
-   
-				cadre->Add(grille, 1, wxALL | wxEXPAND, 5);// Ajout de la grille au wxStaticBoxSizer
-            
-				grille->AddGrowableCol(1);// La deuxième colonne est extensible
-				grille->AddGrowableRow(3);  // La quatrième ligne également
-
-				sizer_intermed->Add(cadre, 1, wxALL | wxEXPAND, 5); // Ajout du wxStaticBoxSizer au sizer intermédiaire
-      
-				wxStaticLine *ligneHoriz = new wxStaticLine(panelAffichage, -1);  // Création de la ligne de séparation horizontale et ajout au sizer intermédiaire
-				sizer_intermed->Add(ligneHoriz, 0, wxALL | wxEXPAND, 5);
-
-				wxBoxSizer *sizer_boutons = new wxBoxSizer(wxHORIZONTAL); // Création du wxBoxSizer pour les boutons
-   
-				wxButton *btnValider = new wxButton(panelAffichage, -1, _T("Valider")); // Création du bouton "Valider"
-				sizer_boutons->Add(btnValider, 0);
-
-				sizer_boutons->AddSpacer(5);// Ajout d'un espace entre les deux boutons
-    
-				wxButton *btnAnnuler = new wxButton(panelAffichage, -1, _T("Annuler"));// Création du bouton "Annuler"
-				sizer_boutons->Add(btnAnnuler, 0);
-
-				sizer_intermed->Add(sizer_boutons, 0, wxALIGN_RIGHT | wxALL, 5);  // Ajout du sizer des boutons au sizer intermédiaire
-				panelAffichage->SetSizer(sizer_intermed); // Affectation du sizer intermédiaire au wxPanel
-			
-		}
-		
+		Frame_login(const wxString& title);
         virtual ~Frame_login(){};
+		
+		
 };
 
-IMPLEMENT_APP(App_GestNote);
 
 
+Frame_login::Frame_login(const wxString& title) : wxFrame(NULL, wxID_ANY, title,wxDefaultPosition,*(new wxSize(300,210)))
+{
+	wxPanel         *fenetre					= new wxPanel(this);
+	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
+	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace GestNote.\n"));
+	wxStaticBoxSizer*conteneur_authentification	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Authentification : "));
+	wxBoxSizer		*conteneur_horisontal_login	= new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer		*conteneur_horisontal_mdp 	= new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText	*label_login				= new wxStaticText(fenetre, -1, _T("Login : ")); 
+	wxTextCtrl		*input_login				= new wxTextCtrl(  fenetre, -1, _T(""));
+	wxStaticText	*label_mdp					= new wxStaticText(fenetre, -1, _T("Mot de passe : ")); 
+	wxTextCtrl		*input_mdp					= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
+	wxBoxSizer 		*conteneur_boutons			= new wxBoxSizer(wxHORIZONTAL);
+	wxButton 		*bouton_valider 			= new wxButton(    fenetre, -1, _T("Valider"));
+	wxButton 		*bouton_annuler 			= new wxButton(    fenetre, -1, _T("Annuler"));
+	
+	fenetre->SetSizer(contenu_fenetre_sans_marge);
+	
+	contenu_fenetre_sans_marge->Add(texte_explicatif, 			1, wxALIGN_TOP|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 15);
+	contenu_fenetre_sans_marge->Add(conteneur_authentification, 1, wxALIGN_TOP|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL , 15);//on met 5px de marge
+	conteneur_authentification->Add(conteneur_horisontal_login, 1, wxALIGN_LEFT);
+	conteneur_authentification->Add(conteneur_horisontal_mdp,   1, wxALIGN_LEFT);
+	
+	conteneur_horisontal_login->Add(label_login, 1);
+	conteneur_horisontal_login->Add(input_login, 1);
+	conteneur_horisontal_mdp->Add(label_mdp, 1);
+	conteneur_horisontal_mdp->Add(input_mdp, 1);
+	
+	contenu_fenetre_sans_marge->Add(conteneur_boutons,1, wxTOP|wxALIGN_CENTER_HORIZONTAL,5);
+	
+	conteneur_boutons->Add(bouton_valider,1);
+	conteneur_boutons->Add(bouton_annuler,1);
+	/*
+			Connect(ID_BTN_VALIDER, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnClick_Valider));
+			Connect(ID_BTN_ANNULER, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnClick_Annuler));
+	*/		
+}
 bool App_GestNote::OnInit()
 {
 	Frame_login *login=new Frame_login(_T("GestNote"));
@@ -83,4 +67,4 @@ bool App_GestNote::OnInit()
  
     return true;
 }
-
+               
