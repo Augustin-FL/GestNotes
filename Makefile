@@ -1,19 +1,21 @@
 # Compilateur
 CC=g++
 # Options du compilateur 
-CFLAGS=-O2 -Wall -D_GNU_SOURCE=1 -Dmain=SDL_main -mwindows
+CFLAGS=-O2 -Wall -mwindows 
 # Option du linker
-LIBS=-lwxmsw31u -lwxtiff -lwxjpeg -lwxpng -lwxzlib -lwxregexu -lwxexpat -lwxregexu -lwinspool -lwinmm 
+LIBS=-lwxmsw31u -lsqlite3 # -lwxmswu_31core
 
+PROGRAMME=GestNote
 
 REP_COURRANT=$(shell cd)
 
-GestNote:wx.o
+$(PROGRAMME):wx.o
 	$(CC) $(CFLAGS) "main.cpp" wx.o -o "$@" -I "C:\Program Files\Cyg-npp\plugins\Dev-Cpp\include"  $(LIBS)
-	cmd /c start "" "$(REP_COURRANT)\GestNote.exe"
+	$(REP_COURRANT)\$(PROGRAMME).exe
 	
 wx.o:
 	windres -I "C:\include" "wx.rc" wx.o
+	
 	# en cas de recompilation de wx.rc : 
 	# vous devez absolument copier le répertoire "include" dans un dossier SANS ESPACES !
 	# ceci est un bug connu de windres.exe : https://sourceware.org/bugzilla/show_bug.cgi?id=4356
