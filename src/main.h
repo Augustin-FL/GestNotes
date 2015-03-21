@@ -18,17 +18,17 @@
 		
 	};
 
-	class requete_prepare
+	class requete_prepare : public wxString
 	{
 		public:
 			requete_prepare(sqlite3 *&bdd,const string& texte);
-			int bind(const char *cle,const char *valeur);
-			int bind(char *cle,int valeur);
+			int bind(const string &cle,const string &valeur);
+			int bind(const string &cle,int valeur);
 			int bind(int cle,int valeur); 
-			int bind(int cle,char* valeur);
+			int bind(int cle,const string &valeur);
 			int fetch();
 			int getColumn_int(int numero);
-			char *getColumn_text(int numero);
+			string getColumn_text(int numero);
 			double getColumn_float(int numero);
 			
 		private:
@@ -38,7 +38,7 @@
 			int nb_colonnes;
 	};
 	 
-	class connexion_bdd
+	class connexion_bdd : public wxString
 	{
 		private:
 			sqlite3* bdd;
@@ -46,8 +46,8 @@
 		public:
 			connexion_bdd();
 			~connexion_bdd();
-			int exec(const string texte);
-			requete_prepare* prepare(const string texte);
+			int exec(const string &texte);
+			requete_prepare* prepare(const string &texte);
 		
 	};
 	

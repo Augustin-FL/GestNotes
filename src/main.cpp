@@ -36,7 +36,11 @@ Frame_login::Frame_login(connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("Ge
 	
 	conteneur_boutons->Add(bouton_valider,1);//et il y a 2 boutons : valider et annuler
 	conteneur_boutons->Add(bouton_annuler,1);
+
 	bouton_valider->Disable();
+	
+	input_mdp->MoveAfterInTabOrder(input_login);//l'ordre des champs avec l'appui sur "tab"
+	bouton_annuler->MoveAfterInTabOrder(input_mdp);
 	
 	bouton_valider->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_login::onClick_valider), NULL, this);
 	bouton_annuler->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_login::onClick_annuler), NULL, this);
@@ -49,24 +53,29 @@ Frame_login::Frame_login(connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("Ge
 void Frame_login::onChange(wxCommandEvent &evenement)
 {
 	if(input_login->IsEmpty() ||input_mdp->IsEmpty()) bouton_valider->Disable();
-	else bouton_valider->Enable();	
+	else 
+	{
+		bouton_valider->Enable();	
+		bouton_valider->SetDefault();
+	}
 }
 
 void Frame_login::onClick_valider(wxCommandEvent &evenement)
 {
-    
      
-	requete_prepare* req=bdd->prepare("SELECT count(*) as compteur,  FROM login_centralise WHERE matricule=:matricule AND mdp=:mdp");
+	requete_prepare* req=bdd->prepare("SELECT count(*),type FROM login_centralise WHERE matricule=:matricule and mdp=:mdp");//WHERE matricule=:matricule AND mdp=:mdp
 	
-	req->bind(":matricule",input_login->GetValue().mb_str());
-	req->bind(":mdp",input_mdp->GetValue().mb_str());
+	req->bind(":matricule",string(input_login->GetValue().mb_str())); //si une erreur survient a ce niveau : 
+	req->bind(":mdp",string(input_mdp->GetValue().mb_str()));//penser a utiliser le namespace std, ou a mettre std::string()
 
 	int resultat=req->fetch();
-	if(resultat)
+	
+	if(resultat && req->getColumn_int(0)==1)
 	{
 		Hide();
-		int a=req->getColumn_int(0);
-		wxMessageBox(_T("test"),_T("bienvenu !"));
+		wxString nombre;
+		nombre << req->getColumn_text(1);
+		wxMessageBox(nombre,_T("bienvenu !"));
 		Close();
 	}
 	else 
