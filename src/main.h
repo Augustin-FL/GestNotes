@@ -71,15 +71,22 @@
 			connexion_bdd* bdd;
 			bool veto_autorise;
 
+			wxRadioButton *input_radio_prof, *input_radio_admin;
+			wxTextCtrl *input_ajout_nom, *input_ajout_prenom, *input_ajout_mdp, *input_ajout_matiere;
+			wxStaticText*  label_ajouter_prof_matiere;
+			
+
 		public:
 			Frame_principale(connexion_bdd*& arg_bdd);
 			~Frame_principale(){};
 			void afficher_apres_login(int type_arg, int id_arg);
 			void onClose(wxCloseEvent &evenement);
+			void onQuit(wxCommandEvent &evenement);
+			void onClick_radio_ajout_prof(wxCommandEvent &evenement);
 			void main_admin();
 			void main_eleve();
 			void main_prof();
-			void onQuit(wxCommandEvent &evenement);
+			
 			
 		
 	};

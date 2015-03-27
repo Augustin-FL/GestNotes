@@ -117,7 +117,7 @@ void Frame_login::onClose(wxCloseEvent &evenement)
 
 
 
-Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNote"),wxDefaultPosition,*(new wxSize(800,800)))
+Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNote"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
@@ -164,41 +164,106 @@ void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
 
 void Frame_principale::main_admin()
 {
-	wxMenuBar *barre_menu= new wxMenuBar();
-    wxMenu *menu_fichier = new wxMenu();
-	wxTextCtrl *input_login,*input_mdp;
-	
 	//saisir prof
 	//saisir éleve
 	//ajouter/supprimer/modifier eleve & prof 
+	
+	wxMenuBar *barre_menu= new wxMenuBar();
+    wxMenu *menu_fichier = new wxMenu();
+	wxMenu *menu_aide = new wxMenu();
+
+	this->SetSize(wxDefaultCoord,wxDefaultCoord,300,500);
+	
 	wxPanel         *fenetre					= new wxPanel(this);
 	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer      *contenur_radio_ajout		= new wxBoxSizer(wxVERTICAL);
 	
-	input_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
-	input_login		= new wxTextCtrl(  fenetre, -1, _T(""));
-
+	wxStaticText* texte_ajouter_prof 		= new wxStaticText(fenetre, -1, _T("\nAjouter un professeur, ou un admin : \n"));
+	wxStaticText* label_ajouter_prof_nom 	= new wxStaticText(fenetre, -1, _T("Nom : "));
+	wxStaticText* label_ajouter_prof_prenom = new wxStaticText(fenetre, -1, _T("Prénom : "));
+	wxStaticText* label_ajouter_prof_mdp 	= new wxStaticText(fenetre, -1, _T("Mot de Passe: "));
+	wxStaticText* label_ajouter_prof_radio	= new wxStaticText(fenetre, -1, _T("Ajouter un : "));
+	label_ajouter_prof_matiere= new wxStaticText(fenetre, -1, _T("Matière : "));
+	
+	
+	input_ajout_nom		= new wxTextCtrl(  fenetre, -1, _T(""));
+	input_ajout_prenom	= new wxTextCtrl(  fenetre, -1, _T(""));
+	input_ajout_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
+	input_ajout_matiere	= new wxTextCtrl(  fenetre, -1, _T(""));
+	
+	wxStaticBoxSizer* texte_conteneur_ajout = new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
+	wxFlexGridSizer*  conteneur_formulaire_ajout = new wxFlexGridSizer(2,5,5);
+	
 	
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
 	
-		
-	wxStaticBoxSizer*conteneur_ajout= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
-	contenu_fenetre_sans_marge->Add(conteneur_ajout,0,  wxALIGN_TOP, 10); 
-//	contenu_
 	
-	conteneur_ajout->Add(input_login,1, 10);
-	conteneur_ajout->Add(input_mdp,1);
+	contenu_fenetre_sans_marge->Add(texte_conteneur_ajout,0,  wxALIGN_TOP, 10); 
+	texte_conteneur_ajout->Add(texte_ajouter_prof,0);
 	
+	texte_conteneur_ajout->Add(conteneur_formulaire_ajout,0);
+	conteneur_formulaire_ajout->Add(label_ajouter_prof_nom,0);
+	conteneur_formulaire_ajout->Add(input_ajout_nom,0);
+	conteneur_formulaire_ajout->Add(label_ajouter_prof_prenom,0);
+	conteneur_formulaire_ajout->Add(input_ajout_prenom,0);
+	conteneur_formulaire_ajout->Add(label_ajouter_prof_mdp,0);
+	conteneur_formulaire_ajout->Add(input_ajout_mdp,0);
+	conteneur_formulaire_ajout->Add(label_ajouter_prof_radio,0);
+	conteneur_formulaire_ajout->Add(contenur_radio_ajout,0);
+	conteneur_formulaire_ajout->Add(label_ajouter_prof_matiere,0);
+	conteneur_formulaire_ajout->Add(input_ajout_matiere,0);
+
+	input_radio_prof  = new wxRadioButton(fenetre, -1, _T("Professeur") );
+	input_radio_admin = new wxRadioButton(fenetre, -1, _T("Administrateur"));
+	
+	contenur_radio_ajout->Add(input_radio_prof,1);
+	
+	contenur_radio_ajout->Add(input_radio_admin,1);
+	input_radio_prof->MoveAfterInTabOrder(input_radio_admin);
+	
+	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof));
+	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof));
+	
+	//input_radio_prof->SetValue(true);
+
+	
+	
+	
+	
+	
+	//ajout d'une matière 
 	
 	
 	
 	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"));
+	menu_aide->Append(wxID_ABOUT, _T("A Propos"));
 	barre_menu->Append(menu_fichier, _T("Fichier"));
+	barre_menu->Append(menu_aide, _T("Aide"));
 	this->SetMenuBar(barre_menu);
+	
+	this->CreateStatusBar(1);
+	this->SetStatusText(_T("GestNote - Accès Admin"));
 	
 	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit));
 }
 
-
+void Frame_principale::onClick_radio_ajout_prof(wxCommandEvent &evenement)
+{
+	wxMessageBox(_T("Identifients incorrects !"),_T("erreur"));
+	//bool a=input_radio_admin->GetValue();
+	
+		/*if()
+		{
+			//input_ajout_matiere->Enable();
+			//label_ajouter_prof_matiere->Enable();
+		}
+		/*else if(input_radio_admin->GetValue()==true)
+		{
+			//input_ajout_matiere->Disable();
+			//label_ajouter_prof_matiere->Disable();
+		}
+		*/
+}
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
 	this->Close();
@@ -230,4 +295,3 @@ bool App_GestNote::OnInit()
  
     return true;
 }
-
