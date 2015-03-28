@@ -22,7 +22,7 @@ Celui ci utilise les dépendances suivantes, que vous devez installer :
 
 Vous devez pour cela compiler ces dépendances depuis les sources. 
 - Pour wxWidgets, vous trouverez un tutoriel sur [le site officiel de codeblocks](http://wiki.codeblocks.org/index.php?title=Compiling_wxWidgets_3.0.0_to_develop_Code::Blocks_(MSW)) : 
-- Pour SQLite, le tutoriel se trouve sur leur [https://www.sqlite.org/howtocompile.html](site officiel)
+- Pour SQLite, le tutoriel se trouve sur leur [site officiel](https://www.sqlite.org/howtocompile.html)
 
 Pour windows -> Si vous ne voulez pas vous embêter avec les dépendances (solution de facilité), vous pouvez télécharger celles ci toutes compilées par votre serviteur ici : https://mega.co.nz/#!F5EXzJpY!6W0L0zBizfhRYERPQND_8xvTLXvH4b509XSRd61qLqU
 
