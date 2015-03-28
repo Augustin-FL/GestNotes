@@ -210,30 +210,39 @@ void Frame_principale::main_admin()
 	conteneur_formulaire_ajout->Add(input_ajout_mdp,0);
 	conteneur_formulaire_ajout->Add(label_ajouter_prof_radio,0);
 	conteneur_formulaire_ajout->Add(contenur_radio_ajout,0);
+	
+	
 	conteneur_formulaire_ajout->Add(label_ajouter_prof_matiere,0);
+	
+//	vector<string> liste_matieres=this->lister_matieres();
+	/*
+	requete_sql* req=bdd->exec("select nom, id_matiere from matieres");
+	
+	while(req->fetch())
+	{
+		int id_matiere req->getColumn_int(0);
+	//	 texte=new wxString(""); 
+		
+		
+	}*/
+	
 	conteneur_formulaire_ajout->Add(input_ajout_matiere,0);
-
-	input_radio_prof  = new wxRadioButton(fenetre, -1, _T("Professeur") );
-	input_radio_admin = new wxRadioButton(fenetre, -1, _T("Administrateur"));
+	
+	
+	
+	input_radio_prof  = new wxRadioButton(fenetre,wxID_ANY, _T("Professeur"));
+	input_radio_admin = new wxRadioButton(fenetre, wxID_ANY, _T("Administrateur"));
 	
 	contenur_radio_ajout->Add(input_radio_prof,1);
-	
 	contenur_radio_ajout->Add(input_radio_admin,1);
+	
+	input_radio_prof->SetValue(true);
 	input_radio_prof->MoveAfterInTabOrder(input_radio_admin);
 	
-	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof));
-	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof));
+	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof), NULL, this);
+	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof), NULL, this);
 	
-	//input_radio_prof->SetValue(true);
 
-	
-	
-	
-	
-	
-	//ajout d'une matière 
-	
-	
 	
 	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"));
 	menu_aide->Append(wxID_ABOUT, _T("A Propos"));
@@ -244,25 +253,25 @@ void Frame_principale::main_admin()
 	this->CreateStatusBar(1);
 	this->SetStatusText(_T("GestNote - Accès Admin"));
 	
-	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit));
-}
+	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), NULL, this);
+	
+	//ajout d'une matière 
+	
+	
+	}
 
 void Frame_principale::onClick_radio_ajout_prof(wxCommandEvent &evenement)
 {
-	wxMessageBox(_T("Identifients incorrects !"),_T("erreur"));
-	//bool a=input_radio_admin->GetValue();
-	
-		/*if()
+		if(input_radio_prof->GetValue())
 		{
-			//input_ajout_matiere->Enable();
-			//label_ajouter_prof_matiere->Enable();
+			input_ajout_matiere->Enable();
+			label_ajouter_prof_matiere->Enable();
 		}
-		/*else if(input_radio_admin->GetValue()==true)
+		else if(input_radio_admin->GetValue())
 		{
-			//input_ajout_matiere->Disable();
-			//label_ajouter_prof_matiere->Disable();
+			input_ajout_matiere->Disable();
+			label_ajouter_prof_matiere->Disable();
 		}
-		*/
 }
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
