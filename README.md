@@ -21,10 +21,11 @@ Celui ci utilise les dépendances suivantes, que vous devez installer :
 - g++ >= 4.x.x  est requis (cela siginifie : ca ne marche pas avec Dev-Cpp de l'EFREI. Si vous travaillez avec Windows, vous devez utiliser une autre version de MinGW. Celle de codeblocks par défaut depuis 2012 fait très bien l'affaire, par exemple).
 
 Vous devez pour cela compiler ces dépendances depuis les sources. 
-- Pour wxWidgets, vous trouverez un tutoriel sur le site officiel de codeblocks : http://wiki.codeblocks.org/index.php?title=Compiling_wxWidgets_3.0.0_to_develop_Code::Blocks_(MSW) 
-- Pour SQLite, le tutoriel se trouve sur leur site officiel : https://www.sqlite.org/howtocompile.html
+- Pour wxWidgets, vous trouverez un tutoriel sur [le site officiel de codeblocks](http://wiki.codeblocks.org/index.php?title=Compiling_wxWidgets_3.0.0_to_develop_Code::Blocks_(MSW)) : 
+- Pour SQLite, le tutoriel se trouve sur leur [https://www.sqlite.org/howtocompile.html](site officiel)
 
 Pour windows -> Si vous ne voulez pas vous embêter avec les dépendances (solution de facilité), vous pouvez télécharger celles ci toutes compilées par votre serviteur ici : https://mega.co.nz/#!F5EXzJpY!6W0L0zBizfhRYERPQND_8xvTLXvH4b509XSRd61qLqU
+
 Vous avez juste à fusionner le fichier ZIP avec le dossier de MinGW qui se trouve sur votre ordinateur. Vous devrez également ajouter une variable d'environement : `WXCFG=gcc_dll\mswud`
 
 
