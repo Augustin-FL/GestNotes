@@ -37,11 +37,11 @@ g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/main.cpp" ".
 
 ## ToDo list : 
 futur proche : 
- *terminer l'interface de gestion des administrateurs
- *creer l'interface de gestion pour les élèves et professeurs
- *Ajouter une fonctionnalité : l'impression des buletins
+* terminer l'interface de gestion des administrateurs
+* creer l'interface de gestion pour les élèves et professeurs
+* Ajouter une fonctionnalité : l'impression des buletins
  
 futur éloigné : 
- *ajouter une encryption de la base de donnée à l'aide de GNU-TLS
- *utiliser une base de donnée distante plutot qu'une base locale
+* ajouter une encryption de la base de donnée à l'aide de GNU-TLS
+* utiliser une base de donnée distante plutot qu'une base locale
  
