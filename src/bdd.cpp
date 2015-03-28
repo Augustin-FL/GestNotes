@@ -2,9 +2,19 @@
 
 connexion_bdd::connexion_bdd()
 {
-	if(sqlite3_open("bdd.sqlite", &bdd)) 
+	
+	string path_fichier=string(wxStandardPaths::Get().GetExecutablePath().mb_str());// le chemin de l'executable en cours
+	
+	size_t pos;
+	if(path_fichier.rfind("\\")!=string::npos) 
+		pos=path_fichier.rfind("\\")+1; //multiplateforme : windows
+	else pos=path_fichier.rfind("/")+1;//linux
+	
+	path_fichier=path_fichier.substr(0,pos)+"bdd.sqlite";
+	
+	if(sqlite3_open(path_fichier.c_str(), &bdd)!=SQLITE_OK) 
 	{
-		wxString texte= sqlite3_errmsg(bdd);
+		wxString texte=sqlite3_errmsg(bdd);
 		wxMessageBox(_T("Erreur lors de la connexion à la  BDD : ")+texte,"erreur");
 		exit(0);
 	}
@@ -18,13 +28,7 @@ connexion_bdd::~connexion_bdd()
 
 requete_sql* connexion_bdd::exec(const string &texte)
 {
-	requete_sql* req=new requete_sql(bdd,texte);
-	
-	if(req->fetch())
-	{
-		return req;
-	}
-	return 0;
+	return new requete_sql(bdd,texte);
 }
 
 requete_sql* connexion_bdd::prepare(const string &texte)
@@ -79,7 +83,7 @@ int requete_sql::fetch()
 		
 		return 1;
 	}
-	else if(resultat==SQLITE_DONE) return 1;
+	else if(resultat==SQLITE_DONE) return 0;
 	else if(resultat==SQLITE_BUSY)
 	{
 			wxMessageBox("erreur", _T("Erreur ! SQLITE_BUSY"));
@@ -92,7 +96,7 @@ int requete_sql::fetch()
 		wxMessageBox(texte,"Erreur SQL");	
 	}
 		
-	return 0;
+	return -1;
 }
 int requete_sql::getColumn_int(int numero)
 {

@@ -6,6 +6,7 @@
 	
 	#include <wx/wx.h>
 	#include <wx/statline.h>
+	#include <wx/stdpaths.h>
 	#include <SQLite/sqlite3.h>
 
 	using namespace std;
