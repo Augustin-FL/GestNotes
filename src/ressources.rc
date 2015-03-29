@@ -1,0 +1,4 @@
+icone ICON "GestNote.ico"
+logo_ressource RCDATA "GestNote.png"
+
+#include <wx/msw/wx.rc>

@@ -13,14 +13,14 @@ REP_COURRANT=$(shell cd)
 # en cas de recompilation de wx.rc : 
 # vous devez absolument copier le répertoire "include" dans un dossier SANS ESPACES !
 # ceci est un bug connu de windres.exe : https://sourceware.org/bugzilla/show_bug.cgi?id=4356
-# malheureusement, on peux pas faire grand chose contre cela (a pars attendre que windres soit mis a jour...)
+# malheureusement, on peux pas faire grand chose contre cela (a part attendre que windres soit mis a jour...)
 
-$(PROGRAMME):"./tmp/wx.o"
-	$(CC) $(CFLAGS) "./src/bdd.cpp"  "./src/main.cpp" "./tmp/wx.o" -o "./bin/$@" -I "./include" -I "C:\Program Files\Cyg-npp\plugins\Dev-Cpp\include"  $(LIBS)
+$(PROGRAMME):"./tmp/ressources.o"
+	$(CC) $(CFLAGS) "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./tmp/ressources.o" -o "./bin/$@" -I "./include" -I "C:\Program Files\Cyg-npp\plugins\Dev-Cpp\include"  $(LIBS)
 	
 	cmd /C start "GestNote" "$(REP_COURRANT)\bin\$(PROGRAMME).exe"
 	
-"./tmp/wx.o":
-	windres -I "C:\include" "./src/wx.rc" "./tmp/wx.rc"
+"./tmp/ressources.o":
+	windres -I "C:\include" "./src/ressources.rc" "./tmp/ressources.o"
 	
 	

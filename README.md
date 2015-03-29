@@ -9,6 +9,23 @@ Copiez tout les fichiers présents dans le dossier "bin" sur un dossier de votre
 
 Le programme fonctionne actuellement en local sur un ordinateur. 
 
+compte Administrateur : 
+```console
+matricule : 1
+mot de passe : test
+```
+
+compte Professeur(pas encore créé) : 
+```console
+matricule : 2
+mot de passe : test
+```
+
+compte Etudiant (pas encore créé) : 
+```console
+matricule : 3
+mot de passe : test
+```
 
 ## Comment compiler le programme a partir de ses sources : 
 
@@ -31,10 +48,9 @@ Vous devrez également ajouter une variable d'environement(qui est néssésaire 
 Une fois ceci fait, vous pouvez compiler GestNote, en effectuant les commandes suivantes(sous windows) : 
 
 ```console
-windres "./src/wx.rc" "./tmp/wx.o"
-g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/main.cpp" "./tmp/wx.o" -I "./include" -o "./bin/GestNote.exe"
+windres "./src/ressources.rc" "./tmp/ressources.o"
+g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./tmp/ressources.o" -I "./include" -o "./bin/GestNote.exe"
 ```
-
 
 Note : si vous ne maitrisez pas la ligne de commande ni les Makefile :  un fichier .cbp (pour codeblocks) et un fichier .vcxproj (pour visual studio) seront bientot ajoutés au projet.
 

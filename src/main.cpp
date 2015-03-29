@@ -1,126 +1,13 @@
 #include "main.h"
 IMPLEMENT_APP(App_GestNote);
 
-Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("GestNote"),wxDefaultPosition,*(new wxSize(300,220)))
-{
-	wxPanel         *fenetre					= new wxPanel(this);
-	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer		*conteneur_horisontal_login	= new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer		*conteneur_horisontal_mdp 	= new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer 		*conteneur_boutons			= new wxBoxSizer(wxHORIZONTAL);
-	
-	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace GestNote.\n"));
-	wxStaticBoxSizer*conteneur_authentification	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Authentification : "));
-	
-	wxStaticText	*label_login				= new wxStaticText(fenetre, -1, _T("Matricule : ")); 				
-	wxStaticText	*label_mdp					= new wxStaticText(fenetre, -1, _T("Mot de passe : ")); 				
-	
-	bouton_valider	= new wxButton(    fenetre, -1, _T("Valider"));
-	bouton_annuler 	= new wxButton(    fenetre, -1, _T("Quitter"));
-	input_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
-	input_login		= new wxTextCtrl(  fenetre, -1, _T(""));
-	
-	fenetre->SetSizer(contenu_fenetre_sans_marge);
-	
-	contenu_fenetre_sans_marge->Add(texte_explicatif, 			1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL);//la fenetre contient : 
-	contenu_fenetre_sans_marge->Add(conteneur_authentification, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL);//un texte explicatif, la zone de
-	contenu_fenetre_sans_marge->Add(conteneur_boutons, 			1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxTOP, 10);//login, et les boutons
-	
-	conteneur_authentification->Add(conteneur_horisontal_login, 1, wxALIGN_LEFT|wxDOWN,5);//on dit que la zone d'authentification contient 
-	conteneur_authentification->Add(conteneur_horisontal_mdp,   1, wxALIGN_LEFT);//un login et un mot de passe
-	
-	conteneur_horisontal_login->Add(label_login, 1);//la zone login contient un label pour le login, et un champ d'input.
-	conteneur_horisontal_login->Add(input_login, 1);
-	conteneur_horisontal_mdp->Add(label_mdp, 1);
-	conteneur_horisontal_mdp->Add(input_mdp, 1);
-	
-	conteneur_boutons->Add(bouton_valider,1);//et il y a 2 boutons : valider et annuler
-	conteneur_boutons->Add(bouton_annuler,1);
-
-	bouton_valider->Disable();
-	
-	input_mdp->MoveAfterInTabOrder(input_login);//l'ordre des champs avec l'appui sur "tab"
-	bouton_annuler->MoveAfterInTabOrder(input_mdp);
-	
-	bouton_valider->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_login::onClick_valider), NULL, this);
-	bouton_annuler->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_login::onClick_annuler), NULL, this);
-	input_login->Connect( 	wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(Frame_login::onChange), NULL, this);
-	input_mdp->Connect( 	wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(Frame_login::onChange), NULL, this);
-	this->Connect(			wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_login::onClose),NULL, this);
-	this->Show();
-	
-	bdd=arg_bdd;
-	frame_parente=parent;
-	type=PAS_CONNECTE;
-}
-
-
-void Frame_login::onChange(wxCommandEvent &evenement)
-{
-	if(input_login->IsEmpty() ||input_mdp->IsEmpty()) bouton_valider->Disable();
-	else 
-	{
-		bouton_valider->Enable();	
-		bouton_valider->SetDefault();
-	}
-}
-
-void Frame_login::onClick_valider(wxCommandEvent &evenement)
-{
-     
-	requete_sql* req=bdd->prepare("SELECT count(*),type FROM login_centralise WHERE matricule=:matricule and mdp=:mdp");//WHERE matricule=:matricule AND mdp=:mdp
-	
-	req->bind(":matricule",string(input_login->GetValue().mb_str())); //si une erreur survient a ce niveau : 
-	req->bind(":mdp",string(input_mdp->GetValue().mb_str()));//penser a utiliser le namespace std, ou a mettre std::string()
-
-	if(req->fetch() && req->getColumn_int(0)==1)
-	{
-		type=req->getColumn_int(1);
-		this->Hide();
-		frame_parente->afficher_apres_login(type,req->getColumn_int(2));	
-		this->Close();
-	}
-	else 
-	{
-		wxMessageBox(_T("Identifients incorrects !"),_T("erreur"));
-		input_mdp->SetValue("");
-	}
-    
-}
-
-void Frame_login::onClick_annuler(wxCommandEvent &evenement)
-{
-	this->Close();
-}
-
-
-void Frame_login::onClose(wxCloseEvent &evenement)
-{
-		
-	if(evenement.CanVeto() && type==PAS_CONNECTE)
-	{
-		int reponse=wxMessageBox(_T("Voulez vous vraiment quitter?"), _T("Quitter"), wxYES_NO | wxCANCEL);
-		if (reponse == wxNO) 
-		{
-			evenement.Veto();	
-			return ;
-		}
-	}
-	
-	this->Destroy();
-	if(type==PAS_CONNECTE) frame_parente->Destroy();
-}
-
-
-
-
-
 
 
 Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNote"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
+	SetIcon(wxICON(icone));
 }
 
 void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
@@ -158,7 +45,6 @@ void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
 	
 	
 	this->Connect(wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_principale::onClose),NULL, this);
-	this->Show();
 }
 
 
@@ -168,110 +54,231 @@ void Frame_principale::main_admin()
 	//saisir éleve
 	//ajouter/supprimer/modifier eleve & prof 
 	
+	requete_sql* req=bdd->exec("select nom, id_matiere from matieres");
+	wxArrayString texte_select;
+	while(req->fetch()) texte_select.Add(req->getColumn_text(0));
+	texte_select.Add(_T("<Ajouter Une Matière>"));
+	
+	nombre_matiere=texte_select.GetCount()-1;
+	
+	// graphique
+	
+	this->SetSize(wxDefaultCoord,wxDefaultCoord,800,600);
+	
 	wxMenuBar *barre_menu= new wxMenuBar();
-    wxMenu *menu_fichier = new wxMenu();
-	wxMenu *menu_aide = new wxMenu();
+	wxMenu *menu_fichier = new wxMenu();
+	wxMenu *menu_aide	 = new wxMenu();
 
-	this->SetSize(wxDefaultCoord,wxDefaultCoord,300,500);
-	
-	wxPanel         *fenetre					= new wxPanel(this);
-	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer      *contenur_radio_ajout		= new wxBoxSizer(wxVERTICAL);
-	
+	wxPanel          *fenetre					= new wxPanel(this);
+	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer       *contenur_radio_ajout		= new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
+	wxBoxSizer		 *conteneur_ajout_horisontal= new wxBoxSizer(wxHORIZONTAL);
+	wxFlexGridSizer  *conteneur_ajout_gauche= new wxFlexGridSizer(2,5,5);
+	wxFlexGridSizer  *conteneur_ajout_droite= new wxFlexGridSizer(2,11,5);
+	wxStaticLine     *separarion_horisontale 	= new wxStaticLine(fenetre, -1);
+	wxStaticLine     *separarion_verticale	 	= new wxStaticLine(fenetre, -1,wxDefaultPosition, wxDefaultSize,wxLI_VERTICAL);
+   
+   
 	wxStaticText* texte_ajouter_prof 		= new wxStaticText(fenetre, -1, _T("\nAjouter un professeur, ou un admin : \n"));
 	wxStaticText* label_ajouter_prof_nom 	= new wxStaticText(fenetre, -1, _T("Nom : "));
 	wxStaticText* label_ajouter_prof_prenom = new wxStaticText(fenetre, -1, _T("Prénom : "));
 	wxStaticText* label_ajouter_prof_mdp 	= new wxStaticText(fenetre, -1, _T("Mot de Passe: "));
 	wxStaticText* label_ajouter_prof_radio	= new wxStaticText(fenetre, -1, _T("Ajouter un : "));
-	label_ajouter_prof_matiere= new wxStaticText(fenetre, -1, _T("Matière : "));
+	 
+	label_ajouter_prof_matiere	= new wxStaticText(fenetre, -1, _T("Matière : "));
+	input_ajout_nom				= new wxTextCtrl(  fenetre, -1, _T(""));
+	input_ajout_prenom			= new wxTextCtrl(  fenetre, -1, _T(""));
+	input_ajout_mdp				= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
 	
+	label_ajout_eleve__nom_responsable 	= new wxStaticText(fenetre, -1, _T("Nom du responsable : "));
 	
-	input_ajout_nom		= new wxTextCtrl(  fenetre, -1, _T(""));
-	input_ajout_prenom	= new wxTextCtrl(  fenetre, -1, _T(""));
-	input_ajout_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
-	input_ajout_matiere	= new wxTextCtrl(  fenetre, -1, _T(""));
+	input_ajout_eleve__nom_responsable	= new wxTextCtrl(  fenetre, -1, _T(""));
+
+	input_radio_prof  			= new wxRadioButton(fenetre, -1, _T("Professeur"));
+	input_radio_admin 			= new wxRadioButton(fenetre, -1, _T("Administrateur"));
+	input_radio_eleve 			= new wxRadioButton(fenetre, -1, _T("Élève"));
+	input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<selectionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
+	bouton_valider_ajout_prof	= new wxButton(fenetre, -1, _T("Valider"));
+     
+	/*    
 	
-	wxStaticBoxSizer* texte_conteneur_ajout = new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
-	wxFlexGridSizer*  conteneur_formulaire_ajout = new wxFlexGridSizer(2,5,5);
+	input_ajout_eleve__prenom_responsable
+	input_ajout_eleve__tel_responsable
+	input_ajout_eleve__mail_responsable
+	input_ajout_eleve__sexe
+	input_ajout_eleve__nom_rue
+	input_ajout_eleve__rue
+	input_ajout_eleve__code_postal
+	input_ajout_eleve__ville
+	input_ajout_eleve__tel_mobile
+	input_ajout_eleve__groupe
+	*/
 	
+	// -- la liste des matières
 	
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
 	
+	contenu_fenetre_sans_marge->Add(texte_conteneur_ajout,0,  wxALIGN_TOP|wxALIGN_LEFT, 10); 
 	
-	contenu_fenetre_sans_marge->Add(texte_conteneur_ajout,0,  wxALIGN_TOP, 10); 
-	texte_conteneur_ajout->Add(texte_ajouter_prof,0);
+	texte_conteneur_ajout->Add(texte_ajouter_prof,0,wxALIGN_CENTER);
+	texte_conteneur_ajout->Add(conteneur_ajout_horisontal,0);
 	
-	texte_conteneur_ajout->Add(conteneur_formulaire_ajout,0);
-	conteneur_formulaire_ajout->Add(label_ajouter_prof_nom,0);
-	conteneur_formulaire_ajout->Add(input_ajout_nom,0);
-	conteneur_formulaire_ajout->Add(label_ajouter_prof_prenom,0);
-	conteneur_formulaire_ajout->Add(input_ajout_prenom,0);
-	conteneur_formulaire_ajout->Add(label_ajouter_prof_mdp,0);
-	conteneur_formulaire_ajout->Add(input_ajout_mdp,0);
-	conteneur_formulaire_ajout->Add(label_ajouter_prof_radio,0);
-	conteneur_formulaire_ajout->Add(contenur_radio_ajout,0);
+	conteneur_ajout_horisontal->Add(conteneur_ajout_gauche,0);
+	conteneur_ajout_horisontal->Add(separarion_verticale,0, wxALL | wxEXPAND, 5);
+	conteneur_ajout_horisontal->Add(conteneur_ajout_droite,0);
 	
+
+	conteneur_ajout_gauche->Add(label_ajouter_prof_nom,0);
+	conteneur_ajout_gauche->Add(input_ajout_nom,0);
+	conteneur_ajout_gauche->Add(label_ajouter_prof_prenom,0);
+	conteneur_ajout_gauche->Add(input_ajout_prenom,0);
+	conteneur_ajout_gauche->Add(label_ajouter_prof_mdp,0);
+	conteneur_ajout_gauche->Add(input_ajout_mdp,0);
+	conteneur_ajout_gauche->Add(label_ajouter_prof_radio,0);
+	conteneur_ajout_gauche->Add(contenur_radio_ajout,0);
+	conteneur_ajout_gauche->Add(label_ajouter_prof_matiere,0);
+	conteneur_ajout_gauche->Add(input_select_matiere_ajout,0);
 	
-	conteneur_formulaire_ajout->Add(label_ajouter_prof_matiere,0);
+	texte_conteneur_ajout->Add(separarion_horisontale,0, wxALL | wxEXPAND, 5);
+	texte_conteneur_ajout->Add(bouton_valider_ajout_prof,1, wxALIGN_CENTER_HORIZONTAL,5);
 	
-//	vector<string> liste_matieres=this->lister_matieres();
-	/*
-	requete_sql* req=bdd->exec("select nom, id_matiere from matieres");
-	
-	while(req->fetch())
-	{
-		int id_matiere req->getColumn_int(0);
-	//	 texte=new wxString(""); 
-		
-		
-	}*/
-	
-	conteneur_formulaire_ajout->Add(input_ajout_matiere,0);
-	
-	
-	
-	input_radio_prof  = new wxRadioButton(fenetre,wxID_ANY, _T("Professeur"));
-	input_radio_admin = new wxRadioButton(fenetre, wxID_ANY, _T("Administrateur"));
-	
+	// --les 2 radio
 	contenur_radio_ajout->Add(input_radio_prof,1);
 	contenur_radio_ajout->Add(input_radio_admin,1);
-	
+	contenur_radio_ajout->Add(input_radio_eleve,1);
 	input_radio_prof->SetValue(true);
+	
+	//l'input select
+	input_select_matiere_ajout->SetEditable(false);
+	input_select_matiere_ajout->SetBackgroundColour(0xFFFFFF);
+	
+	
+	
 	input_radio_prof->MoveAfterInTabOrder(input_radio_admin);
 	
+	
+	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable,0);
+	conteneur_ajout_droite->Add(input_ajout_eleve__nom_responsable,0);
+	
+	bouton_valider_ajout_prof->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_principale::onClick_ajouter_prof), NULL, this);
+	input_select_matiere_ajout->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler(Frame_principale::onChange_select_matiere), NULL, this);
 	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof), NULL, this);
 	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof), NULL, this);
 	
-
+	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), NULL, this);
+	this->Connect(wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(Frame_principale::onAbout), NULL, this);
 	
-	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"));
-	menu_aide->Append(wxID_ABOUT, _T("A Propos"));
-	barre_menu->Append(menu_fichier, _T("Fichier"));
-	barre_menu->Append(menu_aide, _T("Aide"));
+	// --bare de menu : haut
+	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"), _T("Quitter GestNote"));
+	menu_aide->Append(wxID_ABOUT, _T("A Propos"), _T("Quelques infos sur le créateur..."));
 	this->SetMenuBar(barre_menu);
 	
+	barre_menu->Append(menu_fichier, _T("Fichier"));
+	barre_menu->Append(menu_aide, _T("Aide"));
+	
+	// --barre de statut : bas
 	this->CreateStatusBar(1);
 	this->SetStatusText(_T("GestNote - Accès Admin"));
 	
-	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), NULL, this);
-	
-	//ajout d'une matière 
-	
-	
-	}
+	this->Show();
+}
 
+void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
+{
+	
+	
+}
+
+void Frame_principale::onAbout(wxCommandEvent &evenement)
+{
+	wxDialog *frame_about= new wxDialog(this, wxID_ANY,_T("A propos..."));
+	
+	wxPanel *fenetre = new wxPanel(frame_about, -1);
+	wxBoxSizer *sizer_horisontal = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_droite = new wxBoxSizer(wxVERTICAL);
+	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
+	wxBoxSizer *sizer_twitter = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_email = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_github = new wxBoxSizer(wxHORIZONTAL);
+	
+  	wxStaticText *texte_haut = new wxStaticText(fenetre,wxID_ANY, _T("Programme créé par Gusfl\nSous licence Apache\n\nContact :"));
+	wxStaticText *texte_bas = new wxStaticText(fenetre,wxID_ANY, _T("\nVous avez trouvé un bug?\nN'hésitez pas à m'en faire part sur"));
+	
+	wxStaticText *texte_bas_2 = new wxStaticText(fenetre,wxID_ANY, _T(" !"));
+	
+	
+	wxStaticText *label_twitter=  new wxStaticText(fenetre,wxID_ANY, _T("Twitter : "));
+	wxHyperlinkCtrl* lien_twitter = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("@FLisMyName"), _T("https://twitter.com/FLisMyName"));
+	
+	wxStaticText *label_email=  new wxStaticText(fenetre,wxID_ANY, _T("Email : "));
+	wxHyperlinkCtrl* lien_email = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
+	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNote/issues"));
+	
+	sizer_twitter->Add(label_twitter);
+	sizer_twitter->Add(lien_twitter);
+	sizer_email->Add(label_email);
+	sizer_email->Add(lien_email);
+	sizer_github->Add(lien_github);
+	sizer_github->Add(texte_bas_2);
+	
+	sizer_droite->Add(texte_haut);
+	sizer_droite->Add(sizer_twitter);
+	sizer_droite->Add(sizer_email);
+	sizer_droite->Add(texte_bas);
+	sizer_droite->Add(sizer_github);
+	
+	
+	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL);
+	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER|wxALIGN_RIGHT, 15);
+	fenetre->SetSizer(sizer_horisontal);
+	
+	frame_about->ShowModal();
+
+}
+
+void Frame_principale::onChange_select_matiere(wxCommandEvent &evenement)
+{
+	if(input_select_matiere_ajout->GetSelection()==nombre_matiere)
+	{
+		input_select_matiere_ajout->SetEditable(true);
+		input_select_matiere_ajout->SetValue("");
+	}
+	else
+	{
+		input_select_matiere_ajout->SetEditable(false);
+		input_select_matiere_ajout->SetBackgroundColour(0xFFFFFF);
+	}
+	
+}
 void Frame_principale::onClick_radio_ajout_prof(wxCommandEvent &evenement)
 {
+	if(input_radio_eleve->GetValue())
+	{
+		label_ajout_eleve__nom_responsable->Enable();
+		input_ajout_eleve__nom_responsable->Enable();
+		
+		input_select_matiere_ajout->Disable();
+		label_ajouter_prof_matiere->Disable();
+	}
+	else
+	{
 		if(input_radio_prof->GetValue())
 		{
-			input_ajout_matiere->Enable();
+			input_select_matiere_ajout->Enable();
 			label_ajouter_prof_matiere->Enable();
 		}
 		else if(input_radio_admin->GetValue())
 		{
-			input_ajout_matiere->Disable();
+			input_select_matiere_ajout->Disable();
 			label_ajouter_prof_matiere->Disable();
 		}
+		
+		label_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__nom_responsable->Disable();
+	}
+		
+	
 }
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
@@ -284,7 +291,7 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 	if(evenement.CanVeto())
 	{
 		int reponse=wxMessageBox(_T("Voulez vous vraiment quitter?"), _T("Quitter"), wxYES_NO | wxCANCEL);
-		if (reponse == wxNO)
+		if (reponse != wxYES )
 		{
 			evenement.Veto();
 			return ;
@@ -295,7 +302,8 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 
 bool App_GestNote::OnInit()
 {
-	
+	wxInitAllImageHandlers();
+	 
 	bdd=new connexion_bdd();
 	Frame_principale *frame_principale=new Frame_principale(bdd);
 	
