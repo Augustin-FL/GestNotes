@@ -1,12 +1,12 @@
 #ifndef HEADERS_INCLUS
 	
 	#define HEADERS_INCLUS
-	#include <iostream>
-	#include <cstdarg> //arguments variables : pour la connexion SQL
 	
 	#include <wx/wx.h>
 	#include <wx/statline.h>
 	#include <wx/stdpaths.h>
+	#include <wx/hyperlink.h>
+	
 	#include <SQLite/sqlite3.h>
 
 	using namespace std;
@@ -17,7 +17,6 @@
 		ELEVE=0,
 		PROF=1,
 		ADMIN=2,
-		
 	};
 
 	class requete_sql : public wxString //connexion a la BDD
@@ -68,15 +67,18 @@
 	{
 		private:
 			int type;
-			int id;
+			int id, nombre_matiere;
 			connexion_bdd* bdd;
 			bool veto_autorise;
 
-			wxRadioButton *input_radio_prof, *input_radio_admin;
-			wxTextCtrl *input_ajout_nom, *input_ajout_prenom, *input_ajout_mdp, *input_ajout_matiere;
-			wxStaticText*  label_ajouter_prof_matiere;
-			
-
+			wxRadioButton *input_radio_prof, *input_radio_admin,*input_radio_eleve;
+			wxTextCtrl *input_ajout_nom, *input_ajout_prenom, *input_ajout_mdp, 
+				*input_ajout_eleve__nom_responsable;
+			wxStaticText*  label_ajouter_prof_matiere,
+				*label_ajout_eleve__nom_responsable;
+			wxComboBox *input_select_matiere_ajout;
+			wxButton *bouton_valider_ajout_prof;
+	
 		public:
 			Frame_principale(connexion_bdd*& arg_bdd);
 			~Frame_principale(){};
@@ -84,6 +86,9 @@
 			void onClose(wxCloseEvent &evenement);
 			void onQuit(wxCommandEvent &evenement);
 			void onClick_radio_ajout_prof(wxCommandEvent &evenement);
+			void onChange_select_matiere(wxCommandEvent &evenement);
+			void onClick_ajouter_prof(wxCommandEvent &evenement);
+			void onAbout(wxCommandEvent &evenement);
 			void main_admin();
 			void main_eleve();
 			void main_prof();
