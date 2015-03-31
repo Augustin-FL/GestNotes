@@ -62,7 +62,7 @@
 	};
 	
 	
-	class App_GestNote : public wxApp
+	class App_Gestnotes : public wxApp
 	{
 		public :	
 			virtual bool OnInit();
@@ -70,7 +70,7 @@
 		protected:
 			connexion_bdd *bdd;
 	};
-	DECLARE_APP(App_GestNote);
+	DECLARE_APP(App_Gestnotes);
 	
 	
 	class Frame_principale: public wxFrame

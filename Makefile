@@ -5,7 +5,7 @@ CFLAGS=-O2 -Wall
 # Option du linker
 LIBS=-lwxmsw31u -lsqlite3 -mwindows # -lwxmswu_31core
 
-PROGRAMME=GestNote
+PROGRAMME=Gestnotes
 
 REP_COURRANT=$(shell cd)
 TMP=$(shell echo %tmp%)
@@ -19,7 +19,7 @@ TMP=$(shell echo %tmp%)
 $(PROGRAMME):$(TMP)/ressources.o"
 	$(CC) $(CFLAGS) "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "$(TMP)/ressources.o" -o "./bin/$@" -I "./include" -I "C:\Program Files\Cyg-npp\plugins\Dev-Cpp\include"  $(LIBS)
 	
-	cmd /C start "GestNote" "$(REP_COURRANT)\bin\$(PROGRAMME).exe"
+	cmd /C start "Gestnotes" "$(REP_COURRANT)\bin\$(PROGRAMME).exe"
 	
 $(TMP)/ressources.o":
 	windres -I "C:\include" "./src/ressources.rc" "$(TMP)/ressources.o"

@@ -1,9 +1,9 @@
 #include "main.h"
-IMPLEMENT_APP(App_GestNote);
+IMPLEMENT_APP(App_Gestnotes);
 
 
 
-Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNote"),wxDefaultPosition,*(new wxSize(500,500)))
+Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("Gestnotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
@@ -37,7 +37,7 @@ void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
 	else if(type==ADMIN) this->main_admin();
 	else 
 	{
-			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("GestNote"));
+			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("Gestnotes"));
 			veto_autorise=false;
 			Close(); 
 			return ;
@@ -55,7 +55,7 @@ void Frame_principale::main_admin()
 	//ajouter/supprimer/modifier eleve & prof 
 
 	wxArrayString texte_select;
-//	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
+	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
 	
 	nombre_matiere=texte_select.GetCount()-1;
@@ -170,7 +170,7 @@ void Frame_principale::main_admin()
 	this->Connect(wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(Frame_principale::onAbout), NULL, this);
 	
 	// --bare de menu : haut
-	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"), _T("Quitter GestNote"));
+	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"), _T("Quitter Gestnotes"));
 	menu_aide->Append(wxID_ABOUT, _T("A Propos"), _T("Quelques infos sur le créateur..."));
 	this->SetMenuBar(barre_menu);
 	
@@ -179,7 +179,7 @@ void Frame_principale::main_admin()
 	
 	// --barre de statut : bas
 	this->CreateStatusBar(1);
-	this->SetStatusText(_T("GestNote - Accès Admin"));
+	this->SetStatusText(_T("Gestnotes - Accès Admin"));
 	
 	this->Show();
 }
@@ -188,7 +188,15 @@ void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 {
 	requete_sql *req;
 	
-	if( !(input_radio_prof->GetValue() || input_radio_prof->GetValue() || input_radio_eleve->GetValue()) || input_ajout_mdp->IsEmpty())//tout n'est pas ok
+	if( !(
+		(input_radio_prof->GetValue() && (input_select_matiere_ajout->IsListEmpty() || input_select_matiere_ajout->IsTextEmpty()))
+		||
+		input_radio_prof->GetValue()
+		||
+		(input_radio_eleve->GetValue() && input_ajout_eleve__nom_responsable->IsEmpty())
+		)
+		|| input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() || input_ajout_prenom->IsEmpty()
+		)//tout n'est pas ok
 	{
 		wxMessageBox("Erreur ! Avez vous rempli tout les champs?");
 		return ;
@@ -300,7 +308,7 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	
 	
 	wxHyperlinkCtrl* lien_email = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
-	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNote/issues"));
+	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/Gestnotes/issues"));
 	
 	sizer_twitter->Add(label_twitter);
 	sizer_twitter->Add(lien_twitter);
@@ -326,7 +334,7 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 }
 
 
-bool App_GestNote::OnInit()
+bool App_Gestnotes::OnInit()
 {
 	wxInitAllImageHandlers();
 	 
@@ -340,7 +348,7 @@ bool App_GestNote::OnInit()
 }
 
 
-int App_GestNote::OnExit()
+int App_Gestnotes::OnExit()
 {
 	bdd->close();
 	return 0;
