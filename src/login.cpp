@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("GestNote"),wxDefaultPosition,*(new wxSize(300,220)))
+Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("Gestnotes"),wxDefaultPosition,*(new wxSize(300,220)))
 {
 	SetIcon(wxICON(icone));
 	
@@ -11,7 +11,7 @@ Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wx
 	wxBoxSizer		*conteneur_horisontal_mdp 	= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer 		*conteneur_boutons			= new wxBoxSizer(wxHORIZONTAL);
 	
-	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace GestNote.\n"));
+	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace Gestnotes.\n"));
 	wxStaticBoxSizer*conteneur_authentification	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Authentification : "));
 	
 	wxStaticText	*label_login				= new wxStaticText(fenetre, -1, _T("Matricule : ")); 				
