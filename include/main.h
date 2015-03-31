@@ -31,23 +31,33 @@
 			int getColumn_int(int numero);
 			string getColumn_text(int numero);
 			double getColumn_float(int numero);
+			void closeCursor();
+			
 			
 		private:
 			sqlite3_stmt* requete;
 			sqlite3* bdd_private;
 			int* types;
 			int nb_colonnes;
+			
 	};
 	class connexion_bdd : public wxString
 	{
 		private:
 			sqlite3* bdd;
+			bool requete_en_cours;
+			string requete_precedente;
+			requete_sql* req;
 			
 		public:
 			connexion_bdd();
 			~connexion_bdd();
-			requete_sql* exec(const string &texte);
+			int exec(const string &texte);
 			requete_sql* prepare(const string &texte);
+			int getColumn_int(int numero);
+			string getColumn_text(int numero);
+			double getColumn_float(int numero);
+			void close();
 		
 	};
 	
@@ -56,7 +66,7 @@
 	{
 		public :	
 			virtual bool OnInit();
-			
+			virtual int OnExit();
 		protected:
 			connexion_bdd *bdd;
 	};
