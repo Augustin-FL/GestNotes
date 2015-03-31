@@ -53,10 +53,9 @@ void Frame_principale::main_admin()
 	//saisir prof
 	//saisir éleve
 	//ajouter/supprimer/modifier eleve & prof 
-	
-	requete_sql* req=bdd->exec("select nom, id_matiere from matieres");
+
 	wxArrayString texte_select;
-	while(req->fetch()) texte_select.Add(req->getColumn_text(0));
+//	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
 	
 	nombre_matiere=texte_select.GetCount()-1;
@@ -148,6 +147,7 @@ void Frame_principale::main_admin()
 	contenur_radio_ajout->Add(input_radio_admin,1);
 	contenur_radio_ajout->Add(input_radio_eleve,1);
 	input_radio_prof->SetValue(true);
+	this->onClick_radio_ajout_prof(*(new wxCommandEvent()));
 	
 	//l'input select
 	input_select_matiere_ajout->SetEditable(false);
@@ -183,58 +183,34 @@ void Frame_principale::main_admin()
 	
 	this->Show();
 }
-
+//johana,orlane,manette
 void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 {
+	requete_sql *req;
 	
+	if( !(input_radio_prof->GetValue() || input_radio_prof->GetValue() || input_radio_eleve->GetValue()) || input_ajout_mdp->IsEmpty())//tout n'est pas ok
+	{
+		wxMessageBox("Erreur ! Avez vous rempli tout les champs?");
+		return ;
+	}
+	req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
+	req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
 	
-}
-
-void Frame_principale::onAbout(wxCommandEvent &evenement)
-{
-	wxDialog *frame_about= new wxDialog(this, wxID_ANY,_T("A propos..."));
+	if(input_radio_prof->GetValue()) req->bind(":type",1);
+	else if(input_radio_admin->GetValue()) req->bind(":type",2);
+	else req->bind(":type",0);
 	
-	wxPanel *fenetre = new wxPanel(frame_about, -1);
-	wxBoxSizer *sizer_horisontal = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *sizer_droite = new wxBoxSizer(wxVERTICAL);
-	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
-	wxBoxSizer *sizer_twitter = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *sizer_email = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *sizer_github = new wxBoxSizer(wxHORIZONTAL);
+	req->fetch();
+	req->closeCursor();
 	
-  	wxStaticText *texte_haut = new wxStaticText(fenetre,wxID_ANY, _T("Programme créé par Gusfl\nSous licence Apache\n\nContact :"));
-	wxStaticText *texte_bas = new wxStaticText(fenetre,wxID_ANY, _T("\nVous avez trouvé un bug?\nN'hésitez pas à m'en faire part sur"));
+	bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
+	int matricule=bdd->getColumn_int(0);
 	
-	wxStaticText *texte_bas_2 = new wxStaticText(fenetre,wxID_ANY, _T(" !"));
+	wxString a;
+	a<<matricule;
 	
+	wxMessageBox(a,_T("Succès"));
 	
-	wxStaticText *label_twitter=  new wxStaticText(fenetre,wxID_ANY, _T("Twitter : "));
-	wxHyperlinkCtrl* lien_twitter = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("@FLisMyName"), _T("https://twitter.com/FLisMyName"));
-	
-	wxStaticText *label_email=  new wxStaticText(fenetre,wxID_ANY, _T("Email : "));
-	wxHyperlinkCtrl* lien_email = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
-	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNote/issues"));
-	
-	sizer_twitter->Add(label_twitter);
-	sizer_twitter->Add(lien_twitter);
-	sizer_email->Add(label_email);
-	sizer_email->Add(lien_email);
-	sizer_github->Add(lien_github);
-	sizer_github->Add(texte_bas_2);
-	
-	sizer_droite->Add(texte_haut);
-	sizer_droite->Add(sizer_twitter);
-	sizer_droite->Add(sizer_email);
-	sizer_droite->Add(texte_bas);
-	sizer_droite->Add(sizer_github);
-	
-	
-	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL);
-	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER|wxALIGN_RIGHT, 15);
-	fenetre->SetSizer(sizer_horisontal);
-	
-	frame_about->ShowModal();
-
 }
 
 void Frame_principale::onChange_select_matiere(wxCommandEvent &evenement)
@@ -300,6 +276,56 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 	 this->Destroy();
 }
 
+
+
+void Frame_principale::onAbout(wxCommandEvent &evenement)
+{
+	wxDialog *frame_about= new wxDialog(this, wxID_ANY,_T("A propos..."));
+	
+	wxPanel *fenetre = new wxPanel(frame_about, -1);
+	wxBoxSizer *sizer_droite = new wxBoxSizer(wxVERTICAL);
+	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
+	wxBoxSizer *sizer_horisontal = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_twitter = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_email = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_github = new wxBoxSizer(wxHORIZONTAL);
+	
+  	wxStaticText *texte_haut = new wxStaticText(fenetre,wxID_ANY, _T(" Auteur : gusfl\n\n Sous licence Apache\n\n Contact :"));
+	wxStaticText *texte_bas = new wxStaticText(fenetre,wxID_ANY, _T("\n Vous avez trouvé un bug?\n N'hésitez pas à m'en faire part sur"));
+	wxStaticText *label_github = new wxStaticText(fenetre,wxID_ANY, _T(" "));
+	wxStaticText *label_github_2 = new wxStaticText(fenetre,wxID_ANY, _T(" !"));
+	wxStaticText *label_email=  new wxStaticText(fenetre,wxID_ANY, _T(" Email : "));
+	wxStaticText *label_twitter=  new wxStaticText(fenetre,wxID_ANY, _T(" Twitter : "));
+	wxHyperlinkCtrl* lien_twitter = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("@FLisMyName"), _T("https://twitter.com/FLisMyName"));
+	
+	
+	wxHyperlinkCtrl* lien_email = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
+	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNote/issues"));
+	
+	sizer_twitter->Add(label_twitter);
+	sizer_twitter->Add(lien_twitter);
+	sizer_email->Add(label_email);
+	sizer_email->Add(lien_email);
+	sizer_github->Add(label_github);
+	sizer_github->Add(lien_github);
+	sizer_github->Add(label_github_2);
+	
+	sizer_droite->Add(texte_haut);
+	sizer_droite->Add(sizer_twitter);
+	sizer_droite->Add(sizer_email);
+	sizer_droite->Add(texte_bas);
+	sizer_droite->Add(sizer_github);
+	
+	
+	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT, 15 );
+	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT, 15);
+	fenetre->SetSizer(sizer_horisontal);
+	
+	frame_about->ShowModal();
+
+}
+
+
 bool App_GestNote::OnInit()
 {
 	wxInitAllImageHandlers();
@@ -311,4 +337,11 @@ bool App_GestNote::OnInit()
 	login->Show();//pour éviter un warning "unused variable"
  
     return true;
+}
+
+
+int App_GestNote::OnExit()
+{
+	bdd->close();
+	return 0;
 }

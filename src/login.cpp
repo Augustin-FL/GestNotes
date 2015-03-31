@@ -69,7 +69,6 @@ void Frame_login::onChange(wxCommandEvent &evenement)
 
 void Frame_login::onClick_valider(wxCommandEvent &evenement)
 {
-     
 	requete_sql* req=bdd->prepare("SELECT count(*),type FROM login_centralise WHERE matricule=:matricule and mdp=:mdp");//WHERE matricule=:matricule AND mdp=:mdp
 	
 	req->bind(":matricule",string(input_login->GetValue().mb_str())); //si une erreur survient a ce niveau : 
@@ -78,13 +77,19 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
 	if(req->fetch() && req->getColumn_int(0)==1)
 	{
 		type=req->getColumn_int(1);
+		int matricule=req->getColumn_int(2);
+		
+		req->closeCursor();
 		this->Hide();
-		frame_parente->afficher_apres_login(type,req->getColumn_int(2));	
+		frame_parente->afficher_apres_login(type,matricule);	
 		this->Close();
 	}
 	else 
 	{
-		wxMessageBox(_T("Identifients incorrects !"),_T("erreur"));
+		req->closeCursor();
+		wxString a;
+		a<<_T("Identifients incorrects !")<<req->getColumn_int(0);
+		wxMessageBox(a,_T("erreur"));
 		input_mdp->SetValue("");
 	}
     
@@ -110,5 +115,5 @@ void Frame_login::onClose(wxCloseEvent &evenement)
 	}
 	
 	this->Destroy();
-	if(type==PAS_CONNECTE) frame_parente->Destroy();
+	if(type==PAS_CONNECTE) frame_parente->Close();
 }
