@@ -48,8 +48,9 @@ Vous devrez également ajouter une variable d'environement(qui est néssésaire 
 Une fois ceci fait, vous pouvez compiler Gestnotes, en effectuant les commandes suivantes(sous windows) : 
 
 ```console
-windres "./src/ressources.rc" "./tmp/ressources.o"
-g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./tmp/ressources.o" -I "./include" -o "./bin/Gestnotes.exe"
+windres "./src/ressources.rc" "./src/ressources.o"
+g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./src/ressources.o" -I "./include" -o "./bin/Gestnotes.exe"
+del "./src/ressources.o"
 ```
 
 Note : si vous ne maitrisez pas la ligne de commande ni les Makefile :  un fichier .cbp (pour codeblocks) et un fichier .vcxproj (pour visual studio) seront bientot ajoutés au projet.
