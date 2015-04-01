@@ -90,14 +90,16 @@ connexion_bdd::~connexion_bdd()
 int connexion_bdd::exec(const string &texte)
 {
 	int resultat;//
+	
 	if(texte.compare(requete_precedente))
 	{
 		if(req!=0) req->closeCursor();
 		
-		requete_en_cours=true;
 		req=new requete_sql(bdd,texte);
 		requete_precedente=texte;
 	}
+	else if(req==0)  req=new requete_sql(bdd,texte);
+	
 
 	resultat=req->fetch();
 	if(!resultat) 
@@ -105,7 +107,6 @@ int connexion_bdd::exec(const string &texte)
 		req->closeCursor();
 		req=0;
 	}
-	
 	return resultat;
 }
 
@@ -146,7 +147,7 @@ requete_sql::requete_sql(sqlite3*& bdd,const string& texte_requete)
 	
 	string texte=string(sqlite3_errmsg(bdd_private));
 	if(texte.compare("not an error"))	wxMessageBox(texte,"Erreur SQL - Prepare");
-		
+	
 	// a faire : compter le onmbre de : et de ;
 }
 
@@ -219,18 +220,19 @@ int requete_sql::fetch()
 }
 int requete_sql::getColumn_int(int numero)
 {
-	if(numero>nb_colonnes || numero<0 || types[numero]!=SQLITE_INTEGER) return -1;
+	
+	if(numero>nb_colonnes-1 || numero<0 || types[numero]!=SQLITE_INTEGER) return -1;
 	
 	return sqlite3_column_int(requete,numero);
 }
 string requete_sql::getColumn_text(int numero)
 {
-	if(numero>nb_colonnes || numero<0  || types[numero]!=SQLITE_TEXT)  return "erreur - GetColumn_text()";
+	if(numero>nb_colonnes-1 || numero<0  || types[numero]!=SQLITE_TEXT)  return "erreur - GetColumn_text()";
 	return string((const char*)sqlite3_column_text(requete, numero));
 }
 double requete_sql::getColumn_float(int numero)
 {
-	if(numero>nb_colonnes || numero<0  || types[numero]!=SQLITE_FLOAT)  return -1.0;
+	if(numero>nb_colonnes-1 || numero<0  || types[numero]!=SQLITE_FLOAT)  return -1.0;
 	return sqlite3_column_double(requete,numero);
 }
 void requete_sql::closeCursor()
