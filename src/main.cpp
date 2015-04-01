@@ -68,47 +68,68 @@ void Frame_principale::main_admin()
 	wxPanel          *fenetre					= new wxPanel(this);
 	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer       *contenur_radio_ajout		= new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer       *contenur_radio_ajout_2	= new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer       *contenur_radio_ajout_2_horisontal= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer		 *conteneur_ajout_horisontal= new wxBoxSizer(wxHORIZONTAL);
 	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
-	wxFlexGridSizer  *conteneur_ajout_gauche	= new wxFlexGridSizer(2,5,5);
+	wxFlexGridSizer  *conteneur_ajout_gauche	= new wxFlexGridSizer(2,7,5);
 	wxFlexGridSizer  *conteneur_ajout_droite	= new wxFlexGridSizer(2,11,5);
 	wxStaticLine     *separarion_horisontale 	= new wxStaticLine(fenetre, -1);
 	wxStaticLine     *separarion_verticale	 	= new wxStaticLine(fenetre, -1,wxDefaultPosition, wxDefaultSize,wxLI_VERTICAL);
       
 	wxStaticText* texte_ajouter_prof 		= new wxStaticText(fenetre, -1, _T("\nAjouter un professeur, ou un admin : \n"));
-	wxStaticText* label_ajouter_prof_nom 	= new wxStaticText(fenetre, -1, _T("Nom : "));
-	wxStaticText* label_ajouter_prof_prenom = new wxStaticText(fenetre, -1, _T("Prénom : "));
-	wxStaticText* label_ajouter_prof_mdp 	= new wxStaticText(fenetre, -1, _T("Mot de Passe: "));
-	wxStaticText* label_ajouter_prof_radio	= new wxStaticText(fenetre, -1, _T("Ajouter un : "));
-	 
-	label_ajouter_prof_matiere	= new wxStaticText(fenetre, -1, _T("Matière : "));
-	input_ajout_nom				= new wxTextCtrl(  fenetre, -1, _T(""));
-	input_ajout_prenom			= new wxTextCtrl(  fenetre, -1, _T(""));
-	input_ajout_mdp				= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
+	wxStaticText* label_ajouter_matricule 	= new wxStaticText(fenetre, -1, _T("\nLier cette personne à un profil existant : \n"));
+	wxStaticText* label_ajout_nom 			= new wxStaticText(fenetre, -1, _T("Nom : "));
+	wxStaticText* label_ajout_prenom		= new wxStaticText(fenetre, -1, _T("Prénom : "));
+	wxStaticText* label_ajout_mdp 			= new wxStaticText(fenetre, -1, _T("Mot de Passe: "));
+	wxStaticText* label_ajout_radio			= new wxStaticText(fenetre, -1, _T("Ajouter un : ")); 
+	label_ajouter_prof__matiere				= new wxStaticText(fenetre, -1, _T("Matière : "));
+	label_ajout_eleve__prenom_responsable	= new wxStaticText(fenetre, -1, _T("Prénom du Responsable : "));
+	label_ajout_eleve__tel_responsable		= new wxStaticText(fenetre, -1, _T("Tel. du Responsable : "));
+	label_ajout_eleve__mail_responsable		= new wxStaticText(fenetre, -1, _T("Email du responsable : "));
+	label_ajout_eleve__sexe					= new wxStaticText(fenetre, -1, _T("Sexe : "));
+	label_ajout_eleve__nom_rue				= new wxStaticText(fenetre, -1, _T("Rue : "));
+	label_ajout_eleve__rue					= new wxStaticText(fenetre, -1, _T("Numero de Rue : "));
+	label_ajout_eleve__code_postal			= new wxStaticText(fenetre, -1, _T("Code Postal : "));
+	label_ajout_eleve__ville				= new wxStaticText(fenetre, -1, _T("Ville : "));
+	label_ajout_eleve__tel_mobile			= new wxStaticText(fenetre, -1, _T("Tel. : "));
+	label_ajout_eleve__groupe				= new wxStaticText(fenetre, -1, _T("Groupe : "));
+	label_ajout_eleve__nom_responsable 		= new wxStaticText(fenetre, -1, _T("Nom du responsable : "));
 	
-	label_ajout_eleve__nom_responsable 	= new wxStaticText(fenetre, -1, _T("Nom du responsable : "));
+	input_ajout_matricule					= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_nom							= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_prenom						= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_mdp							= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
+	input_ajout_eleve__prenom_responsable	= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__tel_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__mail_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__nom_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__nom_rue				= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__rue					= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__code_postal			= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__ville				= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__tel_mobile			= new wxTextCtrl(fenetre, -1, _T(""));
 	
-	input_ajout_eleve__nom_responsable	= new wxTextCtrl(  fenetre, -1, _T(""));
-
+	wxArrayString strings_sexes;
+	wxArrayString strings_groupes;
+	strings_sexes.Add(_T("Fille"));
+	strings_sexes.Add(_T("Garçon"));
+	strings_groupes.Add(_T("Groupe A"));
+	strings_groupes.Add(_T("Groupe B"));
+	
+	input_ajout_eleve__sexe					= new wxChoice(fenetre,-1,wxDefaultPosition,wxDefaultSize,strings_sexes);
+	input_ajout_eleve__groupe				= new wxChoice(fenetre,-1,wxDefaultPosition,wxDefaultSize,strings_groupes);
+	
 	input_radio_prof  			= new wxRadioButton(fenetre, -1, _T("Professeur"));
 	input_radio_admin 			= new wxRadioButton(fenetre, -1, _T("Administrateur"));
 	input_radio_eleve 			= new wxRadioButton(fenetre, -1, _T("Élève"));
-	input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
-	bouton_valider_ajout_prof	= new wxButton(fenetre, -1, _T("Valider"));
-     
-	/*    
+	input_radio_matricule_oui	= new wxRadioButton(fenetre, -1, _T("Oui"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
+	input_radio_matricule_non	= new wxRadioButton(fenetre, -1, _T("Non"));
 	
-	input_ajout_eleve__prenom_responsable
-	input_ajout_eleve__tel_responsable
-	input_ajout_eleve__mail_responsable
-	input_ajout_eleve__sexe
-	input_ajout_eleve__nom_rue
-	input_ajout_eleve__rue
-	input_ajout_eleve__code_postal
-	input_ajout_eleve__ville
-	input_ajout_eleve__tel_mobile
-	input_ajout_eleve__groupe
-	*/
+	input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
+	bouton_valider_ajout		= new wxButton(fenetre, -1, _T("Valider"));
+     
+	
 	
 	// -- la liste des matières
 	
@@ -117,35 +138,44 @@ void Frame_principale::main_admin()
 	contenu_fenetre_sans_marge->Add(texte_conteneur_ajout,0,  wxALIGN_TOP|wxALIGN_LEFT, 10); 
 	
 	texte_conteneur_ajout->Add(texte_ajouter_prof,0,wxALIGN_CENTER);
-	texte_conteneur_ajout->Add(conteneur_ajout_horisontal,0);
+	texte_conteneur_ajout->Add(conteneur_ajout_horisontal);
 	
-	conteneur_ajout_horisontal->Add(conteneur_ajout_gauche,0);
+	conteneur_ajout_horisontal->Add(conteneur_ajout_gauche);
 	conteneur_ajout_horisontal->Add(separarion_verticale,0, wxALL | wxEXPAND, 5);
-	conteneur_ajout_horisontal->Add(conteneur_ajout_droite,0);
+	conteneur_ajout_horisontal->Add(conteneur_ajout_droite);
 	
 
-	conteneur_ajout_gauche->Add(label_ajouter_prof_nom,0);
-	conteneur_ajout_gauche->Add(input_ajout_nom,0);
-	conteneur_ajout_gauche->Add(label_ajouter_prof_prenom,0);
-	conteneur_ajout_gauche->Add(input_ajout_prenom,0);
-	conteneur_ajout_gauche->Add(label_ajouter_prof_mdp,0);
-	conteneur_ajout_gauche->Add(input_ajout_mdp,0);
-	conteneur_ajout_gauche->Add(label_ajouter_prof_radio,0);
-	conteneur_ajout_gauche->Add(contenur_radio_ajout,0);
-	conteneur_ajout_gauche->Add(label_ajouter_prof_matiere,0);
-	conteneur_ajout_gauche->Add(input_select_matiere_ajout,0);
+	conteneur_ajout_gauche->Add(label_ajout_nom);
+	conteneur_ajout_gauche->Add(input_ajout_nom);
+	conteneur_ajout_gauche->Add(label_ajout_prenom);
+	conteneur_ajout_gauche->Add(input_ajout_prenom);
+	conteneur_ajout_gauche->Add(label_ajout_mdp);
+	conteneur_ajout_gauche->Add(input_ajout_mdp);
+	conteneur_ajout_gauche->Add(label_ajout_radio);
+	conteneur_ajout_gauche->Add(contenur_radio_ajout);
+	conteneur_ajout_gauche->Add(label_ajouter_prof__matiere);
+	conteneur_ajout_gauche->Add(input_select_matiere_ajout);
+	conteneur_ajout_gauche->Add(label_ajouter_matricule,wxALIGN_CENTER);
+	conteneur_ajout_gauche->Add(contenur_radio_ajout_2_horisontal);
+	
+	contenur_radio_ajout_2_horisontal->Add(contenur_radio_ajout_2);
 	
 	texte_conteneur_ajout->Add(separarion_horisontale,0, wxALL | wxEXPAND, 5);
-	texte_conteneur_ajout->Add(bouton_valider_ajout_prof,1, wxALIGN_CENTER_HORIZONTAL,5);
+	texte_conteneur_ajout->Add(bouton_valider_ajout,1, wxALIGN_CENTER_HORIZONTAL,5);
 	
-	// --les 2 radio
+	// --les 3 radios
 	contenur_radio_ajout->Add(input_radio_prof,1);
 	contenur_radio_ajout->Add(input_radio_admin,1);
 	contenur_radio_ajout->Add(input_radio_eleve,1);
+	contenur_radio_ajout_2->Add(input_radio_matricule_non);
+	contenur_radio_ajout_2->Add(input_radio_matricule_oui);
+	contenur_radio_ajout_2_horisontal->Add(input_ajout_matricule,0,wxALIGN_CENTER);
 	input_radio_prof->SetValue(true);
-	this->onClick_radio_ajout_prof(*(new wxCommandEvent()));
+	input_radio_matricule_non->SetValue(true);
 	
-	//l'input select
+	
+
+	this->onClick_radio_ajout(*(new wxCommandEvent()));
 	this->onChange_select_matiere(*(new wxCommandEvent()));
 	
 	
@@ -153,13 +183,38 @@ void Frame_principale::main_admin()
 	input_radio_prof->MoveAfterInTabOrder(input_radio_admin);
 	
 	
-	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable,0);
-	conteneur_ajout_droite->Add(input_ajout_eleve__nom_responsable,0);
+	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable);
+	conteneur_ajout_droite->Add(input_ajout_eleve__nom_responsable);
+	conteneur_ajout_droite->Add(label_ajout_eleve__prenom_responsable);
+	conteneur_ajout_droite->Add(input_ajout_eleve__prenom_responsable);
+	conteneur_ajout_droite->Add(label_ajout_eleve__tel_responsable);
+	conteneur_ajout_droite->Add(input_ajout_eleve__tel_responsable);
+	conteneur_ajout_droite->Add(label_ajout_eleve__mail_responsable);
+	conteneur_ajout_droite->Add(input_ajout_eleve__mail_responsable);
+	conteneur_ajout_droite->Add(label_ajout_eleve__sexe);
+	conteneur_ajout_droite->Add(input_ajout_eleve__sexe);
+	conteneur_ajout_droite->Add(label_ajout_eleve__nom_rue);
+	conteneur_ajout_droite->Add(input_ajout_eleve__nom_rue);
+	conteneur_ajout_droite->Add(label_ajout_eleve__rue);
+	conteneur_ajout_droite->Add(input_ajout_eleve__rue);
+	conteneur_ajout_droite->Add(label_ajout_eleve__code_postal);
+	conteneur_ajout_droite->Add(input_ajout_eleve__code_postal);
+	conteneur_ajout_droite->Add(label_ajout_eleve__ville);
+	conteneur_ajout_droite->Add(input_ajout_eleve__ville);
+	conteneur_ajout_droite->Add(label_ajout_eleve__tel_mobile);
+	conteneur_ajout_droite->Add(input_ajout_eleve__tel_mobile);
+	conteneur_ajout_droite->Add(label_ajout_eleve__groupe);
+	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
 	
-	bouton_valider_ajout_prof->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_principale::onClick_ajouter_prof), NULL, this);
+	
+	bouton_valider_ajout->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_principale::onClick_ajouter), NULL, this);
 	input_select_matiere_ajout->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler(Frame_principale::onChange_select_matiere), NULL, this);
-	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof), NULL, this);
-	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout_prof), NULL, this);
+	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout), NULL, this);
+	input_radio_eleve->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout), NULL, this);
+	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout), NULL, this);
+	
+	input_radio_matricule_oui->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout), NULL, this);
+	input_radio_matricule_non->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_principale::onClick_radio_ajout), NULL, this);
 	
 	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), NULL, this);
 	this->Connect(wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(Frame_principale::onAbout), NULL, this);
@@ -179,36 +234,76 @@ void Frame_principale::main_admin()
 	this->Show();
 }
 //johana,orlane,manette
-void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
+void Frame_principale::onClick_ajouter(wxCommandEvent &evenement)
 {
 	requete_sql *req=NULL;
 	int type_ajout=-1;
 	int matricule=0;
+	int test_login_ok=0,test_login_type=0;
+	int i;
 	
 	if(input_radio_prof->GetValue())		type_ajout=PROF;// si c'est un prof
 	else if(input_radio_admin->GetValue()) 	type_ajout=ADMIN; // un admin 
 	else if(input_radio_eleve->GetValue()) 	type_ajout=ELEVE;//un éleve
 		
 	
-	if(type_ajout!=-1 && !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()))// si le login le mdp et le prénom sont OK
+	if(type_ajout!=-1 && !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && (input_radio_matricule_non->GetValue() || input_radio_matricule_oui->GetValue()))// si le login le mdp et le prénom sont OK
 	{
-		req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
-		req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
-		req->bind(":type",type_ajout);
-		
-		req->fetch();
-		req->closeCursor();
-		
-		bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
-		matricule=bdd->getColumn_int(0);
+		if(input_radio_matricule_oui->GetValue())// si on demande a associer la personne a un matricule existant
+		{
+			req=bdd->prepare("SELECT count(*) as nbr, type from login_centralise where matricule=:matricule");
+			req->bind(":matricule",string());
+			req->fetch();
+			test_login_ok=bdd->getColumn_int(0);
+			test_login_type=bdd->getColumn_int(1);
+			req->closeCursor();
+			
+			if(test_login_ok!=1)
+			{
+				wxMessageBox(_T("Erreur ! Ce matricule n'existe pas"));
+				return ;
+			}
+			else
+			{
+				if(type_ajout!=test_login_type)
+				{
+					wxString a[2];
+					
+					for(i=0;i<2;i++)
+					{
+						if(i==1) test_login_type=type_ajout;
+						
+						if(type_ajout==ADMIN)a[i]<<_T("Administrateur");
+						else if(type_ajout==PROF)a[i]<<_T("Professeur");
+						else a[i]<<_T("Éleve");
+					}
+					
+					wxMessageBox(_T("Erreur ! Impossible d'ajouter un "+a[0]+" à un "+a[1]));
+					return ;
+				}
+				matricule=wxAtoi(input_ajout_matricule->GetValue());
+			}
+		}
+		else
+		{
+			req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
+			req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
+			req->bind(":type",type_ajout);
+			
+			req->fetch();
+			req->closeCursor();
+			
+			bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
+			matricule=bdd->getColumn_int(0);
+		}
 		
 		if(type_ajout==PROF && (unsigned int)input_select_matiere_ajout->GetSelection()!=(texte_select.GetCount()-1) && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))
 		{
 			
-			if(input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)
+			if(input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)//si on as une nouvelle matière : on l'ajoute en BDD ! :p 
 			{
 				req=bdd->prepare("insert into matieres (nom)  values(:nom_matiere)");
-				req->bind(":nom_matiere",string(input_select_matiere_ajout->GetValue().mb_str()));
+				req->bind(":nom_matiere", string(input_select_matiere_ajout->GetValue().mb_str()));
 				req->fetch();
 				req->closeCursor();
 				
@@ -272,34 +367,87 @@ void Frame_principale::onChange_select_matiere(wxCommandEvent &evenement)
 	}
 	
 }
-void Frame_principale::onClick_radio_ajout_prof(wxCommandEvent &evenement)
+void Frame_principale::onClick_radio_ajout(wxCommandEvent &evenement)
 {
 	if(input_radio_eleve->GetValue())
 	{
 		label_ajout_eleve__nom_responsable->Enable();
 		input_ajout_eleve__nom_responsable->Enable();
+		input_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__prenom_responsable->Enable();
+		input_ajout_eleve__tel_responsable->Enable();
+		input_ajout_eleve__mail_responsable->Enable();
+		input_ajout_eleve__nom_responsable->Enable();
+		input_ajout_eleve__nom_rue->Enable();
+		input_ajout_eleve__rue->Enable();
+		input_ajout_eleve__code_postal->Enable();
+		input_ajout_eleve__ville->Enable();
+		input_ajout_eleve__tel_mobile->Enable();
+		input_ajout_eleve__sexe->Enable();
+		input_ajout_eleve__groupe->Enable();
+		
+		label_ajout_eleve__sexe->Enable();
+		label_ajout_eleve__groupe->Enable();
+		label_ajout_eleve__nom_responsable->Enable();
+		label_ajout_eleve__prenom_responsable->Enable();
+		label_ajout_eleve__tel_responsable->Enable();
+		label_ajout_eleve__mail_responsable->Enable();
+		label_ajout_eleve__sexe->Enable();
+		label_ajout_eleve__nom_rue->Enable();
+		label_ajout_eleve__rue->Enable();
+		label_ajout_eleve__code_postal->Enable();
+		label_ajout_eleve__ville->Enable();
+		label_ajout_eleve__tel_mobile->Enable();
+		label_ajout_eleve__groupe->Enable();
+		label_ajout_eleve__nom_responsable->Enable();
 		
 		input_select_matiere_ajout->Disable();
-		label_ajouter_prof_matiere->Disable();
+		label_ajouter_prof__matiere->Disable();
 	}
 	else
 	{
 		if(input_radio_prof->GetValue())
 		{
 			input_select_matiere_ajout->Enable();
-			label_ajouter_prof_matiere->Enable();
+			label_ajouter_prof__matiere->Enable();
 		}
 		else if(input_radio_admin->GetValue())
 		{
 			input_select_matiere_ajout->Disable();
-			label_ajouter_prof_matiere->Disable();
+			label_ajouter_prof__matiere->Disable();
 		}
 		
-		label_ajout_eleve__nom_responsable->Disable();
 		input_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__prenom_responsable->Disable();
+		input_ajout_eleve__tel_responsable->Disable();
+		input_ajout_eleve__mail_responsable->Disable();
+		input_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__nom_rue->Disable();
+		input_ajout_eleve__rue->Disable();
+		input_ajout_eleve__code_postal->Disable();
+		input_ajout_eleve__ville->Disable();
+		input_ajout_eleve__tel_mobile->Disable();
+		input_ajout_eleve__sexe->Disable();
+		input_ajout_eleve__groupe->Disable();
+		
+		label_ajout_eleve__sexe->Disable();
+		label_ajout_eleve__groupe->Disable();
+		label_ajout_eleve__nom_responsable->Disable();
+		label_ajout_eleve__prenom_responsable->Disable();
+		label_ajout_eleve__tel_responsable->Disable();
+		label_ajout_eleve__mail_responsable->Disable();
+		label_ajout_eleve__sexe->Disable();
+		label_ajout_eleve__nom_rue->Disable();
+		label_ajout_eleve__rue->Disable();
+		label_ajout_eleve__code_postal->Disable();
+		label_ajout_eleve__ville->Disable();
+		label_ajout_eleve__tel_mobile->Disable();
+		label_ajout_eleve__groupe->Disable();
+		label_ajout_eleve__nom_responsable->Disable();
 	}
 		
-	
+	if(input_radio_matricule_non->GetValue()) input_ajout_matricule->Disable();
+	else if(input_radio_matricule_oui->GetValue())  input_ajout_matricule->Enable();
 }
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
