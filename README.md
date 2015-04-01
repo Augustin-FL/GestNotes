@@ -1,11 +1,11 @@
-# Gestnotes
-Gestnotes est un logiciel de gestion de notes écrit en C++ . Actuellement non stable !
+# GestNotes
+GestNotes est un logiciel de gestion de notes écrit en C++ . Actuellement non stable !
 
 [![Build Status](https://travis-ci.org/zestedesavoir/zds-site.svg?branch=dev)]()
 
 ## Comment utiliser le programme : 
 
-Copiez tout les fichiers présents dans le dossier "bin" sur un dossier de votre ordinateur, puis lancez Gestnotes.exe.
+Copiez tout les fichiers présents dans le dossier "bin" sur un dossier de votre ordinateur, puis lancez GestNotes.exe.
 
 Le programme fonctionne actuellement en local sur un ordinateur. 
 
@@ -45,11 +45,11 @@ Pour windows -> Si vous ne voulez pas vous embêter avec les dépendances (solut
 
 Vous devrez également ajouter une variable d'environement(qui est néssésaire au fonctionnement de wxWidgets) : `WXCFG=gcc_dll\mswud`
 
-Une fois ceci fait, vous pouvez compiler Gestnotes, en effectuant les commandes suivantes(sous windows) : 
+Une fois ceci fait, vous pouvez compiler GestNotes, en effectuant les commandes suivantes(sous windows) : 
 
 ```console
 windres "./src/ressources.rc" "./src/ressources.o"
-g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./src/ressources.o" -I "./include" -o "./bin/Gestnotes.exe"
+g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./src/ressources.o" -I "./include" -o "./bin/GestNotes.exe"
 del "./src/ressources.o"
 ```
 

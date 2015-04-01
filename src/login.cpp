@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("Gestnotes"),wxDefaultPosition,*(new wxSize(300,220)))
+Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(300,220)))
 {
 	SetIcon(wxICON(icone));
 	
@@ -11,7 +11,7 @@ Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wx
 	wxBoxSizer		*conteneur_horisontal_mdp 	= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer 		*conteneur_boutons			= new wxBoxSizer(wxHORIZONTAL);
 	
-	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace Gestnotes.\n"));
+	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace GestNotes.\n"));
 	wxStaticBoxSizer*conteneur_authentification	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Authentification : "));
 	
 	wxStaticText	*label_login				= new wxStaticText(fenetre, -1, _T("Matricule : ")); 				
@@ -87,12 +87,9 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
 	else 
 	{
 		req->closeCursor();
-		wxString a;
-		a<<_T("Identifients incorrects !")<<req->getColumn_int(0);
-		wxMessageBox(a,_T("erreur"));
+		wxMessageBox(_T("Identifients incorrects !"),_T("erreur"));
 		input_mdp->SetValue("");
 	}
-    
 }
 
 void Frame_login::onClick_annuler(wxCommandEvent &evenement)
