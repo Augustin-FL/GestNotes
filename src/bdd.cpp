@@ -168,7 +168,13 @@ int requete_sql::bind(const string &cle,const string &valeur)
 		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
 		return -1;
 	}
-	return sqlite3_bind_text(requete,sqlite3_bind_parameter_index(requete,cle.c_str()), valeur.c_str(),strlen(valeur.c_str()),SQLITE_STATIC);
+	
+	if(sqlite3_bind_text(requete,sqlite3_bind_parameter_index(requete,cle.c_str()), valeur.c_str(),strlen(valeur.c_str()), SQLITE_TRANSIENT)!= SQLITE_OK)
+	{
+		wxMessageBox(_T("Erreur lors du bind ! ")+cle+_T(" : ")+valeur);
+		return -1;
+	}
+	return 0;	
 }
 
 int requete_sql::bind(int cle,int valeur)

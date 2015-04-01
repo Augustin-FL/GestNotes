@@ -6,6 +6,7 @@
 	#include <wx/statline.h>
 	#include <wx/stdpaths.h>
 	#include <wx/hyperlink.h>
+	#include <iostream>
 	
 	#include <SQLite/sqlite3.h>
 
@@ -62,7 +63,7 @@
 	};
 	
 	
-	class App_Gestnotes : public wxApp
+	class App_GestNotes : public wxApp
 	{
 		public :	
 			virtual bool OnInit();
@@ -70,7 +71,7 @@
 		protected:
 			connexion_bdd *bdd;
 	};
-	DECLARE_APP(App_Gestnotes);
+	DECLARE_APP(App_GestNotes);
 	
 	
 	class Frame_principale: public wxFrame
@@ -88,6 +89,7 @@
 				*label_ajout_eleve__nom_responsable;
 			wxComboBox *input_select_matiere_ajout;
 			wxButton *bouton_valider_ajout_prof;
+				wxArrayString texte_select;
 	
 		public:
 			Frame_principale(connexion_bdd*& arg_bdd);

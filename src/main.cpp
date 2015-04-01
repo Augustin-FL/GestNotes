@@ -1,9 +1,9 @@
 #include "main.h"
-IMPLEMENT_APP(App_Gestnotes);
+IMPLEMENT_APP(App_GestNotes);
 
 
 
-Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("Gestnotes"),wxDefaultPosition,*(new wxSize(500,500)))
+Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
@@ -37,7 +37,7 @@ void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
 	else if(type==ADMIN) this->main_admin();
 	else 
 	{
-			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("Gestnotes"));
+			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("GestNotes"));
 			veto_autorise=false;
 			Close(); 
 			return ;
@@ -54,7 +54,6 @@ void Frame_principale::main_admin()
 	//saisir éleve
 	//ajouter/supprimer/modifier eleve & prof 
 
-	wxArrayString texte_select;
 	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
 	
@@ -71,14 +70,13 @@ void Frame_principale::main_admin()
 	wxPanel          *fenetre					= new wxPanel(this);
 	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer       *contenur_radio_ajout		= new wxBoxSizer(wxVERTICAL);
-	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
 	wxBoxSizer		 *conteneur_ajout_horisontal= new wxBoxSizer(wxHORIZONTAL);
-	wxFlexGridSizer  *conteneur_ajout_gauche= new wxFlexGridSizer(2,5,5);
-	wxFlexGridSizer  *conteneur_ajout_droite= new wxFlexGridSizer(2,11,5);
+	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
+	wxFlexGridSizer  *conteneur_ajout_gauche	= new wxFlexGridSizer(2,5,5);
+	wxFlexGridSizer  *conteneur_ajout_droite	= new wxFlexGridSizer(2,11,5);
 	wxStaticLine     *separarion_horisontale 	= new wxStaticLine(fenetre, -1);
 	wxStaticLine     *separarion_verticale	 	= new wxStaticLine(fenetre, -1,wxDefaultPosition, wxDefaultSize,wxLI_VERTICAL);
-   
-   
+      
 	wxStaticText* texte_ajouter_prof 		= new wxStaticText(fenetre, -1, _T("\nAjouter un professeur, ou un admin : \n"));
 	wxStaticText* label_ajouter_prof_nom 	= new wxStaticText(fenetre, -1, _T("Nom : "));
 	wxStaticText* label_ajouter_prof_prenom = new wxStaticText(fenetre, -1, _T("Prénom : "));
@@ -97,7 +95,7 @@ void Frame_principale::main_admin()
 	input_radio_prof  			= new wxRadioButton(fenetre, -1, _T("Professeur"));
 	input_radio_admin 			= new wxRadioButton(fenetre, -1, _T("Administrateur"));
 	input_radio_eleve 			= new wxRadioButton(fenetre, -1, _T("Élève"));
-	input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<selectionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
+	input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
 	bouton_valider_ajout_prof	= new wxButton(fenetre, -1, _T("Valider"));
      
 	/*    
@@ -170,7 +168,7 @@ void Frame_principale::main_admin()
 	this->Connect(wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(Frame_principale::onAbout), NULL, this);
 	
 	// --bare de menu : haut
-	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"), _T("Quitter Gestnotes"));
+	menu_fichier->Append(wxID_EXIT,	 _T("Quitter"), _T("Quitter GestNotes"));
 	menu_aide->Append(wxID_ABOUT, _T("A Propos"), _T("Quelques infos sur le créateur..."));
 	this->SetMenuBar(barre_menu);
 	
@@ -179,45 +177,88 @@ void Frame_principale::main_admin()
 	
 	// --barre de statut : bas
 	this->CreateStatusBar(1);
-	this->SetStatusText(_T("Gestnotes - Accès Admin"));
+	this->SetStatusText(_T("GestNotes - Accès Admin"));
 	
 	this->Show();
 }
 //johana,orlane,manette
 void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 {
-	requete_sql *req;
+	requete_sql *req=NULL;
+	int type_ajout=-1;
+	int matricule=0,matiere;
 	
-	if( !(
-		(input_radio_prof->GetValue() && (input_select_matiere_ajout->IsListEmpty() || input_select_matiere_ajout->IsTextEmpty()))
-		||
-		input_radio_prof->GetValue()
-		||
-		(input_radio_eleve->GetValue() && input_ajout_eleve__nom_responsable->IsEmpty())
-		)
-		|| input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() || input_ajout_prenom->IsEmpty()
-		)//tout n'est pas ok
+	if(input_radio_prof->GetValue())		type_ajout=PROF;// si c'est un prof
+	else if(input_radio_admin->GetValue()) 	type_ajout=ADMIN; // un admin 
+	else if(input_radio_eleve->GetValue()) 	type_ajout=ELEVE;//un éleve
+		
+	
+	if(type_ajout!=-1 && !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()))// si le login le mdp et le prénom sont OK
 	{
-		wxMessageBox("Erreur ! Avez vous rempli tout les champs?");
+		
+		req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
+		req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
+		req->bind(":type",type_ajout);
+		
+		req->fetch();
+		req->closeCursor();
+		
+		bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
+		matricule=bdd->getColumn_int(0);
+	
+		if(type_ajout==PROF && input_select_matiere_ajout->GetSelection()!=nombre_matiere && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))
+		{
+			
+			if(input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)
+			{
+				wxMessageBox(_T("Ajout matiere"));
+				req=bdd->prepare("insert into matieres (nom)  values(:nom_matiere)");
+				req->bind(":nom_matiere",string(input_select_matiere_ajout->GetValue().mb_str()));
+				req->fetch();
+				req->closeCursor();
+				
+				bdd->exec("select last_insert_rowid() AS ligne FROM matieres limit 1");
+				matiere=bdd->getColumn_int(0);
+				
+				
+				nombre_matiere++;
+				
+			}
+			else matiere=input_select_matiere_ajout->GetSelection()-1;
+			
+			req=bdd->prepare("insert into profs values (:matricule,:nom,:prenom,:matiere)");
+			req->bind(":matiere",matiere);
+		}
+		else if(type_ajout==ADMIN)
+		{
+			wxMessageBox("ADMIN !");
+			
+		}
+		else if(type_ajout==ELEVE &&  !input_ajout_eleve__nom_responsable->IsEmpty() )
+		{
+			wxMessageBox("eleve !");
+		}
+		else type_ajout=-1;
+
+	}		
+	
+	if(type_ajout==-1)
+	{
+		wxMessageBox("Erreur ! Avez vous rempli tout les champs?");//tout n'est pas ok
 		return ;
 	}
-	req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
-	req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
+	else
+	{
+		req->bind(":matricule",matricule);
+		req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
+		req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+		req->fetch();
+		req->closeCursor();
+	}
 	
-	if(input_radio_prof->GetValue()) req->bind(":type",1);
-	else if(input_radio_admin->GetValue()) req->bind(":type",2);
-	else req->bind(":type",0);
-	
-	req->fetch();
-	req->closeCursor();
-	
-	bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
-	int matricule=bdd->getColumn_int(0);
-	
-	wxString a;
-	a<<matricule;
-	
-	wxMessageBox(a,_T("Succès"));
+	wxString fin;
+	fin<<_T("Le profil a été créé. Son matricule est le : ")<<matricule;
+	wxMessageBox(fin,_T("Succès"));
 	
 }
 
@@ -308,7 +349,7 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	
 	
 	wxHyperlinkCtrl* lien_email = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
-	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/Gestnotes/issues"));
+	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNotes/issues"));
 	
 	sizer_twitter->Add(label_twitter);
 	sizer_twitter->Add(lien_twitter);
@@ -334,7 +375,7 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 }
 
 
-bool App_Gestnotes::OnInit()
+bool App_GestNotes::OnInit()
 {
 	wxInitAllImageHandlers();
 	 
@@ -348,7 +389,7 @@ bool App_Gestnotes::OnInit()
 }
 
 
-int App_Gestnotes::OnExit()
+int App_GestNotes::OnExit()
 {
 	bdd->close();
 	return 0;
