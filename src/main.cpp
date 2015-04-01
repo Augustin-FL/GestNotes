@@ -56,9 +56,7 @@ void Frame_principale::main_admin()
 
 	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
-	
-	nombre_matiere=texte_select.GetCount()-1;
-	
+		
 	// graphique
 	
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,800,600);
@@ -148,8 +146,7 @@ void Frame_principale::main_admin()
 	this->onClick_radio_ajout_prof(*(new wxCommandEvent()));
 	
 	//l'input select
-	input_select_matiere_ajout->SetEditable(false);
-	input_select_matiere_ajout->SetBackgroundColour(0xFFFFFF);
+	this->onChange_select_matiere(*(new wxCommandEvent()));
 	
 	
 	
@@ -186,7 +183,7 @@ void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 {
 	requete_sql *req=NULL;
 	int type_ajout=-1;
-	int matricule=0,matiere;
+	int matricule=0;
 	
 	if(input_radio_prof->GetValue())		type_ajout=PROF;// si c'est un prof
 	else if(input_radio_admin->GetValue()) 	type_ajout=ADMIN; // un admin 
@@ -195,7 +192,6 @@ void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 	
 	if(type_ajout!=-1 && !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()))// si le login le mdp et le prénom sont OK
 	{
-		
 		req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
 		req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
 		req->bind(":type",type_ajout);
@@ -205,29 +201,30 @@ void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 		
 		bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
 		matricule=bdd->getColumn_int(0);
-	
-		if(type_ajout==PROF && input_select_matiere_ajout->GetSelection()!=nombre_matiere && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))
+		
+		if(type_ajout==PROF && (unsigned int)input_select_matiere_ajout->GetSelection()!=(texte_select.GetCount()-1) && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))
 		{
 			
 			if(input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)
 			{
-				wxMessageBox(_T("Ajout matiere"));
 				req=bdd->prepare("insert into matieres (nom)  values(:nom_matiere)");
 				req->bind(":nom_matiere",string(input_select_matiere_ajout->GetValue().mb_str()));
 				req->fetch();
 				req->closeCursor();
 				
 				bdd->exec("select last_insert_rowid() AS ligne FROM matieres limit 1");
-				matiere=bdd->getColumn_int(0);
+				texte_select.Insert(input_select_matiere_ajout->GetValue(), texte_select.GetCount()-1);
 				
-				
-				nombre_matiere++;
-				
+				input_select_matiere_ajout->Clear();
+				input_select_matiere_ajout->Append(texte_select);
+				input_select_matiere_ajout->SetSelection(texte_select.GetCount()-2);
+				this->onChange_select_matiere(*(new wxCommandEvent()));
+	
 			}
-			else matiere=input_select_matiere_ajout->GetSelection()-1;
 			
 			req=bdd->prepare("insert into profs values (:matricule,:nom,:prenom,:matiere)");
-			req->bind(":matiere",matiere);
+			req->bind(":matiere",input_select_matiere_ajout->GetSelection()-1);
+			
 		}
 		else if(type_ajout==ADMIN)
 		{
@@ -239,7 +236,6 @@ void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 			wxMessageBox("eleve !");
 		}
 		else type_ajout=-1;
-
 	}		
 	
 	if(type_ajout==-1)
@@ -264,7 +260,7 @@ void Frame_principale::onClick_ajouter_prof(wxCommandEvent &evenement)
 
 void Frame_principale::onChange_select_matiere(wxCommandEvent &evenement)
 {
-	if(input_select_matiere_ajout->GetSelection()==nombre_matiere)
+	if((unsigned int)input_select_matiere_ajout->GetSelection()==texte_select.GetCount()-1)
 	{
 		input_select_matiere_ajout->SetEditable(true);
 		input_select_matiere_ajout->SetValue("");
