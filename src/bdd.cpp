@@ -6,13 +6,15 @@ connexion_bdd::connexion_bdd()//const string &infos)
 	/*if(infos.find("sqlite:")!=string::npos)
 	{*/
 		string path_fichier=string(wxStandardPaths::Get().GetExecutablePath().mb_str());// le chemin de l'executable en cours
-	
+		bool fichier_existe=false;
 		size_t pos;
 		if(path_fichier.rfind("\\")!=string::npos) 
 			pos=path_fichier.rfind("\\")+1; //multiplateforme : windows
 		else pos=path_fichier.rfind("/")+1;//linux
 		
 		path_fichier=path_fichier.substr(0,pos)+"bdd.sqlite";
+		
+		if(wxFileName::FileExists(path_fichier))  fichier_existe=true;
 		
 		if(sqlite3_open(path_fichier.c_str(), &bdd)!=SQLITE_OK) 
 		{
@@ -50,7 +52,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						id					INTEGER NOT NULL,							\
 						prenom				TEXT 	NOT NULL,							\
 						nom 				TEXT	NOT NULL,							\
-						groupe 				INTEGER,									\
+						groupe 				INTEGER NOT NULL,							\
 						sexe				INTEGER NOT NULL,							\
 						date_inscription	NUMERIC NOT NULL,							\
 						rue					TEXT,										\
@@ -60,7 +62,6 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						tel_mobile			INTEGER,									\
 						nom_responsable		TEXT,										\
 						prenom_responsable	TEXT,										\
-						adresse_responsable	TEXT,										\
 						tel_responsable		INTEGER,									\
 						mail_responsable	TEXT										\
 					);");
@@ -71,15 +72,22 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						prenom				TEXT 	NOT NULL							\
 					);");
 					
+		if(!fichier_existe)
+		{
+			this->exec("INSERT INTO login_centralise VALUES (1,'test',2)");
+			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
+			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
+			this->exec("INSERT INTO admin VALUES (1,'FL','Augustin')");
+			this->exec("INSERT INTO profs VALUES (2,'Elise','Bernard',1)");
+			this->exec("INSERT INTO eleve VALUES (3,'Elise','Bernard',0,0,'','Rue qui n''existe pas',12,75001,'Paris',60102030405,'Boiseck','Xiao',01203040506,'howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO matieres VALUES (1,'maths')");
+		}
 	/*}
 	else 
 	{
 		wxMessageBox(_T("Erreur ! Driver SQL inconnu : ")+texte,"erreur");
 		exit(0);
 	}*/
-	
-	
-	
 };
 
 connexion_bdd::~connexion_bdd()
@@ -180,7 +188,14 @@ int requete_sql::bind(const string &cle,const string &valeur)
 
 int requete_sql::bind(int cle,int valeur)
 {
-	return sqlite3_bind_int(requete,cle, valeur);
+	if(sqlite3_bind_int(requete,cle, valeur)!= SQLITE_OK)
+	{
+		wxString a;
+		a<<_T("Erreur lors du bind ! ")<<cle<<_T(" : ")<<valeur;
+		wxMessageBox(a,"Erreur !");
+		return -1;
+	}
+	return 0;
 }
 
 int requete_sql::bind(int cle,const string &valeur)

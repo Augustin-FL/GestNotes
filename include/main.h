@@ -6,6 +6,7 @@
 	#include <wx/statline.h>
 	#include <wx/stdpaths.h>
 	#include <wx/hyperlink.h>
+	#include <wx/filename.h>
 	#include <iostream>
 	
 	#include <SQLite/sqlite3.h>
