@@ -15,13 +15,13 @@ matricule : 1
 mot de passe : test
 ```
 
-compte Professeur(pas encore créé) : 
+compte Professeur(fenètres pas encore crées) : 
 ```console
 matricule : 2
 mot de passe : test
 ```
 
-compte Etudiant (pas encore créé) : 
+compte Etudiant (fenètres pas encore créés) : 
 ```console
 matricule : 3
 mot de passe : test
@@ -56,13 +56,21 @@ del "./src/ressources.o"
 Note : si vous ne maitrisez pas la ligne de commande ni les Makefile :  un fichier .cbp (pour codeblocks) et un fichier .vcxproj (pour visual studio) seront bientot ajoutés au projet.
 
 ## ToDo list : 
-futur proche : 
+
+futur proche :
 * Terminer l'interface de gestion des administrateurs
-* Créer l'interface de gestion pour les élèves et professeurs
+** Exploser main.cpp en plusieurs classes
+** Supporter la suppression d'un étudiant/élève/prof
+** Supporter la modification d'un étudiant/élève/prof
+*
+* Créer l'interface de gestion pour les professeurs
+** Saisie des notes
+** Saisie des groupes
+* Créer l'interface de gestion pour les élèves
 * Ajouter une fonctionnalité : l'impression des buletins
 * Ajouter les menus graphiques
 
 futur éloigné : 
-* Ajouter un chiffrement de la base de donnée à l'aide de GNU-TLS
+* Ajouter un chiffrement de la base de donnée à l'aide de la librairie crypto d'OpenSSL
 * Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale 
 * Creer un installateur à l'aide de NSIS
