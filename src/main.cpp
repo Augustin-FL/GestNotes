@@ -233,56 +233,49 @@ void Frame_principale::main_admin()
 	
 	this->Show();
 }
-//johana,orlane,manette
+//
 void Frame_principale::onClick_ajouter(wxCommandEvent &evenement)
 {
 	requete_sql *req=NULL;
 	int type_ajout=-1;
 	int matricule=0;
-	int test_login_ok=0,test_login_type=0;
-	int i;
 	
 	if(input_radio_prof->GetValue())		type_ajout=PROF;// si c'est un prof
 	else if(input_radio_admin->GetValue()) 	type_ajout=ADMIN; // un admin 
 	else if(input_radio_eleve->GetValue()) 	type_ajout=ELEVE;//un éleve
 		
-	
-	if(type_ajout!=-1 && !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && (input_radio_matricule_non->GetValue() || input_radio_matricule_oui->GetValue()))// si le login le mdp et le prénom sont OK
+	if((type_ajout!=-1 &&  !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && input_radio_matricule_non->GetValue()) || (input_radio_matricule_oui->GetValue() && !input_ajout_matricule->IsEmpty()))// si le login le mdp et le prénom sont OK
 	{
-		if(input_radio_matricule_oui->GetValue())// si on demande a associer la personne a un matricule existant
-		{
+		if(input_radio_matricule_oui->GetValue())// si on demande a associer la professeur a un matricule existant
+		{	
 			req=bdd->prepare("SELECT count(*) as nbr, type from login_centralise where matricule=:matricule");
-			req->bind(":matricule",string());
+			req->bind(":matricule",string(input_ajout_matricule->GetValue().mb_str()));
 			req->fetch();
-			test_login_ok=bdd->getColumn_int(0);
-			test_login_type=bdd->getColumn_int(1);
-			req->closeCursor();
 			
-			if(test_login_ok!=1)
+			if(req->getColumn_int(0)!=1)
 			{
+				req->closeCursor();
 				wxMessageBox(_T("Erreur ! Ce matricule n'existe pas"));
 				return ;
 			}
-			else
+
+			if(req->getColumn_int(1)!=type_ajout)
 			{
-				if(type_ajout!=test_login_type)
-				{
-					wxString a[2];
-					
-					for(i=0;i<2;i++)
-					{
-						if(i==1) test_login_type=type_ajout;
-						
-						if(type_ajout==ADMIN)a[i]<<_T("Administrateur");
-						else if(type_ajout==PROF)a[i]<<_T("Professeur");
-						else a[i]<<_T("Éleve");
-					}
-					
-					wxMessageBox(_T("Erreur ! Impossible d'ajouter un "+a[0]+" à un "+a[1]));
-					return ;
-				}
-				matricule=wxAtoi(input_ajout_matricule->GetValue());
+				req->closeCursor();
+				wxMessageBox(_T("Erreur ! Impossible d'ajouter quelqu'un qui n'est pas du même type (prof, admin, élêve)"));
+				return ;
 			}
+			
+			matricule=wxAtoi(input_ajout_matricule->GetValue());
+			req->closeCursor();
+			
+			req=bdd->prepare("select nom, prenom from profs where id=?");
+			req->bind(1,matricule);
+			req->fetch();
+			input_ajout_nom->SetValue(req->getColumn_text(0));
+			input_ajout_prenom->SetValue(req->getColumn_text(1));
+			
+			req->closeCursor();
 		}
 		else
 		{
@@ -321,15 +314,23 @@ void Frame_principale::onClick_ajouter(wxCommandEvent &evenement)
 			req->bind(":matiere",input_select_matiere_ajout->GetSelection()-1);
 			
 		}
-		else if(type_ajout==ADMIN)
+		else if(type_ajout==ELEVE &&  !input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !  input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty())
 		{
-			wxMessageBox("ADMIN !");
+			req=bdd->prepare("insert into eleve(:matricule,:prenom,:nom,:groupe,:sexe,:date_inscription,:rue,:num_rue,:code_postal,:ville,:tel_mobile,:nom_responsable,:prenom_responsable:tel_responsable,:mail_responsable)");
+			req->bind(":groupe",input_ajout_eleve__groupe->GetSelection());
+			req->bind(":sexe",  input_ajout_eleve__sexe->  GetSelection());
+			req->bind(":date_inscription",time(NULL));
 			
+			req->bind(":nom_rue",string(input_ajout_eleve__nom_rue->GetValue().mb_str()));
+			req->bind(":code_postal",wxAtoi(input_ajout_eleve__code_postal->GetValue()));
+			req->bind(":ville",string(input_ajout_eleve__ville->GetValue().mb_str()));
+			req->bind(":tel_mobile",wxAtoi(input_ajout_eleve__tel_mobile->GetValue()));
+			req->bind(":nom_responsable",string(input_ajout_eleve__nom_responsable->GetValue().mb_str()));
+			req->bind(":prenom_responsable",string(input_ajout_eleve__prenom_responsable->GetValue().mb_str()));
+			req->bind(":adresse_responsable",string(input_ajout_eleve__tel_responsable->GetValue().mb_str()));
+			req->bind(":mail_responsable",string(input_ajout_eleve__mail_responsable->GetValue().mb_str()));
 		}
-		else if(type_ajout==ELEVE &&  !input_ajout_eleve__nom_responsable->IsEmpty() )
-		{
-			wxMessageBox("eleve !");
-		}
+		else if(type_ajout==ADMIN)  req=bdd->prepare("insert into admins values (:matricule,:nom,:prenom)");	
 		else type_ajout=-1;
 	}		
 	
@@ -348,7 +349,10 @@ void Frame_principale::onClick_ajouter(wxCommandEvent &evenement)
 	}
 	
 	wxString fin;
-	fin<<_T("Le profil a été créé. Son matricule est le : ")<<matricule;
+	if(input_radio_matricule_non->GetValue())
+		fin<<_T("Le profil a été créé. Son matricule est le : ")<<matricule;
+	else 
+		fin<<_T("Le proffesseur a été affecté au matricule numéro ")<<matricule<<_(".");
 	wxMessageBox(fin,_T("Succès"));
 	
 }
@@ -369,6 +373,30 @@ void Frame_principale::onChange_select_matiere(wxCommandEvent &evenement)
 }
 void Frame_principale::onClick_radio_ajout(wxCommandEvent &evenement)
 {
+	if(input_radio_matricule_non->GetValue())
+	{
+		input_ajout_matricule->Disable();
+		
+		input_ajout_nom->Enable();
+		input_ajout_prenom->Enable();
+		input_ajout_mdp->Enable();
+		
+		input_radio_admin->Enable();
+		input_radio_eleve->Enable();
+	}
+	else if(input_radio_matricule_oui->GetValue())
+	{
+		input_ajout_matricule->Enable();
+		
+		input_radio_admin->Disable();
+		input_radio_eleve->Disable();
+		input_radio_prof->SetValue(true);
+		
+		input_ajout_nom->Disable();
+		input_ajout_prenom->Disable();
+		input_ajout_mdp->Disable();
+	}
+
 	if(input_radio_eleve->GetValue())
 	{
 		label_ajout_eleve__nom_responsable->Enable();
@@ -445,10 +473,8 @@ void Frame_principale::onClick_radio_ajout(wxCommandEvent &evenement)
 		label_ajout_eleve__groupe->Disable();
 		label_ajout_eleve__nom_responsable->Disable();
 	}
-		
-	if(input_radio_matricule_non->GetValue()) input_ajout_matricule->Disable();
-	else if(input_radio_matricule_oui->GetValue())  input_ajout_matricule->Enable();
 }
+
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
 	this->Close();
