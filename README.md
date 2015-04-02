@@ -1,5 +1,5 @@
 # GestNotes
-GestNotes est un logiciel de gestion de notes écrit en C++ . Actuellement non stable !
+GestNotes est un logiciel de gestion de notes écrit en C++ !
 
 [![Build Status](https://travis-ci.org/zestedesavoir/zds-site.svg?branch=dev)]()
 
@@ -57,20 +57,21 @@ windres "./src/ressources.rc" "./src/ressources.o"
 g++ -O2 -Wall -lwxmsw31u -lsqlite3 -mwindows "./src/bdd.cpp" "./src/login.cpp" "./src/main.cpp" "./src/ressources.o" -I "./include" -o "./bin/GestNotes.exe"
 del "./src/ressources.o"
 ```
-(sous linux, la commande est la même, il faut juste enlevez la permière ligne. En effet les fichiers de ressources n'existent pas sous linux).
+(sous linux, la commande est la même, il faut juste enlever la permière ligne).
 
 Note : si vous ne maitrisez pas la ligne de commande ni les Makefile :  un fichier .cbp (pour codeblocks) et un fichier .vcxproj (pour visual studio) seront bientot ajoutés au projet.
+
 
 ## ToDo list : 
 
 futur proche :
 * Terminer l'interface de gestion des administrateurs
-** Exploser main.cpp en plusieurs classes
-** Supporter la suppression d'un étudiant/élève/prof
-** Supporter la modification d'un étudiant/élève/prof
+* -> Exploser main.cpp en plusieurs classes
+* -> Supporter la suppression d'un étudiant/élève/prof
+* -> Supporter la modification d'un étudiant/élève/prof
 * Créer l'interface de gestion pour les professeurs
-** Saisie des notes
-** Saisie des groupes
+* -> Saisie des notes
+* -> Saisie des groupes
 * Créer l'interface de gestion pour les élèves
 * Ajouter une fonctionnalité : l'impression des buletins
 * Ajouter les menus graphiques
