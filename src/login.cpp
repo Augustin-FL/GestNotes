@@ -50,7 +50,7 @@ Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wx
 	input_mdp->Connect( 	wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(Frame_login::onChange), NULL, this);
 	this->Connect(			wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_login::onClose),NULL, this);
 	this->Show();
-	
+
 	bdd=arg_bdd;
 	frame_parente=parent;
 	type=PAS_CONNECTE;

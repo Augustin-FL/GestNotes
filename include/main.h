@@ -74,7 +74,6 @@
 	};
 	DECLARE_APP(App_GestNotes);
 	
-	
 	class Frame_principale: public wxFrame
 	{
 		private:
@@ -82,46 +81,6 @@
 			int id, nombre_matiere;
 			connexion_bdd* bdd;
 			bool veto_autorise;
-
-			wxRadioButton *input_radio_prof,
-						*input_radio_admin,
-						*input_radio_eleve,
-						*input_radio_matricule_oui,
-						*input_radio_matricule_non;
-						
-			wxTextCtrl *input_ajout_nom, *input_ajout_prenom, *input_ajout_mdp, 
-				*input_ajout_eleve__nom_responsable,
-				*input_ajout_eleve__prenom_responsable,
-				*input_ajout_eleve__tel_responsable,
-				*input_ajout_eleve__mail_responsable,
-				*input_ajout_eleve__nom_rue,
-				*input_ajout_eleve__rue,
-				*input_ajout_eleve__code_postal,
-				*input_ajout_eleve__ville,
-				*input_ajout_eleve__tel_mobile,
-				*input_ajout_matricule;
-				
-			wxStaticText*  label_ajouter_prof__matiere,
-				*label_ajout_eleve__nom_responsable,
-				*label_ajout_eleve__prenom_responsable,
-				*label_ajout_eleve__tel_responsable,
-				*label_ajout_eleve__mail_responsable,
-				*label_ajout_eleve__sexe,
-				*label_ajout_eleve__nom_rue,
-				*label_ajout_eleve__rue,
-				*label_ajout_eleve__code_postal,
-				*label_ajout_eleve__ville,
-				*label_ajout_eleve__tel_mobile,
-				*label_ajout_eleve__groupe;
-			
-			wxChoice *input_ajout_eleve__sexe,
-					*input_ajout_eleve__groupe;
-			
-			wxComboBox *input_select_matiere_ajout;
-			
-			
-			wxButton *bouton_valider_ajout;
-			wxArrayString texte_select;
 	
 		public:
 			Frame_principale(connexion_bdd*& arg_bdd);
@@ -129,16 +88,64 @@
 			void afficher_apres_login(int type_arg, int id_arg);
 			void onClose(wxCloseEvent &evenement);
 			void onQuit(wxCommandEvent &evenement);
+			void onAbout(wxCommandEvent &evenement);
+	};
+	
+	class Frame_admin : public wxEvtHandler
+	{
+		private:
+			int id, nombre_matiere;
+			connexion_bdd* bdd;
+			bool veto_autorise;
+				
+				
+			wxRadioButton 	*input_radio_prof,
+							*input_radio_admin,
+							*input_radio_eleve,
+							*input_radio_matricule_oui,
+							*input_radio_matricule_non;
+							
+				wxTextCtrl *input_ajout_nom, *input_ajout_prenom, *input_ajout_mdp, 
+						*input_ajout_eleve__nom_responsable,
+						*input_ajout_eleve__prenom_responsable,
+						*input_ajout_eleve__tel_responsable,
+						*input_ajout_eleve__mail_responsable,
+						*input_ajout_eleve__nom_rue,
+						*input_ajout_eleve__rue,
+						*input_ajout_eleve__code_postal,
+						*input_ajout_eleve__ville,
+						*input_ajout_eleve__tel_mobile,
+						*input_ajout_matricule;
+				
+			wxStaticText*  label_ajouter_prof__matiere,
+						*label_ajout_eleve__nom_responsable,
+						*label_ajout_eleve__prenom_responsable,
+						*label_ajout_eleve__tel_responsable,
+						*label_ajout_eleve__mail_responsable,
+						*label_ajout_eleve__sexe,
+						*label_ajout_eleve__nom_rue,
+						*label_ajout_eleve__rue,
+						*label_ajout_eleve__code_postal,
+						*label_ajout_eleve__ville,
+						*label_ajout_eleve__tel_mobile,
+						*label_ajout_eleve__groupe;
+			
+			wxChoice *input_ajout_eleve__sexe,
+					 *input_ajout_eleve__groupe;
+			
+			wxComboBox *input_select_matiere_ajout;
+			
+			wxButton *bouton_valider_ajout;
+			wxArrayString texte_select;
+			Frame_principale* frame_parente;
+			
+		public:
+			Frame_admin(Frame_principale* parent, connexion_bdd*& arg_bdd,int &id_arg);
+			
+			void onAjouter(wxCommandEvent &evenement);
 			void onClick_radio_ajout(wxCommandEvent &evenement);
 			void onChange_select_matiere(wxCommandEvent &evenement);
-			void onClick_ajouter(wxCommandEvent &evenement);
-			void onAbout(wxCommandEvent &evenement);
-			void main_admin();
-			void main_eleve();
-			void main_prof();
-			
-			
-		
+			void onClick_ajouter(wxCommandEvent &evenement);	
 	};
 
 	class Frame_login : public wxFrame
