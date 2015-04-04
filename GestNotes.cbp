@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="GestNotes" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/GestNotes" prefix_auto="1" extension_auto="1" />
+				<Option object_output="%TMP%" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="./src" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lwxmsw31u -lsqlite3 -mwindows" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="./src" />
+		</ResourceCompiler>
+		<Linker>
+			<Add library="libkernel32.a" />
+			<Add library="libuser32.a" />
+			<Add library="libgdi32.a" />
+			<Add library="libwinspool.a" />
+			<Add library="libcomdlg32.a" />
+			<Add library="libadvapi32.a" />
+			<Add library="libshell32.a" />
+			<Add library="libole32.a" />
+			<Add library="liboleaut32.a" />
+			<Add library="libuuid.a" />
+			<Add library="libcomctl32.a" />
+			<Add library="libwsock32.a" />
+			<Add library="libodbc32.a" />
+		</Linker>
+		<Unit filename="include/main.h" />
+		<Unit filename="src/admin.cpp" />
+		<Unit filename="src/bdd.cpp" />
+		<Unit filename="src/eleve.cpp" />
+		<Unit filename="src/login.cpp" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/professeur.cpp" />
+		<Unit filename="src/ressources.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
