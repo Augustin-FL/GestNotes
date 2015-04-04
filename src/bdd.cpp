@@ -24,7 +24,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		}
 		requete_en_cours=false;
 		requete_precedente="";
-		this->exec("CREATE TABLE IF NOT EXISTS profs (									\
+		this->exec("CREATE TABLE IF NOT EXISTS profs (									\
 						id 		INTEGER NOT NULL,										\
 						nom		TEXT 	NOT NULL,										\
 						prenom	TEXT,													\
@@ -42,10 +42,10 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						nom	TEXT														\
 					);");
 					
-		this->exec("CREATE TABLE IF NOT EXISTS	login_centralise(						\
-						matricule	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 	\
-						mdp			TEXT NOT NULL,										\
-						type		INTEGER												\
+		this->exec("CREATE TABLE IF NOT EXISTS	login_centralise(						\
+						matricule	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 	\
+						mdp			TEXT NOT NULL,										\
+						type		INTEGER												\
 					);");
 						
 		this->exec("CREATE TABLE IF NOT EXISTS eleve(									\
@@ -62,25 +62,25 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						tel_mobile			INTEGER,									\
 						nom_responsable		TEXT,										\
 						prenom_responsable	TEXT,										\
-						tel_responsable		INTEGER,									\
-						mail_responsable	TEXT										\
+						tel_responsable		INTEGER,									\
+						mail_responsable	TEXT										\
 					);");
 					
 		this->exec("CREATE TABLE IF NOT EXISTS admin(									\
-						id					INTEGER NOT NULL,							\
+						id					INTEGER NOT NULL,							\
 						nom					TEXT 	NOT NULL,							\
-						prenom				TEXT 	NOT NULL							\
+						prenom				TEXT 	NOT NULL							\
 					);");
 					
-		if(!fichier_existe)
+		if(!fichier_existe)
 		{
-			this->exec("INSERT INTO login_centralise VALUES (1,'test',2)");
-			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
-			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
-			this->exec("INSERT INTO admin VALUES (1,'FL','Augustin')");
-			this->exec("INSERT INTO profs VALUES (2,'Elise','Bernard',1)");
-			this->exec("INSERT INTO eleve VALUES (3,'Elise','Bernard',0,0,'','Rue qui n''existe pas',12,75001,'Paris',60102030405,'Boiseck','Xiao',01203040506,'howyouloveme@yopmail.com')");
-			this->exec("INSERT INTO matieres VALUES (1,'maths')");
+			this->exec("INSERT INTO login_centralise VALUES (1,'test',2)");
+			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
+			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
+			this->exec("INSERT INTO admin VALUES (1,'FL','Augustin')");
+			this->exec("INSERT INTO profs VALUES (2,'Elise','Bernard',1)");
+			this->exec("INSERT INTO eleve VALUES (3,'Elise','Bernard',0,0,'','Rue qui n''existe pas',12,75001,'Paris',60102030405,'Boiseck','Xiao',01203040506,'howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO matieres VALUES (1,'maths')");
 		}
 	/*}
 	else 
