@@ -43,6 +43,7 @@
 			int nb_colonnes;
 			
 	};
+	
 	class connexion_bdd : public wxString
 	{
 		private:
