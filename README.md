@@ -1,7 +1,7 @@
 # GestNotes
 GestNotes est un logiciel de gestion de notes écrit en C++ !
 
-[![Build Status](https://travis-ci.org/zestedesavoir/zds-site.svg?branch=dev)]()
+[![Build Status](https://travis-ci.org/gusfl/GestNotes.svg)](https://travis-ci.org/gusfl/GestNotes)
 
 ## Comment utiliser le programme : 
 
@@ -37,22 +37,16 @@ GestNotes utilise les dépendances suivantes, que vous devez installer :
 
 Pour compiler GestNotes, vous devez d'abbord compiler ces dépendances depuis leurs sources sources. 
 
-**Pour linux (Red Hat)**, c'est simple : 
+**Pour linux (Red Hat)**, c'est simple, une version compilée existe dans les dépots officiels : 
  ```console 
 sudo yum install wxGTK-devel wxBase
 ```
-**Pour windows** en revanche, c'est plus complexe : 
-- Pour wxWidgets, vous trouverez un tutoriel sur [le site officiel de codeblocks](http://wiki.codeblocks.org/index.php?title=Compiling_wxWidgets_3.0.0_to_develop_Code::Blocks_(MSW)) 
-- Pour SQLite, le tutoriel se trouve sur leur [site officiel](https://www.sqlite.org/howtocompile.html)
+**Pour windows** : 
+vous pouvez télécharger toutes les dépendances compilées par votre serviteur (moi) [ici](https://mega.co.nz/#!F5EXzJpY!6W0L0zBizfhRYERPQND_8xvTLXvH4b509XSRd61qLqU). Vous avez juste à fusionner le fichier ZIP avec le dossier de MinGW qui se trouve sur votre ordinateur. 
 
-Pour windows : Si vous ne voulez pas vous embêter avec les dépendances (et que vous recherchez la solution de facilité), vous pouvez télécharger celles ci toutes compilées par votre serviteur(moi) [ici](https://mega.co.nz/#!F5EXzJpY!6W0L0zBizfhRYERPQND_8xvTLXvH4b509XSRd61qLqU). Vous avez juste à fusionner le fichier ZIP avec le dossier de MinGW qui se trouve sur votre ordinateur.
+Une fois ceci fait, vous pouvez compiler GestNotes, à l'aide du projet codeblocks (.cbp),ou du Makefile (compatible windows et linux).
 
-Vous devrez également ajouter une variable d'environement (qui est néssésaire au fonctionnement de wxWidgets) : `WXCFG=gcc_dll\mswud`
- 
-
-Une fois ceci fait, vous pouvez compiler GestNotes.
-
-Note : si vous ne maitrisez pas la ligne de commande ni les Makefile :  un fichier .cbp (pour codeblocks) et un fichier .vcxproj (pour visual studio) seront bientot ajoutés au projet.
+Note : si vous ne maitrisez ni les Makefile ni CodeBlocks : un fichier .vcxproj (pour visual studio) sera bientot ajouté au projet.
 
 
 ## ToDo list : 
@@ -68,7 +62,10 @@ futur proche :
 * Ajouter une fonctionnalité : l'impression des buletins
 * Ajouter les menus graphiques
 
+
+
 futur éloigné : 
 * Ajouter un chiffrement de la base de donnée à l'aide de la librairie crypto d'OpenSSL
 * Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale 
 * Creer un installateur à l'aide de NSIS
+
