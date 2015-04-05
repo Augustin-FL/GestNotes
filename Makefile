@@ -1,12 +1,12 @@
 PROGRAMME=GestNotes
 CC=g++
-CFLAGS= -Wall 
+ARGS_COMPILATION=-Wall 
 INCLUDE=-I "./include"
 
 
 ifeq ($(OS),Windows_NT)
 LIBS =-lwxmsw31u -lsqlite3 -mwindows
-
+CFLAGS=$(ARGS_COMPILATION)
 REP_COURRANT=$(shell cd)
 TMP=$(shell echo %tmp%)
 
@@ -16,8 +16,8 @@ RESSOURCES="$(TMP)/ressources.o"
 RM_RES=rm "$(TMP)ressources.o"
 
 else 
-LIBS=`wx-config --cxxflags --libs` -lsqlite3
-
+LIBS=`wx-config --libs` -lsqlite3
+CFLAGS=`wx-config --cxxflags` $(ARGS_COMPILATION)
 REP_COURRANT=$(shell pwd)
 $(shell mkdir -p obj)
 
