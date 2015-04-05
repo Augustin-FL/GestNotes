@@ -1,0 +1,16 @@
+language: cpp
+
+branches:
+  only:
+   - master
+
+compiler: 
+	- g++
+
+before_script: 
+"sudo aptitude install sqlite3 libwxgtk2.8-dev libwxgtk2.8-dbg && sudo ln -sv wx-2.8/wx wx"
+
+sudo : required
+
+script:
+  - make Makefile && ./bin/GestNote
