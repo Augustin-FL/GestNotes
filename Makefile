@@ -22,7 +22,7 @@ REP_COURRANT=$(shell pwd)
 $(shell mkdir -p obj)
 
 TMP=./obj
-LANCER_PROG=$(REP_COURRANT)/bin/GestNotes
+LANCER_PROG=
 
 COMMANDE_WINDRES=
 RESSOURCES=
