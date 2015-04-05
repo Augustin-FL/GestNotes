@@ -7,7 +7,7 @@ branches:
 compiler: 
    - g++
 
-before_script: "sudo aptitude install sqlite3 libwxgtk2.8-dev libwxgtk2.8-dbg && sudo ln -sv wx-2.8/wx wx"
+before_script: "sudo yum install wxGTK-devel wxBase && sudo ln -sv wx-2.8/wx wx"
 
 sudo : required
 
