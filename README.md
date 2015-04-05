@@ -44,7 +44,7 @@ sudo yum install wxGTK-devel wxBase
 **Pour windows** : 
 vous pouvez télécharger toutes les dépendances compilées par votre serviteur (moi) [ici](https://mega.co.nz/#!F5EXzJpY!6W0L0zBizfhRYERPQND_8xvTLXvH4b509XSRd61qLqU). Vous avez juste à fusionner le fichier ZIP avec le dossier de MinGW qui se trouve sur votre ordinateur. 
 
-Une fois ceci fait, vous pouvez compiler GestNotes, à l'aide du projet codeblocks (.cbp),ou du Makefile (`make all` - compatible windows et linux).
+Une fois ceci fait, vous pouvez compiler GestNotes, à l'aide du projet codeblocks (.cbp),ou du Makefile (compatible windows et linux).
 
 Note : si vous ne maitrisez ni les Makefile ni CodeBlocks : un fichier .vcxproj (pour visual studio) sera bientot ajouté au projet.
 
