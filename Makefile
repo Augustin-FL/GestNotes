@@ -5,7 +5,7 @@ CFLAGS= -Wall
 # Make
 
 PROGRAMME=GestNotes
-LIBS=-lwxmsw31u -lsqlite3 -mwindows # -lwxmswu_31core
+LIBS=-lwxmsw31u -lsqlite3 # -lwxmswu_31core
 
 
 
@@ -19,6 +19,7 @@ LANCER_PROG=cmd /C start "$(PROGRAMME)" "$(REP_COURRANT)\bin\$(PROGRAMME).exe"
 COMMANDE_WINDRES=windres "./src/ressources.rc" "$(TMP)/ressources.o"
 RESSOURCES="$(TMP)/ressources.o"
 RM_RES=rm "$(TMP)ressources.o"
+LIBS=$(LIBS) -mwindows
 else 
 REP_COURRANT=$(shell pwd)
 $(shell mkdir -p obj)
