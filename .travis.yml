@@ -17,7 +17,7 @@ before_script:
     
   - sudo apt-get install -y liblzma5 
   - sudo apt-get install -y libjbig0
-  - sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0
+  - sudo apt-get install -y libpango1.0-0 libpangocairo1.0-0
   - sudo apt-get install -y libwxbase3.0-0-unofficial libwxbase3.0-dev libwxgtk3.0-0-unofficial libwxgtk3.0-dev wx3.0-headers wx-common wx3.0-i18n    
   - sudo apt-get install -y libcppunit-dev
   - sudo ln -sv wx-3.0/wx wx
