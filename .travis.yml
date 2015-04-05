@@ -23,4 +23,4 @@ before_script:
   - sudo ln -sv wx-3.0/wx wx
 
 script:
-  - make all
+  - make
