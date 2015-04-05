@@ -3,7 +3,9 @@
 
 Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(300,220)))
 {
-	SetIcon(wxICON(icone));
+	#ifdef __WXMSW__
+		SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
+	#endif
 	
 	wxPanel         *fenetre					= new wxPanel(this);
 	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
