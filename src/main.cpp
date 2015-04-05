@@ -31,7 +31,9 @@ Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
-	SetIcon(wxICON(icone));
+	#ifdef __WXMSW__
+		SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
+	#endif
 }
 
 void Frame_principale::afficher_apres_login(int type_arg, int id_arg)

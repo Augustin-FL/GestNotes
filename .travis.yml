@@ -14,12 +14,20 @@ before_script:
   - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0.2/ubuntu/ precise universe'
   - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update
- 
-  - sudo apt-get install -y liblzma5 libjbig0 libpango1.0-0 libwxbase3.0-0-unofficial libwxbase3.0-dev libwxgtk3.0-0-unofficial libwxgtk3.0-dev wx3.0-headers wx-common wx3.0-i18n libcppunit-dev libsqlite3-dev
 
-  - sudo mv /usr/include/wx-3.0-unofficial/wx /usr/include/wx
+  - sudo apt-get install -y liblzma5 
+  - sudo apt-get install -y libjbig0
+  - sudo apt-get install -y libpango1.0-0
+  - sudo apt-get install -y libwxbase3.0-0-unofficial
+  - sudo apt-get install -y libwxbase3.0-dev
+  - sudo apt-get install -y libwxgtk3.0-0-unofficial
+  - sudo apt-get install -y libwxgtk3.0-dev
+  - sudo apt-get install -y wx3.0-headers
+  - sudo apt-get install -y wx-common
+  - sudo apt-get install -y wx3.0-i18n    
+  - sudo apt-get install -y libcppunit-dev
+  - sudo mv /usr/include/wx-3.0-unofficial/wx /usr/include/wx 
   - sudo mkdir /usr/include/SQLite && sudo mv /usr/include/sqlite3.h /usr/include/SQLite/sqlite3.h
-  - ls -la /usr/include/
   
 script:
   - make
