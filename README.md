@@ -39,10 +39,15 @@ GestNotes utilise les dépendances suivantes, que vous devez installer :
 
 Pour compiler GestNotes, vous devez d'abbord compiler ces dépendances depuis leurs sources sources. 
 
-**Pour linux (Red Hat)**, c'est simple, une version compilée existe dans les dépots officiels : 
+**Pour linux (Debian)**, quelques lignes de commandes permettent de tout installer : 
  ```console 
-sudo yum install wxGTK-devel wxBase
+sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc # on ajoute un nouveau dépot, avec sa clé
+sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0.2/ubuntu/ precise universe'
+sudo apt-get install -y liblzma5 libjbig0 libpango1.0-0 libwxbase3.0-0-unofficial libwxbase3.0-dev libwxgtk3.0-0-unofficial libwxgtk3.0-dev wx3.0-headers wx-common wx3.0-i18n libcppunit-dev libsqlite3-dev #installation
+sudo mv /usr/include/wx-3.0-unofficial/wx /usr/include/wx   # on pour que les headers de wxWidgets correspondent aux #includes du programme
+sudo mkdir /usr/include/SQLite && sudo mv /usr/include/sqlite3.h /usr/include/SQLite/sqlite3.h # idem, pour SQLite3
 ```
+
 **Pour windows** : 
 vous pouvez télécharger toutes les dépendances compilées par votre serviteur (moi) [ici](https://mega.co.nz/#!F5EXzJpY!6W0L0zBizfhRYERPQND_8xvTLXvH4b509XSRd61qLqU). Vous avez juste à fusionner le fichier ZIP avec le dossier de MinGW qui se trouve sur votre ordinateur. 
 
