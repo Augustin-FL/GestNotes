@@ -113,7 +113,11 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	
 	wxPanel *fenetre = new wxPanel(frame_about, -1);
 	wxBoxSizer *sizer_droite = new wxBoxSizer(wxVERTICAL);
-	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
+	#ifdef __WXMSW__
+		wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
+	#else
+		wxStaticBitmap *image= new wxStaticBitmap( fenetre, wxID_ANY);
+	#endif
 	wxBoxSizer *sizer_horisontal = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_twitter = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_email = new wxBoxSizer(wxHORIZONTAL);
