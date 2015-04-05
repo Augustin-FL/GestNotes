@@ -11,9 +11,10 @@ sudo : required
 
 before_script: 
    - sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
+   - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0.1/ubuntu/ trusty universe'
    - sudo apt-get update
-   - sudo apt-get install -y  install libwxbase3.1-dev libwxgtk3.1-dev wx3.1-headers wx-common libwxbase3.1-dbg libwxgtk3.1-dbg
-   - sudo ln -sv wx-3.1/wx wx
+   - sudo apt-get install -y  install libwxbase3.0-dev libwxgtk3.0-dev wx3.0-headers wx-common libwxbase3.0-dbg libwxgtk3.0-dbg
+   - sudo ln -sv wx-3.0/wx wx
 
 script:
   - make Makefile
