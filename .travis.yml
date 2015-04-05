@@ -10,7 +10,7 @@ compiler:
 sudo : required
 
 before_script: 
-   - sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
+  - sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
   - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0.2/ubuntu/ precise universe'
   - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update
