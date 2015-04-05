@@ -21,7 +21,8 @@ before_script:
   - sudo apt-get install -y libwxbase3.0-0-unofficial libwxbase3.0-dev libwxgtk3.0-0-unofficial libwxgtk3.0-dev wx3.0-headers wx-common wx3.0-i18n    
   - sudo apt-get install -y libcppunit-dev
   - sudo ln -sv /usr/include/wx /usr/include/wx-3.0-unofficial/wx
-  
+  - ls -la /usr/include
+  - ls -la /usr/include/wx
 script:
   - make
   
