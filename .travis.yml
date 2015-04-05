@@ -10,8 +10,10 @@ compiler:
 sudo : required
 
 before_script: 
-   - sudo apt-get install -y wxGTK-devel wxBase 
-   - sudo ln -sv wx-3.0/wx wx
+   - sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
+   - sudo apt-get update
+   - sudo apt-get install -y  install libwxbase3.1-dev libwxgtk3.1-dev wx3.1-headers wx-common libwxbase3.1-dbg libwxgtk3.1-dbg
+   - sudo ln -sv wx-3.1/wx wx
 
 script:
-  - make Makefile && ./bin/GestNote
+  - make Makefile
