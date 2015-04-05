@@ -44,7 +44,7 @@ Pour compiler GestNotes, vous devez d'abbord compiler ces dépendances depuis le
 sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc # on ajoute un nouveau dépot, avec sa clé
 sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0.2/ubuntu/ precise universe'
 sudo apt-get install -y liblzma5 libjbig0 libpango1.0-0 libwxbase3.0-0-unofficial libwxbase3.0-dev libwxgtk3.0-0-unofficial libwxgtk3.0-dev wx3.0-headers wx-common wx3.0-i18n libcppunit-dev libsqlite3-dev #installation
-sudo mv /usr/include/wx-3.0-unofficial/wx /usr/include/wx   # on pour que les headers de wxWidgets correspondent aux #includes du programme
+sudo mv /usr/include/wx-3.0-unofficial/wx /usr/include/wx   # pour que les headers de wxWidgets correspondent aux #includes du programme
 sudo mkdir /usr/include/SQLite && sudo mv /usr/include/sqlite3.h /usr/include/SQLite/sqlite3.h # idem, pour SQLite3
 ```
 
