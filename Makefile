@@ -1,21 +1,32 @@
 PROGRAMME=GestNotes
 CC=g++
-ARGS_COMPILATION=-Wall -g 
-INCLUDE=-I "./include"
+ARGS_COMPILATION=-Wall 
+INCLUDE=-I "./include" -I "c:\include"
+
+# note : si vous avez comme erreur 'wx/msw/hand.cur': No such file or directory
+# c'est un bug connu de windres.exe : https://sourceware.org/bugzilla/show_bug.cgi?id=4356
+# pour le résoudre, vous devez rajouter a INCLUDE ceci : "-I le_Chemin_Vers_Votre_MINGW"
+# Tout en veillant a ce que le chemin ne contienne pas d'espace (utilisez "progra~1" au lieu de "program files" par exemple)
+
 
 
 ifeq ($(OS),Windows_NT)
+# sous windows : on compile avec wxMSW, et -mwindows.
+# de plus on utilise les ressources rc et on lance le programme a la fin du makefile
+# enfin, les fichiers .o sont mis dans le dossier %TMP%
 LIBS =-lwxmsw31u -lsqlite3 -mwindows
 CFLAGS=$(ARGS_COMPILATION)
 REP_COURRANT=$(shell cd)
 TMP=$(shell echo %tmp%)
 
 LANCER_PROG=cmd /C start "$(PROGRAMME)" "$(REP_COURRANT)\bin\$(PROGRAMME).exe"
-COMMANDE_WINDRES=windres "./src/ressources.rc" "$(TMP)/ressources.o"
+COMMANDE_WINDRES=windres "./include/ressources.rc" "$(TMP)/ressources.o" $(INCLUDE)
 RESSOURCES="$(TMP)/ressources.o"
 RM_RES=rm "$(TMP)ressources.o"
 
-else 
+else  
+# sous linux : on utilise wx-config, et on ne lance pas le programme.
+# et les fichiers .o sont mis dans le dossier ./obj
 LIBS=`wx-config --libs` -lsqlite3
 CFLAGS=`wx-config --cxxflags` $(ARGS_COMPILATION)
 REP_COURRANT=$(shell pwd)
@@ -28,9 +39,6 @@ COMMANDE_WINDRES=
 RESSOURCES=
 RM_RES=
 endif
-
-# note : bug connu de windres.exe : https://sourceware.org/bugzilla/show_bug.cgi?id=4356
-# malheureusement, on peux pas faire grand chose contre cela (a part attendre que windres soit mis à jour...)
 	
 $(PROGRAMME):$(TMP)/ressources.o"
 	$(CC) "./src/main.cpp"       $(CFLAGS) $(INCLUDE) -c -o $(TMP)/main.o

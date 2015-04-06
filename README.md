@@ -55,6 +55,9 @@ Une fois ceci fait, vous pouvez compiler GestNotes, à l'aide du projet codebloc
 
 Note : si vous ne maitrisez ni les Makefile ni CodeBlocks : un fichier .vcxproj (pour visual studio) sera bientot ajouté au projet.
 
+pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or directory` lors de la compilation : 
+- si vous compilez à l'aide du makefile, la procédure pour déjouer ce problème est expliquéee dedant
+- si vous compilez à l'aide de codeblocks, la procédure est expliquée dans le fichier ressources.rc
 
 ## ToDo list : 
 
