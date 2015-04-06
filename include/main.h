@@ -10,7 +10,11 @@
 	#include <iostream>
 	
 	#include <SQLite/sqlite3.h>
-
+	
+	#ifndef __WXMSW__
+		#include "ressources.xpm"//ressources linux
+	#endif
+	
 	using namespace std;
 
 	enum 
@@ -140,6 +144,8 @@
 			wxArrayString texte_select;
 			Frame_principale* frame_parente;
 			
+			wxDialog *frame_ajouter;
+			
 		public:
 			Frame_admin(Frame_principale* parent, connexion_bdd*& arg_bdd,int &id_arg);
 			
@@ -147,6 +153,7 @@
 			void onClick_radio_ajout(wxCommandEvent &evenement);
 			void onChange_select_matiere(wxCommandEvent &evenement);
 			void onClick_ajouter(wxCommandEvent &evenement);	
+			void onAjouterQuit(wxCloseEvent &evenement);
 	};
 
 	class Frame_login : public wxFrame

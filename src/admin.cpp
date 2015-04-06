@@ -43,10 +43,24 @@ Frame_admin::Frame_admin(Frame_principale* parent, connexion_bdd*& arg_bdd,int &
 void Frame_admin::onAjouter(wxCommandEvent &evenement)//creer wxMessageBox
 {
 
-	wxDialog		 *frame_ajouter				= new wxDialog(frame_parente, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,*(new wxSize(800,600)));
+	frame_ajouter = new wxDialog(frame_parente, wxID_ANY,_T("GestNotes - Ajouter"));
 	
-	wxPanel          *fenetre					= new wxPanel(frame_ajouter);
+	wxPanel          *fenetre					= new wxPanel(frame_ajouter,-1);
 	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
+
+	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNotes/issues"));
+	contenu_fenetre_sans_marge->Add(lien_github);
+	fenetre->SetSizer(contenu_fenetre_sans_marge);
+
+	frame_ajouter->ShowModal();
+	frame_ajouter->Connect(wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_admin::onAjouterQuit));
+	
+}
+
+void Frame_admin::onAjouterQuit(wxCloseEvent &evenement)
+{
+	frame_ajouter->Destroy();
+}
 	/*wxBoxSizer       *contenur_radio_ajout		= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer       *contenur_radio_ajout_2	= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer       *contenur_radio_ajout_2_horisontal= new wxBoxSizer(wxHORIZONTAL);
@@ -187,12 +201,7 @@ void Frame_admin::onAjouter(wxCommandEvent &evenement)//creer wxMessageBox
 	input_radio_matricule_oui->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin::onClick_radio_ajout));
 	input_radio_matricule_non->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin::onClick_radio_ajout));
 	*/
-	fenetre->SetSizer(contenu_fenetre_sans_marge);
-
-	wxMessageBox("ss");
-	frame_ajouter->ShowModal();
-}
-
+	
 void Frame_admin::onClick_ajouter(wxCommandEvent &evenement)
 {
 	requete_sql *req=NULL;

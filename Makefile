@@ -1,6 +1,6 @@
 PROGRAMME=GestNotes
 CC=g++
-ARGS_COMPILATION=-Wall 
+ARGS_COMPILATION=-Wall -g 
 INCLUDE=-I "./include"
 
 
