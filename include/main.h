@@ -9,10 +9,12 @@
 	#include <wx/filename.h>
 	#include <iostream>
 	
+#include <ctime>
+	
 	#include <SQLite/sqlite3.h>
 	
 	#ifndef __WXMSW__
-		#include "ressources.xpm"//ressources linux
+		#include "./include/ressources.xpm"//ressources linux
 	#endif
 	
 	using namespace std;
@@ -148,12 +150,11 @@
 			
 		public:
 			Frame_admin(Frame_principale* parent, connexion_bdd*& arg_bdd,int &id_arg);
-			
+			~Frame_admin();
 			void onAjouter(wxCommandEvent &evenement);
 			void onClick_radio_ajout(wxCommandEvent &evenement);
 			void onChange_select_matiere(wxCommandEvent &evenement);
 			void onClick_ajouter(wxCommandEvent &evenement);	
-			void onAjouterQuit(wxCloseEvent &evenement);
 	};
 
 	class Frame_login : public wxFrame

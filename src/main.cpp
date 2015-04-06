@@ -93,7 +93,6 @@ void Frame_principale::onQuit(wxCommandEvent &evenement)
 
 void Frame_principale::onClose(wxCloseEvent &evenement)
 {
-		
 	if(evenement.CanVeto())
 	{
 		int reponse=wxMessageBox(_T("Voulez vous vraiment quitter?"), _T("Quitter"), wxYES_NO | wxCANCEL);
