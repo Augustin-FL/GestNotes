@@ -31,9 +31,8 @@ Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
-	#ifdef __WXMSW__
-		SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
-	#endif
+	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
+
 }
 
 void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
@@ -144,10 +143,10 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	sizer_droite->Add(texte_bas);
 	sizer_droite->Add(sizer_github);
 	
-	#ifdef __WXMSW__
-		wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
-		sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT, 15 );
-	#endif
+	
+	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
+	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT, 15 );
+	
 	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT, 15);
 	fenetre->SetSizer(sizer_horisontal);
 	
