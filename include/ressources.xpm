@@ -1,5 +1,5 @@
 /* GestNotes.png - 20358 bytes */
-static const unsigned char GestNotes_png[] = {
+static const unsigned char logo_ressource_png[] = {
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 
   0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 
   0x00, 0x00, 0x00, 0xc8, 0x00, 0x00, 0x00, 0xc8, 
@@ -2548,7 +2548,7 @@ static const unsigned char GestNotes_png[] = {
 /* End Of File */
 
 
-static char *icone_xpm[] = {
+static const char *icone_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 55 1",
 "  c #555557",
