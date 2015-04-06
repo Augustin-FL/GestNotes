@@ -14,7 +14,7 @@
 	#include <SQLite/sqlite3.h>
 	
 	#ifndef __WXMSW__
-		#include "./include/ressources.xpm"//ressources linux
+		#include "ressources.xpm"//ressources linux
 	#endif
 	
 	using namespace std;
