@@ -28,7 +28,7 @@ int App_GestNotes::OnExit()
 
 
 
-Frame_principale::Frame_principale(connexion_bdd* bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
+Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	bdd=bdd_arg;
 	veto_autorise=true;
@@ -72,7 +72,7 @@ void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
 		//si accord de l'admin : changer les notes
 		wxMessageBox("prof");
 	}
-	else if(type_arg==ADMIN) new Frame_admin(this,bdd,id_arg);
+	else if(type_arg==ADMIN) new Frame_admin(this,id_arg,bdd);
 	else
 	{
 			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("GestNotes"));
@@ -91,6 +91,7 @@ void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
 	this->Close();
 }
+
 
 void Frame_principale::onClose(wxCloseEvent &evenement)
 {

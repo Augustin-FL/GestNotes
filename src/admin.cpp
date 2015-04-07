@@ -1,14 +1,13 @@
 #include "main.h"
 //
 
-Frame_admin::Frame_admin(Frame_principale* parent, connexion_bdd* arg_bdd,int &id_arg)
+Frame_admin::Frame_admin(Frame_principale* parent,int &id_arg,connexion_bdd*& bdd_arg)
 {
-	bdd=arg_bdd;
+	bdd=bdd_arg;
 	id=id_arg;
 	frame_parente=parent;
 	frame_parente->SetSize(wxDefaultCoord,wxDefaultCoord,800,600);
-
-
+	
 	wxPanel  *fenetre = new wxPanel(frame_parente);
 
 	wxBoxSizer *sizer_principal= new wxBoxSizer(wxVERTICAL);
@@ -28,29 +27,31 @@ Frame_admin::Frame_admin(Frame_principale* parent, connexion_bdd* arg_bdd,int &i
 	frame_parente->SetSizer(sizer_principal);
 
 
-	button_ajouter->Connect(wxEVT_COMMAND_BUTTON_CLICKED,wxCommandEventHandler(Frame_admin::onAjouter));
+	button_ajouter->Connect(wxEVT_COMMAND_BUTTON_CLICKED,wxCommandEventHandler(Frame_admin::onAjouter),NULL,this);
 	//button_supprimer->Connect(wxEVT_COMMAND_BUTTON_CLICKED,wxCommandEventHandler(Frame_admin::onModifier));
 	//button_supprimer->Connect(wxEVT_COMMAND_BUTTON_CLICKED,wxCommandEventHandler(Frame_admin::onSupprimer));
 	frame_parente->SetStatusText(_T("GestNotes - Accès Admin"));
 	fenetre->SetSize(frame_parente->GetClientSize());
 	frame_parente->Show();
+	
 
 }
 
 void Frame_admin::onAjouter(wxCommandEvent &evenement)
 {
-	Frame_admin_ajouter ajouter(frame_parente,bdd);
+	Frame_admin_ajouter(frame_parente,bdd);
 }
-
 
 // -------------
 
-Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd* bdd_arg) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
+Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent_arg,connexion_bdd* bdd_arg) : wxDialog(parent_arg, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
 {
 	bdd=bdd_arg;
+	parent=parent_arg;
+	
 	wxArrayString texte_select;
-	while(bdd->exec("select nom, id_matiere from matieres")){} //texte_select.Add(bdd->getColumn_text(0));
-//	texte_select.Add(_T("<Ajouter Une Matière>"));
+	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
+	texte_select.Add(_T("<Ajouter Une Matière>"));
 	
 	wxPanel          *fenetre					= new wxPanel(this,-1);
 	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
@@ -115,7 +116,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	input_radio_eleve 			= new wxRadioButton(fenetre, -1, _T("Élève"));
 	input_radio_matricule_oui	= new wxRadioButton(fenetre, -1, _T("Oui"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
 	input_radio_matricule_non	= new wxRadioButton(fenetre, -1, _T("Non"));
-	//input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
+	input_select_matiere_ajout	= new wxComboBox(fenetre, -1,_T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
 	bouton_valider_ajout		= new wxButton(fenetre, -1, _T("Valider"));
 	
 	
@@ -137,7 +138,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	conteneur_ajout_gauche->Add(label_ajout_radio);
 	conteneur_ajout_gauche->Add(contenur_radio_ajout);
 	conteneur_ajout_gauche->Add(label_ajouter_prof__matiere);
-//	conteneur_ajout_gauche->Add(input_select_matiere_ajout);
+	conteneur_ajout_gauche->Add(input_select_matiere_ajout);
 	conteneur_ajout_gauche->Add(label_ajouter_matricule,wxALIGN_CENTER);
 	conteneur_ajout_gauche->Add(contenur_radio_ajout_2_horisontal);
 
@@ -156,10 +157,10 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	input_radio_prof->SetValue(true);
 	input_radio_matricule_non->SetValue(true);
 
-/*
-	this->onClick_radio_ajout(*(new wxCommandEvent()));
+
+	this->onClick_radio(*(new wxCommandEvent()));
 	this->onChange_select_matiere(*(new wxCommandEvent()));
-*/
+
 
 	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable);
 	conteneur_ajout_droite->Add(input_ajout_eleve__nom_responsable);
@@ -185,11 +186,136 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
 
 	
+	//bouton_valider_ajout->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_admin_ajouter::onClick_ajouter));
+	input_select_matiere_ajout->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler(Frame_admin_ajouter::onChange_select_matiere),NULL,this);
+	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
+	input_radio_eleve->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
+	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
+	input_radio_matricule_oui->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
+	input_radio_matricule_non->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
+
+	
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
 	this->ShowModal();
 }
 
-Frame_admin::~Frame_admin()
-{	
+void Frame_admin_ajouter::onClick_radio(wxCommandEvent &evenement)
+{
+	if(input_radio_matricule_non->GetValue())
+	{
+		input_ajout_matricule->Disable();
+
+		input_ajout_nom->Enable();
+		input_ajout_prenom->Enable();
+		input_ajout_mdp->Enable();
+
+		input_radio_admin->Enable();
+		input_radio_eleve->Enable();
+	}
+	else if(input_radio_matricule_oui->GetValue())
+	{
+		input_ajout_matricule->Enable();
+
+		input_radio_admin->Disable();
+		input_radio_eleve->Disable();
+		input_radio_prof->SetValue(true);
+
+		input_ajout_nom->Disable();
+		input_ajout_prenom->Disable();
+		input_ajout_mdp->Disable();
+	}
+
+	if(input_radio_eleve->GetValue())
+	{
+		label_ajout_eleve__nom_responsable->Enable();
+		input_ajout_eleve__nom_responsable->Enable();
+		input_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__prenom_responsable->Enable();
+		input_ajout_eleve__tel_responsable->Enable();
+		input_ajout_eleve__mail_responsable->Enable();
+		input_ajout_eleve__nom_responsable->Enable();
+		input_ajout_eleve__nom_rue->Enable();
+		input_ajout_eleve__rue->Enable();
+		input_ajout_eleve__code_postal->Enable();
+		input_ajout_eleve__ville->Enable();
+		input_ajout_eleve__tel_mobile->Enable();
+		input_ajout_eleve__sexe->Enable();
+		input_ajout_eleve__groupe->Enable();
+
+		label_ajout_eleve__sexe->Enable();
+		label_ajout_eleve__groupe->Enable();
+		label_ajout_eleve__nom_responsable->Enable();
+		label_ajout_eleve__prenom_responsable->Enable();
+		label_ajout_eleve__tel_responsable->Enable();
+		label_ajout_eleve__mail_responsable->Enable();
+		label_ajout_eleve__sexe->Enable();
+		label_ajout_eleve__nom_rue->Enable();
+		label_ajout_eleve__rue->Enable();
+		label_ajout_eleve__code_postal->Enable();
+		label_ajout_eleve__ville->Enable();
+		label_ajout_eleve__tel_mobile->Enable();
+		label_ajout_eleve__groupe->Enable();
+		label_ajout_eleve__nom_responsable->Enable();
+
+		input_select_matiere_ajout->Disable();
+		label_ajouter_prof__matiere->Disable();
+	}
+	else
+	{
+		if(input_radio_prof->GetValue())
+		{
+			input_select_matiere_ajout->Enable();
+			label_ajouter_prof__matiere->Enable();
+		}
+		else if(input_radio_admin->GetValue())
+		{
+			input_select_matiere_ajout->Disable();
+			label_ajouter_prof__matiere->Disable();
+		}
+
+		input_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__prenom_responsable->Disable();
+		input_ajout_eleve__tel_responsable->Disable();
+		input_ajout_eleve__mail_responsable->Disable();
+		input_ajout_eleve__nom_responsable->Disable();
+		input_ajout_eleve__nom_rue->Disable();
+		input_ajout_eleve__rue->Disable();
+		input_ajout_eleve__code_postal->Disable();
+		input_ajout_eleve__ville->Disable();
+		input_ajout_eleve__tel_mobile->Disable();
+		input_ajout_eleve__sexe->Disable();
+		input_ajout_eleve__groupe->Disable();
+
+		label_ajout_eleve__sexe->Disable();
+		label_ajout_eleve__groupe->Disable();
+		label_ajout_eleve__nom_responsable->Disable();
+		label_ajout_eleve__prenom_responsable->Disable();
+		label_ajout_eleve__tel_responsable->Disable();
+		label_ajout_eleve__mail_responsable->Disable();
+		label_ajout_eleve__sexe->Disable();
+		label_ajout_eleve__nom_rue->Disable();
+		label_ajout_eleve__rue->Disable();
+		label_ajout_eleve__code_postal->Disable();
+		label_ajout_eleve__ville->Disable();
+		label_ajout_eleve__tel_mobile->Disable();
+		label_ajout_eleve__groupe->Disable();
+		label_ajout_eleve__nom_responsable->Disable();
+	}
 }
-	
+
+
+
+void Frame_admin_ajouter::onChange_select_matiere(wxCommandEvent &evenement)
+{
+	if((unsigned int)input_select_matiere_ajout->GetSelection()==texte_select.GetCount()-1)
+	{
+		input_select_matiere_ajout->SetEditable(true);
+		input_select_matiere_ajout->SetValue("");
+	}
+	else
+	{
+		input_select_matiere_ajout->SetEditable(false);
+		input_select_matiere_ajout->SetBackgroundColour(0xFFFFFF);
+	}
+}
+
