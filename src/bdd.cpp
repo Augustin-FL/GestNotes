@@ -13,7 +13,8 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		else pos=path_fichier.rfind("/")+1;//linux
 		
 		path_fichier=path_fichier.substr(0,pos)+"bdd.sqlite";
-		
+		
+
 		if(wxFileName::FileExists(path_fichier))  fichier_existe=true;
 		
 		if(sqlite3_open(path_fichier.c_str(), &bdd)!=SQLITE_OK) 
@@ -29,25 +30,31 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						nom		TEXT 	NOT NULL,										\
 						prenom	TEXT,													\
 						matiere	INTEGER NOT NULL										\
-					);");
+					);");
+
 					
 		this->exec("CREATE TABLE IF NOT EXISTS notes (									\
 						id_eleve	INTEGER,											\
 						id_matiere	INTEGER,											\
 						note		INTEGER												\
 					);");
-			
+			
+
 		this->exec("CREATE TABLE IF NOT EXISTS matieres(								\
 						id_matiere	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,	\
 						nom	TEXT														\
-					);");
-					
+					);");
+
+					
+
 		this->exec("CREATE TABLE IF NOT EXISTS	login_centralise(						\
 						matricule	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 	\
 						mdp			TEXT NOT NULL,										\
 						type		INTEGER												\
-					);");
-						
+					);");
+
+						
+
 		this->exec("CREATE TABLE IF NOT EXISTS eleve(									\
 						id					INTEGER NOT NULL,							\
 						prenom				TEXT 	NOT NULL,							\
@@ -64,16 +71,21 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						prenom_responsable	TEXT,										\
 						tel_responsable		INTEGER,									\
 						mail_responsable	TEXT										\
-					);");
-					
+					);");
+
+					
+
 		this->exec("CREATE TABLE IF NOT EXISTS admin(									\
 						id					INTEGER NOT NULL,							\
 						nom					TEXT 	NOT NULL,							\
 						prenom				TEXT 	NOT NULL							\
-					);");
-					
+					);");
+
+		this->req=0;	
+
 		if(!fichier_existe)
-		{
+		{
+
 			this->exec("INSERT INTO login_centralise VALUES (1,'test',2)");
 			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
 			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
@@ -97,24 +109,34 @@ connexion_bdd::~connexion_bdd()
 
 int connexion_bdd::exec(const string &texte)
 {
-	int resultat;//
+	int resultat;//
 	
-	if(texte.compare(requete_precedente))
-	{
-		if(req!=0) req->closeCursor();
-		
+	
+	if(texte.compare(requete_precedente)!=0)// si requete_precedente!=texte
+	{
+		if(req!=NULL)
+		{
+			req->closeCursor();
+		}
+	
 		req=new requete_sql(bdd,texte);
 		requete_precedente=texte;
-	}
-	else if(req==0)  req=new requete_sql(bdd,texte);
-	
-
-	resultat=req->fetch();
-	if(!resultat) 
-	{
-		req->closeCursor();
-		req=0;
 	}
+
+	else if(req==NULL)  req=new requete_sql(bdd,texte);
+
+	
+	
+	resultat=req->fetch();
+	nb++;
+	if(!resultat) 
+	{
+
+		req->closeCursor();
+		req=NULL;
+		nb=0;
+	}
+	
 	return resultat;
 }
 
@@ -138,11 +160,6 @@ void connexion_bdd::close()
 
 requete_sql* connexion_bdd::prepare(const string &texte)
 {
-	if(req!=0) 
-	{
-		req->closeCursor();
-		req=0;	
-	}
 	
 	return new requete_sql(bdd,texte);
 }
@@ -160,11 +177,13 @@ requete_sql::requete_sql(sqlite3*& bdd,const string& texte_requete)
 }
 
 int requete_sql::bind(const string &cle,int valeur)
-{
-	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
-	{
-		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
-		return -1;
+{
+
+	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
+	{
+		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
+		return -1;
+
 	}
 	return sqlite3_bind_int(requete, sqlite3_bind_parameter_index(requete,cle.c_str()), valeur);
 }
@@ -172,34 +191,35 @@ int requete_sql::bind(const string &cle,int valeur)
 
 int requete_sql::bind(const string &cle,const string &valeur)
 {
-	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
-	{
-		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
-		return -1;
-	}
-	
-	if(sqlite3_bind_text(requete,sqlite3_bind_parameter_index(requete,cle.c_str()), valeur.c_str(),strlen(valeur.c_str()), SQLITE_TRANSIENT)!= SQLITE_OK)
-	{
-		wxMessageBox(_T("Erreur lors du bind ! ")+cle+_T(" : ")+valeur);
-		return -1;
-	}
+	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
+	{
+		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
+		return -1;
+	}
+	
+	if(sqlite3_bind_text(requete,sqlite3_bind_parameter_index(requete,cle.c_str()), valeur.c_str(),strlen(valeur.c_str()), SQLITE_TRANSIENT)!= SQLITE_OK)
+	{
+		wxMessageBox(_T("Erreur lors du bind ! ")+cle+_T(" : ")+valeur);
+		return -1;
+	}
 	return 0;	
 }
 
 int requete_sql::bind(int cle,int valeur)
 {
-	if(sqlite3_bind_int(requete,cle, valeur)!= SQLITE_OK)
-	{
-		wxString a;
-		a<<_T("Erreur lors du bind ! ")<<cle<<_T(" : ")<<valeur;
-		wxMessageBox(a,"Erreur !");
-		return -1;
-	}
+	if(sqlite3_bind_int(requete,cle, valeur)!= SQLITE_OK)
+	{
+		wxString a;
+		a<<_T("Erreur lors du bind ! ")<<cle<<_T(" : ")<<valeur;
+		wxMessageBox(a,"Erreur !");
+		return -1;
+	}
 	return 0;
 }
 
 int requete_sql::bind(int cle,const string &valeur)
-{
+{
+
 	
 	return sqlite3_bind_text(requete,cle, valeur.c_str(),strlen(valeur.c_str()),SQLITE_STATIC);
 }
@@ -234,7 +254,8 @@ int requete_sql::fetch()
 	return -1;
 }
 int requete_sql::getColumn_int(int numero)
-{
+{
+
 	
 	if(numero>nb_colonnes-1 || numero<0 || types[numero]!=SQLITE_INTEGER) return -1;
 	
@@ -252,7 +273,6 @@ double requete_sql::getColumn_float(int numero)
 }
 void requete_sql::closeCursor()
 {
-	sqlite3_finalize(requete);
-	
+	sqlite3_finalize(requete);
 }
 

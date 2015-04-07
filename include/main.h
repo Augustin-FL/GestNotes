@@ -57,6 +57,7 @@
 			bool requete_en_cours;
 			string requete_precedente;
 			requete_sql* req;
+			int nb;
 			
 		public:
 			connexion_bdd();
@@ -90,7 +91,7 @@
 			bool veto_autorise;
 	
 		public:
-			Frame_principale(connexion_bdd*& arg_bdd);
+			Frame_principale(connexion_bdd* arg_bdd);
 			~Frame_principale(){};
 			void afficher_apres_login(int type_arg, int id_arg);
 			void onClose(wxCloseEvent &evenement);
@@ -98,19 +99,21 @@
 			void onAbout(wxCommandEvent &evenement);
 	};
 	
-	class Frame_admin : public wxEvtHandler
+	class Frame_admin_ajouter : public wxDialog
 	{
+		public:
+			Frame_admin_ajouter(Frame_principale* parent,connexion_bdd* bdd_arg);
 		private:
 			int id, nombre_matiere;
 			connexion_bdd* bdd;
 			bool veto_autorise;
 				
 				
-			wxRadioButton 	*input_radio_prof,
-							*input_radio_admin,
-							*input_radio_eleve,
-							*input_radio_matricule_oui,
-							*input_radio_matricule_non;
+			wxRadioButton *input_radio_prof;
+			wxRadioButton *input_radio_eleve;
+			wxRadioButton *input_radio_admin;
+			wxRadioButton *input_radio_matricule_oui;
+			wxRadioButton *input_radio_matricule_non;
 							
 				wxTextCtrl *input_ajout_nom, *input_ajout_prenom, *input_ajout_mdp, 
 						*input_ajout_eleve__nom_responsable,
@@ -147,9 +150,16 @@
 			Frame_principale* frame_parente;
 			
 			wxDialog *frame_ajouter;
-			
+	};
+	
+	class Frame_admin : public wxEvtHandler
+	{
+		private:
+			int id, nombre_matiere;
+			connexion_bdd* bdd;
+			Frame_principale* frame_parente;
 		public:
-			Frame_admin(Frame_principale* parent, connexion_bdd*& arg_bdd,int &id_arg);
+			Frame_admin(Frame_principale* parent, connexion_bdd* arg_bdd,int &id_arg);
 			~Frame_admin();
 			void onAjouter(wxCommandEvent &evenement);
 			void onClick_radio_ajout(wxCommandEvent &evenement);

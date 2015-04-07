@@ -14,6 +14,7 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-g" />
 					<Add directory="include" />
 				</Compiler>
 				<ResourceCompiler>
@@ -53,7 +54,7 @@
 		<Unit filename="src/login.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/professeur.cpp" />
-		<Unit filename="src/ressources.rc">
+		<Unit filename="include/ressources.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Extensions>
