@@ -7,12 +7,11 @@ logo_ressource RCDATA "GestNotes.png"
 
     En cas de problème "windres :  can't open cursor file `wx/msw/hand.cur': No such file or directory"
 
-    faites un clic droit sur le projet->poperties...->onglet build target->build options. Une nouvelle fenètre
-    va s'ouvrir.
+    faites un clic droit sur settings->Compiler.
 
-    Dans cette fenêtre, allez sur l'onglet search directoryes, sous onglet "ressources compiler".
-    Et ajoutez ("add") l'emplacement actuel du dossier "include" de MinGW (dans lequel vous avez
-    installé wxWidgets)
+    Dans la fenêtre ouverte, allez sur l'onglet "search directories",puis dans le sous onglet
+    "ressources compiler"....Et ajoutez ("add") l'emplacement actuel
+    du dossier "include" de MinGW (dans lequel vous avez installé wxWidgets)
 
     désolé pour ce bug, j'y peux rien, c'est un bug connu de windres :
     https://sourceware.org/bugzilla/show_bug.cgi?id=4356
