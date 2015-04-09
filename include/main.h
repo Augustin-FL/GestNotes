@@ -7,9 +7,6 @@
 	#include <wx/stdpaths.h>
 	#include <wx/hyperlink.h>
 	#include <wx/filename.h>
-	#include <iostream>
-
-	//#include <ctime>
 
 	#include <SQLite/sqlite3.h>
 
@@ -171,18 +168,19 @@
 		public:
 			Frame_login(connexion_bdd*& arg_bdd);
 			virtual ~Frame_login(){};
-
+			void onClick_annuler(wxCommandEvent &evenement);
+			void onClose(wxCloseEvent &evenement);
 		private:
 			wxTextCtrl *input_login,*input_mdp;
 			wxButton *bouton_valider, *bouton_annuler;
 			connexion_bdd* bdd;
 			int type;
-			Frame_principale* frame_parente;
-
-			void onClick_valider(wxCommandEvent &evenement);
-			void onClick_annuler(wxCommandEvent &evenement);
+			Frame_principale* frame_enfant;
+			Frame_login* frame_actuelle;
+			
 			void onChange(wxCommandEvent &evenement);
-			void onClose(wxCloseEvent &evenement);
+			void onClick_valider(wxCommandEvent &evenement);
+			
 	};
 
 #endif

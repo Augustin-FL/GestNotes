@@ -4,10 +4,11 @@
 	#include "ressources.xpm"//ressources linux
 #endif
 
+
 Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(300,220)))
 {
 	SetIcon(wxICON(icone)); 
-	
+	frame_actuelle=this;
 	wxPanel         *fenetre					= new wxPanel(this);
 	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer		*conteneur_horisontal_login	= new wxBoxSizer(wxHORIZONTAL);
@@ -104,14 +105,12 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
 			//si accord de l'admin : changer les notes
 			wxMessageBox("prof");
 		}
-		else if(type==ADMIN) new Frame_admin(this,matricule,bdd);
+		else if(type==ADMIN) frame_enfant=new Frame_admin(this,matricule,bdd);
 		else
 		{
 			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("GestNotes"));
 			this->Close();
 		}
-		
-		 
 	}
 	else 
 	{
@@ -139,6 +138,5 @@ void Frame_login::onClose(wxCloseEvent &evenement)
 			return ;
 		}
 	}
-	
 	this->Destroy();
 }

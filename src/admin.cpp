@@ -6,12 +6,14 @@
 
 Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
-//bdd=0x42c55d8
-	this->SetSize(wxDefaultCoord,wxDefaultCoord,300,600);
+
+	this->SetSize(wxDefaultCoord,wxDefaultCoord,670,600);
 	
 	wxPanel *fenetre = new wxPanel(this);
 
-	wxBoxSizer *sizer_principal= new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_principal= new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *sizer_principal_haut= new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_principal_bas= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_gauche= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer_centre=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer_droite=new wxBoxSizer(wxVERTICAL);
@@ -33,9 +35,13 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	//
 	wxCheckBox *input_checkbox__afficher_buletins=new wxCheckBox(fenetre,-1,_T("Autoriser l'affichage/impression des buletins"));	
 	
-	sizer_principal->Add(sizer_gauche,1,wxTOP |wxCENTER,15);
-	sizer_principal->Add(sizer_centre,1,wxTOP|wxALIGN_CENTER,30);
-	sizer_principal->Add(sizer_droite,1,wxTOP|wxRIGHT,30);
+	sizer_principal->Add(sizer_principal_haut,50);
+	sizer_principal->Add(sizer_principal_bas,70);
+	sizer_principal_bas->SetForegroundColour(0xFF0000);
+	
+	sizer_principal_haut->Add(sizer_gauche,1,wxTOP |wxCENTER,15);
+	sizer_principal_haut->Add(sizer_centre,1,wxTOP|wxALIGN_CENTER,30);
+	sizer_principal_haut->Add(sizer_droite,1,wxTOP|wxALIGN_CENTER,30);
 	
 	sizer_centre->Add(texte_conteneur_arrondi);
 	
@@ -44,7 +50,6 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	texte_conteneur_ajout->Add(button_ajouter,0,wxALIGN_LEFT|wxALIGN_CENTER_HORIZONTAL,5);
 	texte_conteneur_ajout->Add(button_modifier,0,wxALIGN_LEFT|wxALIGN_CENTER_HORIZONTAL,5);
 	texte_conteneur_ajout->Add(button_supprimer,0,wxALIGN_LEFT|wxALIGN_CENTER_HORIZONTAL,5);
-	
 	
 	texte_conteneur_arrondi->Add(label_arrondir_moyenne);
 	texte_conteneur_arrondi->Add(input_radio__arrondi_cent);
