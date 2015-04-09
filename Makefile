@@ -42,7 +42,7 @@ endif
 	
 $(PROGRAMME):$(TMP)/ressources.o $(TMP)/login.o $(TMP)/main.o $(TMP)/bdd.o $(TMP)/admin.o $(TMP)/professeur.o $(TMP)/eleve.o
 	
-	$(CC) "$(TMP)/main.o" "$(TMP)/bdd.o" "$(TMP)/login.o" "$(TMP)/admin.o" "$(TMP)/professeur.o" "$(TMP)/eleve.o" "$(RESSOURCES)" -o "./bin/$@"  $(LIBS)
+	$(CC) "$(TMP)/main.o" "$(TMP)/bdd.o" "$(TMP)/login.o" "$(TMP)/admin.o" "$(TMP)/professeur.o" "$(TMP)/eleve.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
 	$(LANCER_PROG)
 
 
