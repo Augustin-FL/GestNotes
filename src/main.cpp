@@ -8,9 +8,8 @@ bool App_GestNotes::OnInit()
 
 
 	bdd=new connexion_bdd();
-	Frame_principale *frame_principale=new Frame_principale(bdd);
-
-	Frame_login *login=new Frame_login(frame_principale,bdd);
+	
+	Frame_login* login=new Frame_login(bdd);
 	login->Show();//pour éviter un warning "unused variable"
 
     return true;
@@ -28,16 +27,11 @@ int App_GestNotes::OnExit()
 
 
 
-Frame_principale::Frame_principale(connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
+Frame_principale::Frame_principale(Frame_login *parent,int& matricule,connexion_bdd*& bdd) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
-	bdd=bdd_arg;
-	veto_autorise=true;
+	parent->Destroy();
 	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
 
-}
-
-void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
-{
 	wxMenuBar *barre_menu= new wxMenuBar();
 
 	wxMenu *menu_fichier = new wxMenu();
@@ -53,33 +47,6 @@ void Frame_principale::afficher_apres_login(int type_arg, int id_arg)
 	this->CreateStatusBar(1);
 
 
-	if(type_arg==ELEVE)
-	{
-		//consulter les notes (tableau) +imprimer buletin de notes
-		//consulter son groupe
-		//voir (modifier?) contacts
-
-//		wxStaticBoxSizer*conteneur_notes	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Notes : "));
-	//	contenu_fenetre_sans_marge->Add(conteneur_notes, 1, wxALIGN_CENTER_VERTICAL);
-		wxMessageBox("aaa");
-	}
-	else if(type_arg==PROF)
-	{
-		//liste déroulante en haut.->matière
-
-		//saisir notes
-		//changer groupe(?)
-		//si accord de l'admin : changer les notes
-		wxMessageBox("prof");
-	}
-	else if(type_arg==ADMIN) new Frame_admin(this,id_arg,bdd);
-	else
-	{
-			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("GestNotes"));
-			veto_autorise=false;
-			Close();
-			return ;
-	}
 
 	this->Connect(wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_principale::onClose),NULL, this);
 	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), NULL, this);
@@ -104,7 +71,7 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 			return ;
 		}
 	}
-	 this->Destroy();
+	// this->Destroy();
 }
 
 void Frame_principale::onAbout(wxCommandEvent &evenement)
