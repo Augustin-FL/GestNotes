@@ -60,7 +60,7 @@ $(TMP)/admin.o: ./src/admin.cpp
 $(TMP)/professeur.o: ./src/professeur.cpp
 	$(CC) "./src/professeur.cpp" $(CFLAGS) $(INCLUDE) -c -o "$@"
 $(TMP)/eleve.o: ./src/eleve.cpp
-	$(CC) "./src/main.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"
+	$(CC) "./src/eleve.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"
 	
 clean:
 	$(RM_RES)
