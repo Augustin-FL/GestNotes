@@ -50,7 +50,7 @@ $(TMP)/ressources.o:
 	$(COMMANDE_WINDRES)
 
 $(TMP)/login.o: ./src/login.cpp
-	$(CC) "./src/main.cpp"  	$(CFLAGS) $(INCLUDE) -c -o "$@"
+	$(CC) "./src/login.cpp"  	$(CFLAGS) $(INCLUDE) -c -o "$@"
 $(TMP)/main.o: ./src/main.cpp
 	$(CC) "./src/main.cpp"   	 $(CFLAGS) $(INCLUDE) -c -o "$@"
 $(TMP)/bdd.o: ./src/bdd.cpp
