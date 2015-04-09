@@ -149,6 +149,20 @@
 			wxButton *bouton_valider_ajout;
 			Frame_principale* frame_parente;
 	};
+	
+	class Frame_prof : public Frame_principale
+	{
+		public:
+			Frame_prof(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
+		
+	};
+	
+	class Frame_eleve: public Frame_principale
+	{
+		public:
+			Frame_eleve(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
+		
+	};
 
 	class Frame_admin : public Frame_principale
 	{

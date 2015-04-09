@@ -86,25 +86,8 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
 		req->closeCursor();
 		this->Hide();
 		
-		if(type==ELEVE)
-		{
-			//consulter les notes (tableau) +imprimer buletin de notes
-			//consulter son groupe
-			//voir (modifier?) contacts
-
-		//	wxStaticBoxSizer*conteneur_notes	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Notes : "));
-			//	contenu_fenetre_sans_marge->Add(conteneur_notes, 1, wxALIGN_CENTER_VERTICAL);
-			wxMessageBox("aaa");
-		}
-		else if(type==PROF)
-		{
-			//liste déroulante en haut.->matière
-
-			//saisir notes
-			//changer groupe(?)
-			//si accord de l'admin : changer les notes
-			wxMessageBox("prof");
-		}
+		if(type==ELEVE) frame_enfant=new Frame_eleve(this,matricule,bdd);
+		else if(type==PROF) frame_enfant=new Frame_prof(this,matricule,bdd);
 		else if(type==ADMIN) frame_enfant=new Frame_admin(this,matricule,bdd);
 		else
 		{

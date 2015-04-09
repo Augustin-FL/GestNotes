@@ -57,7 +57,7 @@ Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule,connex
 
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
-	parent->onClick_annuler(*(new wxCommandEvent()));
+	this->Close();
 }
 
 
@@ -73,8 +73,6 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 		}
 	}
 	exit(0);
-	
-	//parent->onClose(*(new wxCloseEvent()));
 }
 
 void Frame_principale::onAbout(wxCommandEvent &evenement)
