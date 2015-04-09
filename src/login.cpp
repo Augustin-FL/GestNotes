@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wxFrame(parent, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(300,220)))
+Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(300,220)))
 {
 	SetIcon(wxICON(icone)); 
 	
@@ -52,7 +52,7 @@ Frame_login::Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd): wx
 	this->Show();
 
 	bdd=arg_bdd;
-	frame_parente=parent;
+//	frame_parente=parent;
 	type=PAS_CONNECTE;
 }
 
@@ -77,12 +77,38 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
 	if(req->fetch() && req->getColumn_int(0)==1)
 	{
 		type=req->getColumn_int(1);
-		int matricule=req->getColumn_int(2);
+		int matricule=wxAtoi(input_login->GetValue());
 		
 		req->closeCursor();
 		this->Hide();
-		frame_parente->afficher_apres_login(type,matricule);	
-		this->Close();
+		
+		if(type==ELEVE)
+		{
+			//consulter les notes (tableau) +imprimer buletin de notes
+			//consulter son groupe
+			//voir (modifier?) contacts
+
+		//	wxStaticBoxSizer*conteneur_notes	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Notes : "));
+			//	contenu_fenetre_sans_marge->Add(conteneur_notes, 1, wxALIGN_CENTER_VERTICAL);
+			wxMessageBox("aaa");
+		}
+		else if(type==PROF)
+		{
+			//liste déroulante en haut.->matière
+
+			//saisir notes
+			//changer groupe(?)
+			//si accord de l'admin : changer les notes
+			wxMessageBox("prof");
+		}
+		else if(type==ADMIN) new Frame_admin(this,matricule,bdd);
+		else
+		{
+			wxMessageBox(_T("Erreur ! Type de personne inconnu"), _T("GestNotes"));
+			this->Close();
+		}
+		
+		 
 	}
 	else 
 	{
@@ -112,5 +138,4 @@ void Frame_login::onClose(wxCloseEvent &evenement)
 	}
 	
 	this->Destroy();
-	if(type==PAS_CONNECTE) frame_parente->Close();
 }

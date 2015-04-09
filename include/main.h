@@ -18,7 +18,15 @@
 	#endif
 
 	using namespace std;
+	
+	class requete_sql;
+	class connexion_bdd;
+	class App_GestNotes;
+	
+	class Frame_principale;
+	class Frame_admin;
 	class Frame_admin_ajouter;
+	class Frame_login;
 
 	enum
 	{
@@ -55,10 +63,8 @@
 	{
 		private:
 			sqlite3* bdd;
-			bool requete_en_cours;
 			string requete_precedente;
 			requete_sql* req;
-			int nb;
 
 		public:
 			connexion_bdd();
@@ -72,7 +78,6 @@
 
 	};
 
-
 	class App_GestNotes : public wxApp
 	{
 		public :
@@ -85,34 +90,31 @@
 
 	class Frame_principale: public wxFrame
 	{
-		private:
-			int type;
-			int id, nombre_matiere;
+		protected:
 			connexion_bdd* bdd;
-			bool veto_autorise;
-
+			int matricule;
+			
 		public:
-			Frame_principale(connexion_bdd*& arg_bdd);
-			~Frame_principale(){};
-			void afficher_apres_login(int type_arg, int id_arg);
-			void onClose(wxCloseEvent &evenement);
-			void onQuit(wxCommandEvent &evenement);
-			void onAbout(wxCommandEvent &evenement);
-			connexion_bdd*& getBDD();
+			Frame_principale(Frame_login *parent,int &matricule,connexion_bdd*& bdd);
+			virtual void onClose(wxCloseEvent &evenement);
+			virtual void onQuit(wxCommandEvent &evenement);
+			virtual void onAbout(wxCommandEvent &evenement);
 	};
 
 	class Frame_admin_ajouter : public wxDialog
 	{
 		public:
-			Frame_admin_ajouter(Frame_principale* parent_arg,connexion_bdd* bdd_arg);
+			Frame_admin_ajouter(Frame_principale* parent_arg,connexion_bdd*& bdd);
 			void onClick_radio(wxCommandEvent &evenement);
 			void onChange_select_matiere(wxCommandEvent &evenement);
+			void onClick(wxCommandEvent &evenement);
+			
 		private:
 			int id, nombre_matiere;
 			connexion_bdd* bdd;
 			bool veto_autorise;
 			Frame_principale* parent;
-			
+			wxArrayString texte_select;
 
 			wxRadioButton *input_radio_prof;
 			wxRadioButton *input_radio_eleve;
@@ -151,20 +153,16 @@
 			wxComboBox *input_select_matiere_ajout;
 
 			wxButton *bouton_valider_ajout;
-			wxArrayString texte_select;
 			Frame_principale* frame_parente;
 	};
 
-	class Frame_admin : public wxEvtHandler
+	class Frame_admin : public Frame_principale
 	{
 		private:
-			int id, nombre_matiere;
-			connexion_bdd* bdd;
-			Frame_principale* frame_parente;
-			Frame_admin_ajouter *classe_ajouter;
+
 			
 		public:
-			Frame_admin(Frame_principale* parent,int &id_arg,connexion_bdd*& bdd);
+			Frame_admin(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
 			void onAjouter(wxCommandEvent &evenement);
 			void onClick_radio_ajout(wxCommandEvent &evenement);
 			void onChange_select_matiere(wxCommandEvent &evenement);
@@ -174,7 +172,7 @@
 	class Frame_login : public wxFrame
 	{
 		public:
-			Frame_login(Frame_principale*& parent, connexion_bdd*& arg_bdd);
+			Frame_login(connexion_bdd*& arg_bdd);
 			virtual ~Frame_login(){};
 
 		private:
