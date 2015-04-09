@@ -40,19 +40,27 @@ RESSOURCES=
 RM_RES=
 endif
 	
-$(PROGRAMME):$(TMP)/ressources.o"
-	$(CC) "./src/main.cpp"       $(CFLAGS) $(INCLUDE) -c -o $(TMP)/main.o
-	$(CC) "./src/bdd.cpp"        $(CFLAGS) $(INCLUDE) -c -o $(TMP)/bdd.o
-	$(CC) "./src/login.cpp"      $(CFLAGS) $(INCLUDE) -c -o $(TMP)/login.o
-	$(CC) "./src/admin.cpp"      $(CFLAGS) $(INCLUDE) -c -o $(TMP)/admin.o
-	$(CC) "./src/professeur.cpp" $(CFLAGS) $(INCLUDE) -c -o $(TMP)/professeur.o
-	$(CC) "./src/eleve.cpp"      $(CFLAGS) $(INCLUDE) -c -o $(TMP)/eleve.o
+$(PROGRAMME):$(TMP)/ressources.o $(TMP)/login.o $(TMP)/main.o $(TMP)/bdd.o $(TMP)/admin.o $(TMP)/professeur.o $(TMP)/eleve.o
 	
-	$(CC) $(TMP)/main.o $(TMP)/bdd.o $(TMP)/login.o $(TMP)/admin.o $(TMP)/professeur.o $(TMP)/eleve.o $(RESSOURCES) -o "./bin/$@"  $(LIBS)
+	$(CC) "$(TMP)/main.o" "$(TMP)/bdd.o" "$(TMP)/login.o" "$(TMP)/admin.o" "$(TMP)/professeur.o" "$(TMP)/eleve.o" "$(RESSOURCES)" -o "./bin/$@"  $(LIBS)
 	$(LANCER_PROG)
 
-$(TMP)/ressources.o":
+
+$(TMP)/ressources.o:
 	$(COMMANDE_WINDRES)
+
+$(TMP)/login.o: ./src/login.cpp
+	$(CC) "./src/main.cpp"  	$(CFLAGS) $(INCLUDE) -c -o "$@"
+$(TMP)/main.o: ./src/main.cpp
+	$(CC) "./src/main.cpp"   	 $(CFLAGS) $(INCLUDE) -c -o "$@"
+$(TMP)/bdd.o: ./src/bdd.cpp
+	$(CC) "./src/bdd.cpp"   	 $(CFLAGS) $(INCLUDE) -c -o "$@"
+$(TMP)/admin.o: ./src/admin.cpp
+	$(CC) "./src/admin.cpp" 	 $(CFLAGS) $(INCLUDE) -c -o "$@"
+$(TMP)/professeur.o: ./src/professeur.cpp
+	$(CC) "./src/professeur.cpp" $(CFLAGS) $(INCLUDE) -c -o "$@"
+$(TMP)/eleve.o: ./src/eleve.cpp
+	$(CC) "./src/main.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"
 	
 clean:
 	$(RM_RES)
