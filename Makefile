@@ -1,7 +1,7 @@
 PROGRAMME=GestNotes
 CC=g++
 ARGS_COMPILATION=-Wall -g
-INCLUDE=-I "./include" -I "c:\include"
+INCLUDE=-I "./include"
 
 # note : si vous avez comme erreur 'wx/msw/hand.cur': No such file or directory
 # c'est un bug connu de windres.exe : https://sourceware.org/bugzilla/show_bug.cgi?id=4356
