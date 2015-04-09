@@ -1,5 +1,8 @@
 #include "main.h"
 
+#ifndef __WXMSW__
+	#include "ressources.xpm"//ressources linux
+#endif
 
 Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(300,220)))
 {

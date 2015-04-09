@@ -9,13 +9,10 @@
 	#include <wx/filename.h>
 	#include <iostream>
 
-#include <ctime>
+	//#include <ctime>
 
 	#include <SQLite/sqlite3.h>
 
-	#ifndef __WXMSW__
-		#include "ressources.xpm"//ressources linux
-	#endif
 
 	using namespace std;
 	
@@ -93,6 +90,7 @@
 		protected:
 			connexion_bdd* bdd;
 			int matricule;
+			Frame_login *parent;
 			
 		public:
 			Frame_principale(Frame_login *parent,int &matricule,connexion_bdd*& bdd);
@@ -112,7 +110,6 @@
 		private:
 			int id, nombre_matiere;
 			connexion_bdd* bdd;
-			bool veto_autorise;
 			Frame_principale* parent;
 			wxArrayString texte_select;
 

@@ -29,7 +29,6 @@ int App_GestNotes::OnExit()
 
 Frame_principale::Frame_principale(Frame_login *parent,int& matricule,connexion_bdd*& bdd) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
-	parent->Destroy();
 	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
 
 	wxMenuBar *barre_menu= new wxMenuBar();
@@ -71,7 +70,8 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 			return ;
 		}
 	}
-	// this->Destroy();
+	this->Destroy();
+	parent->Destroy();
 }
 
 void Frame_principale::onAbout(wxCommandEvent &evenement)
