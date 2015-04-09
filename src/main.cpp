@@ -27,10 +27,10 @@ int App_GestNotes::OnExit()
 
 
 
-Frame_principale::Frame_principale(Frame_login *parent,int& matricule,connexion_bdd*& bdd) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
+Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule,connexion_bdd*& bdd) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
-
+	parent=parent_arg;
 	wxMenuBar *barre_menu= new wxMenuBar();
 
 	wxMenu *menu_fichier = new wxMenu();
@@ -45,17 +45,15 @@ Frame_principale::Frame_principale(Frame_login *parent,int& matricule,connexion_
 
 	this->CreateStatusBar(1);
 
-
-
-	this->Connect(wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_principale::onClose),NULL, this);
-	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), NULL, this);
+	this->Connect(wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_principale::onClose),(wxObject*)this, this);
+	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame_principale::onQuit), (wxObject*)this, this);
 	this->Connect(wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(Frame_principale::onAbout), NULL, this);
 }
 
 
 void Frame_principale::onQuit(wxCommandEvent &evenement)
 {
-	this->Close();
+	parent->onClick_annuler(*(new wxCommandEvent()));
 }
 
 
@@ -70,8 +68,9 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 			return ;
 		}
 	}
-	this->Destroy();
-	parent->Destroy();
+	exit(0);
+	
+	//parent->onClose(*(new wxCloseEvent()));
 }
 
 void Frame_principale::onAbout(wxCommandEvent &evenement)
