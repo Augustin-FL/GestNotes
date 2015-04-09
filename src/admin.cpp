@@ -1,9 +1,5 @@
 #include "main.h"
 
-#ifndef __WXMSW__
-	#include "ressources.xpm"//ressources linux
-#endif
-
 Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
 

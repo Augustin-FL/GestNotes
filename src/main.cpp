@@ -1,5 +1,9 @@
 #include "main.h"
 
+#ifndef __WXMSW__
+	#include "ressources.xpm"//ressources linux
+#endif
+
 IMPLEMENT_APP(App_GestNotes);
 
 bool App_GestNotes::OnInit()
