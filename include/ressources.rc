@@ -13,6 +13,15 @@ logo_ressource RCDATA "GestNotes.png"
     "ressources compiler"....Et ajoutez ("add") l'emplacement actuel
     du dossier "include" de MinGW (dans lequel vous avez installé wxWidgets)
 
+    Attention : Vous devez veiller a ce que le chemin en question ne comporte pas
+    d'espace ! pour cela vous devez utilier l'astuce de la syntaxe DOS....
+
+    par exemple si votre emplacement est "C:\Program Files\CodeBlocks\MinGW\include",
+    alors écrivez "C:\Progra~1\CodeBlocks\MinGW\include"
+    si votre emplacement est "C:\Program Files (x86)\CodeBlocks\MinGW\include"
+    alors écrivez "C:\Progra~2\CodeBlocks\MinGW\include"
+    etc...
+
     désolé pour ce bug, j'y peux rien, c'est un bug connu de windres :
     https://sourceware.org/bugzilla/show_bug.cgi?id=4356
 
