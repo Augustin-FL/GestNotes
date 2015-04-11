@@ -4,7 +4,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 {
 
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
-	
+
 	wxPanel *fenetre = new wxPanel(this);
 
 	wxBoxSizer *sizer_principal = new wxBoxSizer(wxVERTICAL);
@@ -20,32 +20,32 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxButton *button_modifier= new wxButton(fenetre, -1, _T("Modifier"));
 	wxButton *button_supprimer= new wxButton(fenetre, -1, _T("Supprimer"));
 
-	wxCheckBox *input_checkbox__notes_hors_bareme=new wxCheckBox(fenetre,-1,_T("Autoriser les notes hors barème\n(au dessus de 20)\n\n"));	
-	
+	wxCheckBox *input_checkbox__notes_hors_bareme=new wxCheckBox(fenetre,-1,_T("Autoriser les notes hors barème\n(au dessus de 20)\n\n"));
+
 	//Arrondi des moyennes (n'affecte pas les calculs)
 	wxStaticText  *label_arrondir_moyenne 	= new wxStaticText(fenetre, -1, _T("Arrondir les moyennes sur les buletins\n(n'affecte pas les calculs)\n\n"));
 	wxRadioButton *input_radio__arrondi_cent=new wxRadioButton(fenetre,-1,_T("Arrondi au 1/100° de point"));
 	wxRadioButton *input_radio__arrondi_dix=new wxRadioButton(fenetre,-1,_T("Arrondi au 1/10° de point"));
 	wxRadioButton *input_radio__arrondi_demi=new wxRadioButton(fenetre,-1,_T("Arrondi au demi point"));
 	wxRadioButton *input_radio__arrondi_un=new wxRadioButton(fenetre,-1,_T("Arrondi au point"));
-	
-	wxCheckBox *input_checkbox__afficher_buletins=new wxCheckBox(fenetre,-1,_T("Autoriser l'affichage/impression des buletins"));	
-	
+
+	wxCheckBox *input_checkbox__afficher_buletins=new wxCheckBox(fenetre,-1,_T("Autoriser l'affichage/impression des buletins"));
+
 	sizer_principal->Add(sizer_principal_haut,1);
 	sizer_principal->Add(sizer_principal_bas,1,wxEXPAND|wxALL,15);
 
 	sizer_principal_haut->Add(sizer_gauche,1,wxTOP |wxCENTER,1);
 	sizer_principal_haut->Add(sizer_centre,1,wxTOP|wxALIGN_CENTER,1);
 	sizer_principal_haut->Add(sizer_droite,1,wxTOP|wxALIGN_CENTER,1);
-	
+
 	sizer_centre->Add(texte_conteneur_arrondi);
-	
+
 	sizer_gauche->Add(texte_conteneur_ajout,0,wxLEFT,15);
 	texte_conteneur_ajout->Add(texte,0, wxALIGN_CENTER_HORIZONTAL,5);
 	texte_conteneur_ajout->Add(button_ajouter,0,wxALIGN_LEFT|wxALIGN_CENTER_HORIZONTAL,5);
 	texte_conteneur_ajout->Add(button_modifier,0,wxALIGN_LEFT|wxALIGN_CENTER_HORIZONTAL,5);
 	texte_conteneur_ajout->Add(button_supprimer,0,wxALIGN_LEFT|wxALIGN_CENTER_HORIZONTAL,5);
-	
+
 	texte_conteneur_arrondi->Add(label_arrondir_moyenne);
 	texte_conteneur_arrondi->Add(input_radio__arrondi_cent);
 	texte_conteneur_arrondi->Add(input_radio__arrondi_dix);
@@ -54,7 +54,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 
 	sizer_droite->Add(input_checkbox__notes_hors_bareme,1);
 	sizer_droite->Add(input_checkbox__afficher_buletins,1);
-	
+
 	fenetre->SetSizer(sizer_principal);
 
 	button_ajouter->Bind(wxEVT_BUTTON,&Frame_admin::onAjouter,this,wxID_ANY,wxID_ANY,(wxObject*) bdd);
@@ -62,7 +62,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	//button_supprimer->Connect(wxEVT_BUTTON,wxCommandEventHandler(Frame_admin::onSupprimer));
 	this->SetStatusText(_T("GestNotes - Accès Admin"));
 	this->Show();
-	
+
 /*
 Saisie des notes : possibilité de mettre des notes hors barème
 Par exemple, mettre 24/20 à un devoir
@@ -80,10 +80,13 @@ void Frame_admin::onAjouter(wxCommandEvent &evenement)
 
 // -------------
 
-Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*& bdd) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
+Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*& bdd_private) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
 {
+	bdd=bdd_private;
+
 	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
+	
 	
 	wxPanel          *fenetre					= new wxPanel(this,-1);
 	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
@@ -96,7 +99,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	wxFlexGridSizer  *conteneur_ajout_droite	= new wxFlexGridSizer(2,11,5);
 	wxStaticLine     *separarion_horisontale 	= new wxStaticLine(fenetre, -1);
 	wxStaticLine     *separarion_verticale	 	= new wxStaticLine(fenetre, -1,wxDefaultPosition, wxDefaultSize,wxLI_VERTICAL);
-	
+
 	wxStaticText* texte_ajouter_prof 		= new wxStaticText(fenetre, -1, _T("\nAjouter un professeur, ou un admin : \n"));
 	wxStaticText* label_ajouter_matricule 	= new wxStaticText(fenetre, -1, _T("\nLier cette personne à un profil existant : \n"));
 	wxStaticText* label_ajout_nom 			= new wxStaticText(fenetre, -1, _T("Nom : "));
@@ -120,7 +123,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	input_ajout_matricule					= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_nom							= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_prenom						= new wxTextCtrl(fenetre, -1, _T(""));
-	
+
 	input_ajout_mdp							= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
 	input_ajout_eleve__prenom_responsable	= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_eleve__tel_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
@@ -150,10 +153,10 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	input_radio_matricule_non	= new wxRadioButton(fenetre, -1, _T("Non"));
 	input_select_matiere_ajout	= new wxComboBox   (fenetre, -1, _T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
 	bouton_valider_ajout		= new wxButton     (fenetre, -1, _T("Valider"));
-	
-	
+
+
 	contenu_fenetre_sans_marge->Add(texte_conteneur_ajout,0,  wxALL, 5);
-	
+
 	texte_conteneur_ajout->Add(texte_ajouter_prof,0,wxALIGN_CENTER);
 	texte_conteneur_ajout->Add(conteneur_ajout_horisontal);
 
@@ -178,7 +181,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 
 	texte_conteneur_ajout->Add(separarion_horisontale,0, wxALL | wxEXPAND, 5);
 	texte_conteneur_ajout->Add(bouton_valider_ajout,1, wxALIGN_CENTER_HORIZONTAL,5);
-	
+
 	contenur_radio_ajout->Add(input_radio_prof,1);
 	contenur_radio_ajout->Add(input_radio_admin,1);
 	contenur_radio_ajout->Add(input_radio_eleve,1);
@@ -217,16 +220,16 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	conteneur_ajout_droite->Add(label_ajout_eleve__groupe);
 	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
 
-	
-	bouton_valider_ajout->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_admin_ajouter::onClick));
-	input_select_matiere_ajout->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler(Frame_admin_ajouter::onChange_select_matiere),NULL,this);
-	input_radio_prof->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED  ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
-	input_radio_eleve->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
-	input_radio_admin->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
-	input_radio_matricule_oui->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
-	input_radio_matricule_non->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED ,wxCommandEventHandler(Frame_admin_ajouter::onClick_radio),NULL,this);
+	bouton_valider_ajout->Bind(wxEVT_BUTTON,&Frame_admin_ajouter::onClick,this);//,wxID_ANY,wxID_ANY,(wxObject*) bdd);
+	//bouton_valider_ajout->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(F),NULL,this);
+	input_select_matiere_ajout->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED,    &Frame_admin_ajouter::onChange_select_matiere,this);
+	input_radio_prof->Bind(          wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,          this);
+	input_radio_eleve->Bind(         wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,          this);
+	input_radio_admin->Bind(         wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,          this);
+	input_radio_matricule_oui->Bind( wxEVT_COMMAND_RADIOBUTTON_SELECTED ,&Frame_admin_ajouter::onClick_radio,          this);
+	input_radio_matricule_non->Bind( wxEVT_COMMAND_RADIOBUTTON_SELECTED ,&Frame_admin_ajouter::onClick_radio,          this);
 
-	
+
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
 	this->ShowModal();
 }
@@ -353,6 +356,7 @@ void Frame_admin_ajouter::onChange_select_matiere(wxCommandEvent &evenement)
 
 void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
 {
+//	bdd=(connexion_bdd*) evenement.GetEventUserData();
 	requete_sql *req=NULL;
 	int type_ajout=-1;
 	int matricule=0;
@@ -447,7 +451,7 @@ void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
 			req->bind(":adresse_responsable",string(input_ajout_eleve__tel_responsable->GetValue().mb_str()));
 			req->bind(":mail_responsable",string(input_ajout_eleve__mail_responsable->GetValue().mb_str()));
 		}
-		else if(type_ajout==ADMIN)  req=bdd->prepare("insert into admins values (:matricule,:nom,:prenom)");
+		else if(type_ajout==ADMIN)  req=bdd->prepare("insert into admin values (:matricule,:nom,:prenom)");
 		else type_ajout=-1;
 	}
 
