@@ -28,12 +28,12 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
 	
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
 	
-	contenu_fenetre_sans_marge->Add(texte_explicatif, 			1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL);//la fenetre contient : 
-	contenu_fenetre_sans_marge->Add(conteneur_authentification, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL);//un texte explicatif, la zone de
-	contenu_fenetre_sans_marge->Add(conteneur_boutons, 			1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxTOP, 10);//login, et les boutons
+	contenu_fenetre_sans_marge->Add(texte_explicatif, 			1, wxALIGN_CENTER);//la fenetre contient : 
+	contenu_fenetre_sans_marge->Add(conteneur_authentification, 1, wxALIGN_CENTER);//un texte explicatif, la zone de
+	contenu_fenetre_sans_marge->Add(conteneur_boutons, 			1, wxALIGN_CENTER|wxTOP, 10);//login, et les boutons
 	
-	conteneur_authentification->Add(conteneur_horisontal_login, 1, wxALIGN_LEFT|wxDOWN,5);//on dit que la zone d'authentification contient 
-	conteneur_authentification->Add(conteneur_horisontal_mdp,   1, wxALIGN_LEFT);//un login et un mot de passe
+	conteneur_authentification->Add(conteneur_horisontal_login, 1, wxDOWN,5);//on dit que la zone d'authentification contient 
+	conteneur_authentification->Add(conteneur_horisontal_mdp,   1 );//un login et un mot de passe
 	
 	conteneur_horisontal_login->Add(label_login, 1);//la zone login contient un label pour le login, et un champ d'input.
 	conteneur_horisontal_login->Add(input_login, 1);
@@ -56,7 +56,6 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
 	this->Show();
 
 	bdd=arg_bdd;
-//	frame_parente=parent;
 	type=PAS_CONNECTE;
 }
 

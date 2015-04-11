@@ -3,12 +3,6 @@
 
 connexion_bdd::connexion_bdd()//const string &infos)
 {
-	
-	
-	
-	
-	
-	
 	/*if(infos.find("sqlite:")!=string::npos)
 	{*/
 		string path_fichier=string(wxStandardPaths::Get().GetExecutablePath().mb_str());// le chemin de l'executable en cours
