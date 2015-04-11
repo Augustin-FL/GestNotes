@@ -7,6 +7,7 @@
 	#include <wx/stdpaths.h>
 	#include <wx/hyperlink.h>
 	#include <wx/filename.h>
+	#include <wx/listctrl.h>
 
 	#include <SQLite/sqlite3.h>
 
@@ -161,6 +162,11 @@
 	{
 		public:
 			Frame_eleve(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
+			void OnClick_modifier(wxCommandEvent &evenement);
+			void OnClick_imprimer_buletin(wxCommandEvent &evenement);
+			
+		private:
+			wxButton *bouton_modifier,*bouton_imprimer_buletin;
 		
 	};
 

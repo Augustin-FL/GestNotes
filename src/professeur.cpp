@@ -21,6 +21,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 			//saisir notes
 			//changer groupe(?)
 			//si accord de l'admin : changer les notes
+			//ecrire des commentaires pour les buletins
 }
 
 

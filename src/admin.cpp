@@ -58,7 +58,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	fenetre->SetSizer(sizer_principal);
 
 	button_ajouter->Bind(wxEVT_BUTTON,&Frame_admin::onAjouter,this,wxID_ANY,wxID_ANY,(wxObject*) bdd);
-	//button_supprimer->Connect(wxEVT_BUTTON,wxCommandEventHandler(Frame_admin::onModifier));
+	//button_modifier->Connect(wxEVT_BUTTON,wxCommandEventHandler(Frame_admin::onModifier));
 	//button_supprimer->Connect(wxEVT_BUTTON,wxCommandEventHandler(Frame_admin::onSupprimer));
 	this->SetStatusText(_T("GestNotes - Accès Admin"));
 	this->Show();
