@@ -1,7 +1,7 @@
 #include "main.h"
 
 #ifndef __WXMSW__
-	#include "ressources.xpm"//ressources linux
+	#include "ressources.xpm"// ressources pour linux (le logo etc...)
 #endif
 
 
@@ -9,8 +9,8 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
 {
 	SetIcon(wxICON(icone)); 
 	frame_actuelle=this;
-	wxPanel         *fenetre					= new wxPanel(this);
-	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL);
+	wxPanel         *fenetre					= new wxPanel(this); // un "panel" est la fenètre en elle même
+	wxBoxSizer      *contenu_fenetre_sans_marge	= new wxBoxSizer(wxVERTICAL); // les boxSizer et StaticBoxSizer sont l'équivalent des "divs" en HTML
 	wxBoxSizer		*conteneur_horisontal_login	= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer		*conteneur_horisontal_mdp 	= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer 		*conteneur_boutons			= new wxBoxSizer(wxHORIZONTAL);
@@ -18,15 +18,16 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
 	wxStaticText	*texte_explicatif			= new wxStaticText(fenetre, -1, _T("\nVeuillez vous authentifier\npour accéder à votre espace GestNotes.\n"));
 	wxStaticBoxSizer*conteneur_authentification	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Authentification : "));
 	
-	wxStaticText	*label_login				= new wxStaticText(fenetre, -1, _T("Matricule : ")); 				
+	wxStaticText	*label_login				= new wxStaticText(fenetre, -1, _T("Matricule : ")); 	//Du texte
 	wxStaticText	*label_mdp					= new wxStaticText(fenetre, -1, _T("Mot de passe : ")); 				
 	
-	bouton_valider	= new wxButton(    fenetre, -1, _T("Valider"));
+	bouton_valider	= new wxButton(    fenetre, -1, _T("Valider"));// Des champs d'input
 	bouton_annuler 	= new wxButton(    fenetre, -1, _T("Quitter"));
-	input_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
+	input_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);// un input password
 	input_login		= new wxTextCtrl(  fenetre, -1, _T(""));
 	
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
+
 	
 	contenu_fenetre_sans_marge->Add(texte_explicatif, 			1, wxALIGN_CENTER);//la fenetre contient : 
 	contenu_fenetre_sans_marge->Add(conteneur_authentification, 1, wxALIGN_CENTER);//un texte explicatif, la zone de
@@ -48,11 +49,11 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
 	input_mdp->MoveAfterInTabOrder(input_login);//l'ordre des champs avec l'appui sur "tab"
 	bouton_annuler->MoveAfterInTabOrder(input_mdp);
 	
-	bouton_valider->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_login::onClick_valider), NULL, this);
-	bouton_annuler->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(Frame_login::onClick_annuler), NULL, this);
-	input_login->Connect( 	wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(Frame_login::onChange), NULL, this);
-	input_mdp->Connect( 	wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(Frame_login::onChange), NULL, this);
-	this->Connect(			wxEVT_CLOSE_WINDOW,wxCloseEventHandler(Frame_login::onClose),NULL, this);
+	bouton_valider->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_valider, this);
+	bouton_annuler->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_annuler,this);
+	input_login->Bind(wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange,this);
+	input_mdp->Bind(  wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange, this);
+	this->Bind(		  wxEVT_CLOSE_WINDOW,		 &Frame_login::onClose, this);
 	this->Show();
 
 	bdd=arg_bdd;
