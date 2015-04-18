@@ -1,3 +1,7 @@
+/*
+AUTHOR : 
+
+*/
 #include "main.h"
 
 Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
