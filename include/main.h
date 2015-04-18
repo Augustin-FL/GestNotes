@@ -1,13 +1,15 @@
 #ifndef HEADERS_INCLUS
 
 	#define HEADERS_INCLUS
-
+	#include <map>
+	
 	#include <wx/wx.h>
 	#include <wx/statline.h>
 	#include <wx/stdpaths.h>
 	#include <wx/hyperlink.h>
 	#include <wx/filename.h>
 	#include <wx/listctrl.h>
+	
 
 	#include <SQLite/sqlite3.h>
 

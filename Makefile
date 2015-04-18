@@ -1,7 +1,7 @@
 PROGRAMME=GestNotes
 CC=g++
 ARGS_COMPILATION=-Wall -g
-INCLUDE=-I "./include"
+INCLUDE=-I "./include" -I"C:\include"
 
 # note : si vous avez comme erreur 'wx/msw/hand.cur': No such file or directory
 # c'est un bug connu de windres.exe : https://sourceware.org/bugzilla/show_bug.cgi?id=4356
@@ -27,7 +27,7 @@ RM_RES=rm "$(TMP)ressources.o"
 else  
 # sous linux/osX : on utilise wx-config, et on ne lance pas le programme.
 # et les fichiers .o sont mis dans le dossier ./obj
-LIBS=`wx-config --libs` -lsqlite3
+LIBS=`wx-config --libs` -lsqlite3 
 CFLAGS=`wx-config --cxxflags` $(ARGS_COMPILATION)
 REP_COURRANT=$(shell pwd)
 $(shell mkdir -p obj)

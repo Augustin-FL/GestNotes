@@ -34,15 +34,16 @@ connexion_bdd::connexion_bdd()//const string &infos)
 
 
 		this->exec("CREATE TABLE IF NOT EXISTS notes (									\
-						id_eleve	INTEGER,											\
-						id_matiere	INTEGER,											\
-						note		INTEGER												\
+						id_eleve	INTEGER NOT NULL,									\
+						id_matiere	INTEGER NOT NULL,									\
+						note		INTEGER NOT NULL,									\
+						id_note     INTEGER												\
 					);");
 
 
 		this->exec("CREATE TABLE IF NOT EXISTS matieres(								\
 						id_matiere	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,	\
-						nom	TEXT														\
+						nom	        TEXT												\
 					);");
 
 
@@ -253,8 +254,6 @@ int requete_sql::fetch()
 }
 int requete_sql::getColumn_int(int numero)
 {
-
-
 	if(numero>nb_colonnes-1 || numero<0 || types[numero]!=SQLITE_INTEGER) return -1;
 
 	return sqlite3_column_int(requete,numero);
