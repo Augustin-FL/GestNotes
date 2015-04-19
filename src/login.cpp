@@ -50,10 +50,10 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
     bouton_annuler->MoveAfterInTabOrder(input_mdp);
 
     bouton_valider->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_valider, this);
-    bouton_annuler->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_annuler,this);
-    input_login->Bind(wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange,this);
-    input_mdp->Bind(  wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange, this);
-    this->Bind(		  wxEVT_CLOSE_WINDOW,		 &Frame_login::onClose, this);
+    bouton_annuler->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_annuler, this);
+    input_login->Bind(wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange,		this);
+    input_mdp->Bind(  wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange, 		this);
+    this->Bind(		  wxEVT_CLOSE_WINDOW,		 &Frame_login::onClose, 		this);
     this->Show();
 
     bdd=arg_bdd;
@@ -86,8 +86,8 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
         req->closeCursor();
         this->Hide();
 
-        if(type==ELEVE) frame_enfant=new Frame_eleve(this,matricule,bdd);
-        else if(type==PROF) frame_enfant=new Frame_prof(this,matricule,bdd);
+        if(type==ELEVE)      frame_enfant=new Frame_eleve(this,matricule,bdd);
+        else if(type==PROF)  frame_enfant=new Frame_prof (this,matricule,bdd);
         else if(type==ADMIN) frame_enfant=new Frame_admin(this,matricule,bdd);
         else
         {
@@ -111,7 +111,6 @@ void Frame_login::onClick_annuler(wxCommandEvent &evenement)
 
 void Frame_login::onClose(wxCloseEvent &evenement)
 {
-
     if(evenement.CanVeto() && type==PAS_CONNECTE)
     {
         int reponse=wxMessageBox(_T("Voulez vous vraiment quitter?"), _T("Quitter"), wxYES_NO | wxCANCEL);

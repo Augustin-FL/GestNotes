@@ -50,7 +50,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	liste_notes->AppendColumn(_T("Moyenne"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("Commentaires"),wxLIST_FORMAT_CENTER);
 	
-	req=bdd->prepare("select nom as nom_matiere, note, id_note,notes.id_matiere from matieres    \
+	req=bdd->prepare("select nom as nom_matiere, note, type_note,notes.id_matiere from matieres    \
 	left outer join notes on notes.id_matiere=matieres.id_matiere where notes.id_eleve=:matricule");
 	req->bind(":matricule",matricule);
 	
