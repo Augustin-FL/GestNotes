@@ -25,6 +25,8 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		}
 
 		requete_precedente="";
+		this->exec("pragma journal_mode=OFF");
+		
 		this->exec("CREATE TABLE IF NOT EXISTS profs (											\
 						id 		INTEGER NOT NULL,												\
 						nom		TEXT 	NOT NULL,												\
@@ -80,19 +82,21 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						mail_responsable	TEXT												\
 					);");
 
-
-
 		this->exec("CREATE TABLE IF NOT EXISTS admin(											\
 						id					INTEGER NOT NULL,									\
 						nom					TEXT 	NOT NULL,									\
 						prenom				TEXT 	NOT NULL									\
+					);");
+		this->exec("CREATE TABLE IF NOT EXISTS reglages(										\
+						notes_hors_bareme	INTEGER NOT NULL,									\
+						precision			INTEGER NOT NULL, 									\
+						affichage_buletins	INTEGER NOT NULL									\
 					);");
 
 		this->req=0;
 
 		if(!fichier_existe)
 		{
-
 			this->exec("INSERT INTO login_centralise VALUES (1,'test',2)");
 			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
 			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
@@ -103,6 +107,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO eleve VALUES (3,'Camille','Sunaara',0,0,0,'','Rue qui n''existe pas',12,75001,'Paris',060102030405,'Boiseck','Colombette',01203040506,'howyouloveme@yopmail.com')");
 			this->exec("INSERT INTO matieres VALUES (1,'maths')");
 			this->exec("INSERT INTO matieres VALUES (2,'physique')");
+			this->exec("INSERT INTO reglages VALUES (0,100,0)");
 		}
 	/*}
 	else
@@ -163,6 +168,7 @@ double connexion_bdd::getColumn_float(int numero)
 }
 void connexion_bdd::close()
 {
+	if(req!=NULL) req->closeCursor();
 	sqlite3_close(bdd);
 }
 
@@ -207,7 +213,7 @@ int requete_sql::bind(const string &cle,const string &valeur)
 
 	if(sqlite3_bind_text(requete,sqlite3_bind_parameter_index(requete,cle.c_str()), valeur.c_str(),strlen(valeur.c_str()), SQLITE_TRANSIENT)!= SQLITE_OK)
 	{
-		wxMessageBox(_T("Erreur lors du bind ! ")+cle+_T(" : ")+valeur);
+		wxMessageBox(_T("Erreur lors du bind ! clé=")+cle+_T(" : valeur=")+valeur);
 		return -1;
 	}
 	return 0;
@@ -218,7 +224,7 @@ int requete_sql::bind(int cle,int valeur)
 	if(sqlite3_bind_int(requete,cle, valeur)!= SQLITE_OK)
 	{
 		wxString a;
-		a<<_T("Erreur lors du bind ! ")<<cle<<_T(" : ")<<valeur;
+		a<<_T("Erreur lors du bind ! clé")<<cle<<_T(" : valeur=")<<valeur;
 		wxMessageBox(a,"Erreur !");
 		return -1;
 	}
