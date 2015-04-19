@@ -104,14 +104,14 @@
 		public:
 			Frame_admin_ajouter(Frame_principale* parent_arg,connexion_bdd*& bdd);
 			void onClick_radio(wxCommandEvent &evenement);
-			void onChange_select_matiere(wxCommandEvent &evenement);
+			void onChange_select(wxCommandEvent &evenement);
 			void onClick(wxCommandEvent &evenement);
 			
 		private:
 			int id, nombre_matiere;
 			connexion_bdd* bdd;
 			Frame_principale* parent;
-			wxArrayString texte_select;
+			wxArrayString texte_select,texte_classes;
 
 			wxRadioButton *input_radio_prof;
 			wxRadioButton *input_radio_eleve;
@@ -142,12 +142,14 @@
 						*label_ajout_eleve__code_postal,
 						*label_ajout_eleve__ville,
 						*label_ajout_eleve__tel_mobile,
-						*label_ajout_eleve__groupe;
+						*label_ajout_eleve__groupe,
+						*label_ajout_eleve__classe;
 
 			wxChoice *input_ajout_eleve__sexe,
 					 *input_ajout_eleve__groupe;
 
-			wxComboBox *input_select_matiere_ajout;
+			wxComboBox *input_select_matiere_ajout,
+					   *input_ajout_eleve__classe;
 
 			wxButton *bouton_valider_ajout;
 			Frame_principale* frame_parente;
@@ -181,7 +183,6 @@
 			Frame_admin(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
 			void onAjouter(wxCommandEvent &evenement);
 			void onClick_radio_ajout(wxCommandEvent &evenement);
-			void onChange_select_matiere(wxCommandEvent &evenement);
 			void onClick_ajouter(wxCommandEvent &evenement);
 	};
 

@@ -25,61 +25,67 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		}
 
 		requete_precedente="";
-		this->exec("CREATE TABLE IF NOT EXISTS profs (									\
-						id 		INTEGER NOT NULL,										\
-						nom		TEXT 	NOT NULL,										\
-						prenom	TEXT,													\
-						matiere	INTEGER NOT NULL										\
+		this->exec("CREATE TABLE IF NOT EXISTS profs (											\
+						id 		INTEGER NOT NULL,												\
+						nom		TEXT 	NOT NULL,												\
+						prenom	TEXT,															\
+						matiere	INTEGER NOT NULL,												\
+						classe INTEGER NOT NULL													\
 					);");
 
 
-		this->exec("CREATE TABLE IF NOT EXISTS notes (									\
-						id_eleve	INTEGER NOT NULL,									\
-						id_matiere	INTEGER NOT NULL,									\
-						note		INTEGER NOT NULL,									\
-						id_note     INTEGER												\
+		this->exec("CREATE TABLE IF NOT EXISTS notes (											\
+						id_eleve	INTEGER NOT NULL,											\
+						id_matiere	INTEGER NOT NULL,											\
+						note		INTEGER NOT NULL,											\
+						type_note   INTEGER														\
+					);");
+		this->exec("CREATE TABLE IF NOT EXISTS classes ( 										\
+					id						INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,	\
+					nom						TEXT NOT NULL,										\
+					appréciation_generale	TEXT												\
 					);");
 
-
-		this->exec("CREATE TABLE IF NOT EXISTS matieres(								\
-						id_matiere	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,	\
-						nom	        TEXT												\
-					);");
-
-
-
-		this->exec("CREATE TABLE IF NOT EXISTS	login_centralise(						\
-						matricule	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 	\
-						mdp			TEXT NOT NULL,										\
-						type		INTEGER												\
-					);");
-
-
-
-		this->exec("CREATE TABLE IF NOT EXISTS eleve(									\
-						id					INTEGER NOT NULL,							\
-						prenom				TEXT 	NOT NULL,							\
-						nom 				TEXT	NOT NULL,							\
-						groupe 				INTEGER NOT NULL,							\
-						sexe				INTEGER NOT NULL,							\
-						date_inscription	NUMERIC NOT NULL,							\
-						rue					TEXT,										\
-						num_rue				INTEGER,									\
-						code_postal			INTEGER,									\
-						ville				INTEGER,									\
-						tel_mobile			INTEGER,									\
-						nom_responsable		TEXT,										\
-						prenom_responsable	TEXT,										\
-						tel_responsable		INTEGER,									\
-						mail_responsable	TEXT										\
+		this->exec("CREATE TABLE IF NOT EXISTS matieres(										\
+						id_matiere	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,			\
+						nom	        TEXT														\
 					);");
 
 
 
-		this->exec("CREATE TABLE IF NOT EXISTS admin(									\
-						id					INTEGER NOT NULL,							\
-						nom					TEXT 	NOT NULL,							\
-						prenom				TEXT 	NOT NULL							\
+		this->exec("CREATE TABLE IF NOT EXISTS	login_centralise(								\
+						matricule	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 			\
+						mdp			TEXT NOT NULL,												\
+						type		INTEGER														\
+					);");
+
+
+
+		this->exec("CREATE TABLE IF NOT EXISTS eleve(											\
+						id					INTEGER NOT NULL,									\
+						prenom				TEXT 	NOT NULL,									\
+						nom 				TEXT	NOT NULL,									\
+						classe 				INTEGER NOT NULL,									\
+						groupe 				INTEGER NOT NULL,									\
+						sexe				INTEGER NOT NULL,									\
+						date_inscription	NUMERIC NOT NULL,									\
+						rue					TEXT,												\
+						num_rue				INTEGER,											\
+						code_postal			INTEGER,											\
+						ville				INTEGER,											\
+						tel_mobile			INTEGER,											\
+						nom_responsable		TEXT,												\
+						prenom_responsable	TEXT,												\
+						tel_responsable		INTEGER,											\
+						mail_responsable	TEXT												\
+					);");
+
+
+
+		this->exec("CREATE TABLE IF NOT EXISTS admin(											\
+						id					INTEGER NOT NULL,									\
+						nom					TEXT 	NOT NULL,									\
+						prenom				TEXT 	NOT NULL									\
 					);");
 
 		this->req=0;
@@ -91,9 +97,12 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
 			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
 			this->exec("INSERT INTO admin VALUES (1,'FL','Augustin')");
-			this->exec("INSERT INTO profs VALUES (2,'Elise','Bernard',1)");
-			this->exec("INSERT INTO eleve VALUES (3,'Elise','Bernard',0,0,'','Rue qui n''existe pas',12,75001,'Paris',60102030405,'Boiseck','Xiao',01203040506,'howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO profs VALUES (2,'Obiwan','Kenobi',1,0)");
+			this->exec("INSERT INTO classes VALUES (0,'1\xe8\x72\x65 S 1','')");
+			this->exec("INSERT INTO notes VALUES (3,1,8,1)");
+			this->exec("INSERT INTO eleve VALUES (3,'Camille','Sunaara',0,0,0,'','Rue qui n''existe pas',12,75001,'Paris',060102030405,'Boiseck','Colombette',01203040506,'howyouloveme@yopmail.com')");
 			this->exec("INSERT INTO matieres VALUES (1,'maths')");
+			this->exec("INSERT INTO matieres VALUES (2,'physique')");
 		}
 	/*}
 	else
@@ -102,7 +111,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		exit(0);
 	}*/
 };
-//Invalid number 0 of repetitions.
+
 connexion_bdd::~connexion_bdd()
 {
 	sqlite3_close(bdd);

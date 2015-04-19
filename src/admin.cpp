@@ -4,6 +4,12 @@ AUTHOR :
 */
 #include "main.h"
 
+/*
+
+>Editer l'appréciation Générale d'une classe
+>
+*/
+
 Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
 
@@ -88,9 +94,10 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 {
 	bdd=bdd_private;
 
-	while(bdd->exec("select nom, id_matiere from matieres")) texte_select.Add(bdd->getColumn_text(0));
+	while(bdd->exec("select nom from matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
-	
+	while(bdd->exec("select nom from classes")) texte_classes.Add(bdd->getColumn_text(0));
+	texte_classes.Add(_T("<Ajouter Une Classe>"));
 	
 	wxPanel          *fenetre					= new wxPanel(this,-1);
 	wxBoxSizer       *contenu_fenetre_sans_marge= new wxBoxSizer(wxVERTICAL);
@@ -99,7 +106,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	wxBoxSizer       *contenur_radio_ajout_2_horisontal= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer		 *conteneur_ajout_horisontal= new wxBoxSizer(wxHORIZONTAL);
 	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Ajouter : "));
-	wxFlexGridSizer  *conteneur_ajout_gauche	= new wxFlexGridSizer(2,7,5);
+	wxFlexGridSizer  *conteneur_ajout_gauche	= new wxFlexGridSizer(2,8,5);
 	wxFlexGridSizer  *conteneur_ajout_droite	= new wxFlexGridSizer(2,11,5);
 	wxStaticLine     *separarion_horisontale 	= new wxStaticLine(fenetre, -1);
 	wxStaticLine     *separarion_verticale	 	= new wxStaticLine(fenetre, -1,wxDefaultPosition, wxDefaultSize,wxLI_VERTICAL);
@@ -123,7 +130,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	label_ajout_eleve__tel_mobile			= new wxStaticText(fenetre, -1, _T("Tel. : "));
 	label_ajout_eleve__groupe				= new wxStaticText(fenetre, -1, _T("Groupe : "));
 	label_ajout_eleve__nom_responsable 		= new wxStaticText(fenetre, -1, _T("Nom du responsable : "));
-
+	label_ajout_eleve__classe		 		= new wxStaticText(fenetre, -1, _T("Classe : "));
 	input_ajout_matricule					= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_nom							= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_prenom						= new wxTextCtrl(fenetre, -1, _T(""));
@@ -139,7 +146,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	input_ajout_eleve__code_postal			= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_eleve__ville				= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_eleve__tel_mobile			= new wxTextCtrl(fenetre, -1, _T(""));
-
+	
 	wxArrayString strings_sexes;
 	wxArrayString strings_groupes;
 	strings_sexes.Add(_T("Fille"));
@@ -155,6 +162,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	input_radio_eleve 			= new wxRadioButton(fenetre, -1, _T("Élève"));
 	input_radio_matricule_oui	= new wxRadioButton(fenetre, -1, _T("Oui"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
 	input_radio_matricule_non	= new wxRadioButton(fenetre, -1, _T("Non"));
+	input_ajout_eleve__classe	= new wxComboBox   (fenetre, -1, _T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_classes);
 	input_select_matiere_ajout	= new wxComboBox   (fenetre, -1, _T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
 	bouton_valider_ajout		= new wxButton     (fenetre, -1, _T("Valider"));
 
@@ -180,6 +188,8 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	conteneur_ajout_gauche->Add(input_select_matiere_ajout);
 	conteneur_ajout_gauche->Add(label_ajouter_matricule,wxALIGN_CENTER);
 	conteneur_ajout_gauche->Add(contenur_radio_ajout_2_horisontal);
+	conteneur_ajout_gauche->Add(label_ajout_eleve__classe);
+	conteneur_ajout_gauche->Add(input_ajout_eleve__classe);
 
 	contenur_radio_ajout_2_horisontal->Add(contenur_radio_ajout_2);
 
@@ -198,7 +208,7 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 
 
 	this->onClick_radio(*(new wxCommandEvent()));
-	this->onChange_select_matiere(*(new wxCommandEvent()));
+	this->onChange_select(*(new wxCommandEvent()));
 
 
 	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable);
@@ -224,14 +234,14 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	conteneur_ajout_droite->Add(label_ajout_eleve__groupe);
 	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
 
-	bouton_valider_ajout->Bind(wxEVT_BUTTON,&Frame_admin_ajouter::onClick,this);//,wxID_ANY,wxID_ANY,(wxObject*) bdd);
-	//bouton_valider_ajout->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(F),NULL,this);
-	input_select_matiere_ajout->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED,    &Frame_admin_ajouter::onChange_select_matiere,this);
-	input_radio_prof->Bind(          wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,          this);
-	input_radio_eleve->Bind(         wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,          this);
-	input_radio_admin->Bind(         wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,          this);
-	input_radio_matricule_oui->Bind( wxEVT_COMMAND_RADIOBUTTON_SELECTED ,&Frame_admin_ajouter::onClick_radio,          this);
-	input_radio_matricule_non->Bind( wxEVT_COMMAND_RADIOBUTTON_SELECTED ,&Frame_admin_ajouter::onClick_radio,          this);
+	bouton_valider_ajout->Bind(      wxEVT_BUTTON,                       &Frame_admin_ajouter::onClick,			this);
+	input_select_matiere_ajout->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED,    &Frame_admin_ajouter::onChange_select, this);
+	input_ajout_eleve__classe->Bind( wxEVT_COMMAND_COMBOBOX_SELECTED,    &Frame_admin_ajouter::onChange_select, this);
+	input_radio_prof->Bind(          wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio, 	this);
+	input_radio_eleve->Bind(         wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,	this);
+	input_radio_admin->Bind(         wxEVT_COMMAND_RADIOBUTTON_SELECTED, &Frame_admin_ajouter::onClick_radio,	this);
+	input_radio_matricule_oui->Bind( wxEVT_COMMAND_RADIOBUTTON_SELECTED ,&Frame_admin_ajouter::onClick_radio,	this);
+	input_radio_matricule_non->Bind( wxEVT_COMMAND_RADIOBUTTON_SELECTED ,&Frame_admin_ajouter::onClick_radio,	this);
 
 
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
@@ -280,6 +290,7 @@ void Frame_admin_ajouter::onClick_radio(wxCommandEvent &evenement)
 		input_ajout_eleve__tel_mobile->Enable();
 		input_ajout_eleve__sexe->Enable();
 		input_ajout_eleve__groupe->Enable();
+		input_ajout_eleve__classe->Enable();
 
 		label_ajout_eleve__sexe->Enable();
 		label_ajout_eleve__groupe->Enable();
@@ -305,11 +316,15 @@ void Frame_admin_ajouter::onClick_radio(wxCommandEvent &evenement)
 		{
 			input_select_matiere_ajout->Enable();
 			label_ajouter_prof__matiere->Enable();
+			input_ajout_eleve__classe->Enable();
+	
 		}
 		else if(input_radio_admin->GetValue())
 		{
 			input_select_matiere_ajout->Disable();
 			label_ajouter_prof__matiere->Disable();
+			input_ajout_eleve__classe->Disable();
+	
 		}
 
 		input_ajout_eleve__nom_responsable->Disable();
@@ -344,7 +359,7 @@ void Frame_admin_ajouter::onClick_radio(wxCommandEvent &evenement)
 
 
 
-void Frame_admin_ajouter::onChange_select_matiere(wxCommandEvent &evenement)
+void Frame_admin_ajouter::onChange_select(wxCommandEvent &evenement)
 {
 	if((unsigned int)input_select_matiere_ajout->GetSelection()==texte_select.GetCount()-1)
 	{
@@ -356,11 +371,20 @@ void Frame_admin_ajouter::onChange_select_matiere(wxCommandEvent &evenement)
 		input_select_matiere_ajout->SetEditable(false);
 		input_select_matiere_ajout->SetBackgroundColour(0xFFFFFF);
 	}
+	if((unsigned int)input_ajout_eleve__classe->GetSelection()==texte_classes.GetCount()-1)
+	{
+		input_ajout_eleve__classe->SetEditable(true);
+		input_ajout_eleve__classe->SetValue("");
+	}
+	else
+	{
+		input_ajout_eleve__classe->SetEditable(false);
+		input_ajout_eleve__classe->SetBackgroundColour(0xFFFFFF);
+	}
 }
 
 void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
 {
-//	bdd=(connexion_bdd*) evenement.GetEventUserData();
 	requete_sql *req=NULL;
 	int type_ajout=-1;
 	int matricule=0;
@@ -368,9 +392,24 @@ void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
 	if(input_radio_prof->GetValue())		type_ajout=PROF;// si c'est un prof
 	else if(input_radio_admin->GetValue()) 	type_ajout=ADMIN; // un admin
 	else if(input_radio_eleve->GetValue()) 	type_ajout=ELEVE;//un éleve
-
-	if((type_ajout!=-1 &&  !(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && input_radio_matricule_non->GetValue()) || (input_radio_matricule_oui->GetValue() && !input_ajout_matricule->IsEmpty()))// si le login le mdp et le prénom sont OK
-	{
+	
+	//si ((les 3 inputs principaux sont ok && id non existant) || (id existant&& id_non_vide))
+	//&& (admin || ((prof || eleve) && le combobox classe est ok))
+	//&& (prof && le combobox matière est ok)
+	//|| (eleve && 
+	
+	if( ((!(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && input_radio_matricule_non->GetValue()) || (input_radio_matricule_oui->GetValue() && !input_ajout_matricule->IsEmpty())) && 
+	
+	(((type_ajout==PROF || type_ajout==ELEVE) && (unsigned int)input_ajout_eleve__classe->GetSelection()!=(texte_classes.GetCount()-1) && (input_ajout_eleve__classe->GetSelection()!=wxNOT_FOUND || (input_ajout_eleve__classe->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_ajout_eleve__classe->GetValue().Cmp(_T(""))!=0))) ||type_ajout==ADMIN) &&
+	( (type_ajout==PROF && 
+		((unsigned int)input_select_matiere_ajout->GetSelection()!=(texte_select.GetCount()-1) && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))) ||
+	  (type_ajout==ELEVE && 
+		(!input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty())) ||
+		type_ajout==ADMIN
+	))
+		
+	{// si tout les champs sont OK
+	
 		if(input_radio_matricule_oui->GetValue())// si on demande a associer la professeur a un matricule existant
 		{
 			req=bdd->prepare("SELECT count(*) as nbr, type from login_centralise where matricule=:matricule");
@@ -414,40 +453,56 @@ void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
 			bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
 			matricule=bdd->getColumn_int(0);
 		}
-
-		if(type_ajout==PROF && (unsigned int)input_select_matiere_ajout->GetSelection()!=(texte_select.GetCount()-1) && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))
+		
+		//si c'est un prof ou un éleve : on doit lui affecter une classe
+		if( (type_ajout==PROF || type_ajout==ELEVE) && input_ajout_eleve__classe->GetSelection()==wxNOT_FOUND)//si on as une nouvelle classe : on l'ajoute en BDD ! :p
+		{																									//l'id d'une classe est input_ajout_eleve__classe.GetSelection()-1
+			req=bdd->prepare("insert into classes (nom)  values(:nom_classe)");
+			req->bind(":nom_classe", string(input_ajout_eleve__classe->GetValue().mb_str()));
+			req->fetch();
+			req->closeCursor();
+				
+			texte_classes.Insert(input_ajout_eleve__classe->GetValue(), texte_classes.GetCount()-1);
+				
+			input_ajout_eleve__classe->Clear();
+			input_ajout_eleve__classe->Append(texte_classes);
+			input_ajout_eleve__classe->SetSelection(texte_classes.GetCount()-2);
+			this->onChange_select(*(new wxCommandEvent()));
+		}
+		
+		if(type_ajout==PROF)
 		{
-
 			if(input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)//si on as une nouvelle matière : on l'ajoute en BDD ! :p
-			{
-				req=bdd->prepare("insert into matieres (nom)  values(:nom_matiere)");
+			{//l'id de la matiere est texte_select.GetSelection()-1
+				req=bdd->prepare("insert into matieres (nom) values (:nom_matiere)");
 				req->bind(":nom_matiere", string(input_select_matiere_ajout->GetValue().mb_str()));
 				req->fetch();
 				req->closeCursor();
-
-				bdd->exec("select last_insert_rowid() AS ligne FROM matieres limit 1");
+				
 				texte_select.Insert(input_select_matiere_ajout->GetValue(), texte_select.GetCount()-1);
-
+				
 				input_select_matiere_ajout->Clear();
 				input_select_matiere_ajout->Append(texte_select);
 				input_select_matiere_ajout->SetSelection(texte_select.GetCount()-2);
-				this->onChange_select_matiere(*(new wxCommandEvent()));
+				this->onChange_select(*(new wxCommandEvent()));
 
 			}
 
-			req=bdd->prepare("insert into profs values (:matricule,:nom,:prenom,:matiere)");
+			req=bdd->prepare("insert into profs values (:matricule,:nom,:prenom,:matiere,:classe)");
 			req->bind(":matiere",input_select_matiere_ajout->GetSelection()-1);
+			req->bind(":classe",input_ajout_eleve__classe->GetSelection()-1);
 
 		}
-		else if(type_ajout==ELEVE &&  !input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !  input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty())
+		else if(type_ajout==ELEVE)
 		{
-			req=bdd->prepare("insert into eleve(:matricule,:prenom,:nom,:groupe,:sexe,:date_inscription,:rue,:num_rue,:code_postal,:ville,:tel_mobile,:nom_responsable,:prenom_responsable:tel_responsable,:mail_responsable)");
+			req=bdd->prepare("insert into eleve values (:matricule,:prenom,:nom,:classe,:groupe,:sexe,:date_inscription,:rue,:num_rue,:code_postal,:ville,:tel_mobile,:nom_responsable,:prenom_responsable:tel_responsable,:mail_responsable)");
 			req->bind(":groupe",input_ajout_eleve__groupe->GetSelection());
 			req->bind(":sexe",  input_ajout_eleve__sexe->  GetSelection());
 			req->bind(":date_inscription",time(NULL));
 
 			req->bind(":nom_rue",string(input_ajout_eleve__nom_rue->GetValue().mb_str()));
 			req->bind(":code_postal",wxAtoi(input_ajout_eleve__code_postal->GetValue()));
+			req->bind(":classe",input_ajout_eleve__classe->GetSelection()-1);
 			req->bind(":ville",string(input_ajout_eleve__ville->GetValue().mb_str()));
 			req->bind(":tel_mobile",wxAtoi(input_ajout_eleve__tel_mobile->GetValue()));
 			req->bind(":nom_responsable",string(input_ajout_eleve__nom_responsable->GetValue().mb_str()));
@@ -456,22 +511,19 @@ void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
 			req->bind(":mail_responsable",string(input_ajout_eleve__mail_responsable->GetValue().mb_str()));
 		}
 		else if(type_ajout==ADMIN)  req=bdd->prepare("insert into admin values (:matricule,:nom,:prenom)");
-		else type_ajout=-1;
 	}
-
-	if(type_ajout==-1)
+	else
 	{
 		wxMessageBox("Erreur ! Avez vous rempli tout les champs?");//tout n'est pas ok
 		return ;
 	}
-	else
-	{
-		req->bind(":matricule",matricule);
-		req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
-		req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
-		req->fetch();
-		req->closeCursor();
-	}
+	
+	
+	req->bind(":matricule",matricule);
+	req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
+	req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+	req->fetch();
+	req->closeCursor();
 
 	wxString fin;
 	if(input_radio_matricule_non->GetValue())
