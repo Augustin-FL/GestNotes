@@ -9,7 +9,6 @@ INCLUDE=-I "./include" -I"C:\include"
 # Tout en veillant a ce que le chemin ne contienne pas d'espace (utilisez "progra~1" au lieu de "program files" par exemple)
 
 
-
 ifeq ($(OS),Windows_NT)
 # sous windows : on compile avec wxMSW, et -mwindows.
 # de plus on utilise les ressources rc et on lance le programme a la fin du makefile
@@ -17,22 +16,18 @@ ifeq ($(OS),Windows_NT)
 LIBS =-lwxmsw31u -lsqlite3 -mwindows
 CFLAGS=$(ARGS_COMPILATION)
 REP_COURRANT=$(shell cd)
-TMP=$(shell echo %tmp%)
 
 LANCER_PROG=cmd /C start "$(PROGRAMME)" "$(REP_COURRANT)\bin\$(PROGRAMME).exe"
-COMMANDE_WINDRES=windres "./include/ressources.rc" "$(TMP)/ressources.o" $(INCLUDE)
-RESSOURCES="$(TMP)/ressources.o"
-RM_RES=rm "$(TMP)ressources.o"
+COMMANDE_WINDRES=windres "./include/ressources.rc" "./obj/ressources.res" -J rc -O coff $(INCLUDE)
+RESSOURCES="./obj/ressources.res"
+RM_RES=rm "./obj/ressources.res"
 
 else  
 # sous linux/osX : on utilise wx-config, et on ne lance pas le programme.
-# et les fichiers .o sont mis dans le dossier ./obj
 LIBS=`wx-config --libs` -lsqlite3 
 CFLAGS=`wx-config --cxxflags` $(ARGS_COMPILATION)
 REP_COURRANT=$(shell pwd)
-$(shell mkdir -p obj)
 
-TMP=./obj
 LANCER_PROG=
 
 COMMANDE_WINDRES=
@@ -40,26 +35,29 @@ RESSOURCES=
 RM_RES=
 endif
 	
-$(PROGRAMME):$(TMP)/ressources.o $(TMP)/login.o $(TMP)/main.o $(TMP)/bdd.o $(TMP)/admin.o $(TMP)/professeur.o $(TMP)/eleve.o
-	
-	$(CC) "$(TMP)/main.o" "$(TMP)/bdd.o" "$(TMP)/login.o" "$(TMP)/admin.o" "$(TMP)/professeur.o" "$(TMP)/eleve.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
+$(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/admin.o ./obj/professeur.o ./obj/eleve.o | ./bin
+	$(CC) "./obj/main.o" "./obj/bdd.o" "./obj/login.o" "./obj/admin.o" "./obj/professeur.o" "./obj/eleve.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
 	$(LANCER_PROG)
 
 
-$(TMP)/ressources.o:
+./obj/ressources.res: | ./obj
 	$(COMMANDE_WINDRES)
+./obj: 
+	mkdir obj
+./bin:
+	mkdir bin
 
-$(TMP)/login.o: ./src/login.cpp
+./obj/login.o: ./src/login.cpp
 	$(CC) "./src/login.cpp"  	$(CFLAGS) $(INCLUDE) -c -o "$@"
-$(TMP)/main.o: ./src/main.cpp
+./obj/main.o: ./src/main.cpp
 	$(CC) "./src/main.cpp"   	 $(CFLAGS) $(INCLUDE) -c -o "$@"
-$(TMP)/bdd.o: ./src/bdd.cpp
+./obj/bdd.o: ./src/bdd.cpp
 	$(CC) "./src/bdd.cpp"   	 $(CFLAGS) $(INCLUDE) -c -o "$@"
-$(TMP)/admin.o: ./src/admin.cpp
+./obj/admin.o: ./src/admin.cpp
 	$(CC) "./src/admin.cpp" 	 $(CFLAGS) $(INCLUDE) -c -o "$@"
-$(TMP)/professeur.o: ./src/professeur.cpp
+./obj/professeur.o: ./src/professeur.cpp
 	$(CC) "./src/professeur.cpp" $(CFLAGS) $(INCLUDE) -c -o "$@"
-$(TMP)/eleve.o: ./src/eleve.cpp
+./obj/eleve.o: ./src/eleve.cpp
 	$(CC) "./src/eleve.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"
 	
 clean:
