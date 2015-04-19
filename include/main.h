@@ -12,7 +12,8 @@
 	
 
 	#include <SQLite/sqlite3.h>
-
+	
+	#define VERSION "0.0.1 alpha"
 
 	using namespace std;
 	
@@ -97,6 +98,7 @@
 			virtual void onClose(wxCloseEvent &evenement);
 			virtual void onQuit(wxCommandEvent &evenement);
 			virtual void onAbout(wxCommandEvent &evenement);
+			
 	};
 
 	class Frame_admin_ajouter : public wxDialog
@@ -169,6 +171,7 @@
 			void OnClick_modifier(wxCommandEvent &evenement);
 			void OnClick_imprimer_buletin(wxCommandEvent &evenement);
 			
+			
 		private:
 			wxButton *bouton_modifier,*bouton_imprimer_buletin;
 		
@@ -177,13 +180,22 @@
 	class Frame_admin : public Frame_principale
 	{
 		private:
-
+			wxCheckBox *input_checkbox__notes_hors_bareme,
+					   *input_checkbox__afficher_buletins;
+					   
+			wxRadioButton *input_radio__arrondi_cent,
+						  *input_radio__arrondi_dix,
+						  *input_radio__arrondi_demi,
+						  *input_radio__arrondi_un;
 			
 		public:
 			Frame_admin(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
 			void onAjouter(wxCommandEvent &evenement);
-			void onClick_radio_ajout(wxCommandEvent &evenement);
-			void onClick_ajouter(wxCommandEvent &evenement);
+			void onCheck_Buletins(wxCommandEvent &evenement);
+			void onSupprimer(wxCommandEvent &evenement);
+			void onModifier(wxCommandEvent &evenement);
+			void onClick_hors_bareme(wxCommandEvent &evenement);
+			void onChange_arrondi(wxCommandEvent &evenement);
 	};
 
 	class Frame_login : public wxFrame

@@ -49,11 +49,11 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
     input_mdp->MoveAfterInTabOrder(input_login);//l'ordre des champs avec l'appui sur "tab"
     bouton_annuler->MoveAfterInTabOrder(input_mdp);
 
-    bouton_valider->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_valider, this);
-    bouton_annuler->Bind(wxEVT_BUTTON, 			 &Frame_login::onClick_annuler, this);
-    input_login->Bind(wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange,		this);
-    input_mdp->Bind(  wxEVT_COMMAND_TEXT_UPDATED,&Frame_login::onChange, 		this);
-    this->Bind(		  wxEVT_CLOSE_WINDOW,		 &Frame_login::onClose, 		this);
+    bouton_valider->Bind(wxEVT_BUTTON, 	  &Frame_login::onClick_valider, this);
+    bouton_annuler->Bind(wxEVT_BUTTON, 	  &Frame_login::onClick_annuler, this);
+    input_login->Bind(wxEVT_TEXT,		  &Frame_login::onChange,		 this);
+    input_mdp->Bind(  wxEVT_TEXT,		  &Frame_login::onChange, 		 this);
+    this->Bind(		  wxEVT_CLOSE_WINDOW, &Frame_login::onClose, 		 this);
     this->Show();
 
     bdd=arg_bdd;

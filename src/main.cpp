@@ -34,10 +34,11 @@ int App_GestNotes::OnExit()
 
 
 
-Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule,connexion_bdd*& bdd) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
+Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule,connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,*(new wxSize(500,500)))
 {
 	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
 	parent=parent_arg;
+	bdd=bdd_arg;
 	wxMenuBar *barre_menu= new wxMenuBar();
 
 	wxMenu *menu_fichier = new wxMenu();
@@ -75,12 +76,13 @@ void Frame_principale::onClose(wxCloseEvent &evenement)
 			return ;
 		}
 	}
+	bdd->close();
 	exit(0);
 }
 
 void Frame_principale::onAbout(wxCommandEvent &evenement)
 {
-	wxDialog *frame_about= new wxDialog(this, wxID_ANY,_T("A propos..."));
+	wxDialog *frame_about= new wxDialog(this, wxID_ANY,_T("A propos..."),wxDefaultPosition,wxSize(490,225));
 
 	wxPanel *fenetre = new wxPanel(frame_about, -1);
 	wxBoxSizer *sizer_droite = new wxBoxSizer(wxVERTICAL);
@@ -89,37 +91,50 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	wxBoxSizer *sizer_email = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_github = new wxBoxSizer(wxHORIZONTAL);
 
-  	wxStaticText *texte_haut = new wxStaticText(fenetre,wxID_ANY, _T(" Auteur : gusfl\n\n Sous licence Apache\n\n Contact :"));
-	wxStaticText *texte_bas = new wxStaticText(fenetre,wxID_ANY, _T("\n Vous avez trouvé un bug?\n N'hésitez pas à m'en faire part sur"));
-	wxStaticText *label_github = new wxStaticText(fenetre,wxID_ANY, _T(" "));
+	wxStaticText *texte_version= new wxStaticText(fenetre,wxID_ANY,_T("GestNotes ")+(std::string)VERSION);
+  	wxStaticText *texte_haut = new wxStaticText(fenetre,wxID_ANY, _T("\nAuteurs : gusfl et krnruth\nProgramme sous licence Apache.\n\nContact :"));
+	wxStaticText *texte_bas = new wxStaticText(fenetre,wxID_ANY, _T("\nVous avez trouvé un bug?"));
+	wxStaticText *label_github = new wxStaticText(fenetre,wxID_ANY, _T("N'hésitez pas à nous en faire part sur "));
 	wxStaticText *label_github_2 = new wxStaticText(fenetre,wxID_ANY, _T(" !"));
-	wxStaticText *label_email=  new wxStaticText(fenetre,wxID_ANY, _T(" Email : "));
-	wxStaticText *label_twitter=  new wxStaticText(fenetre,wxID_ANY, _T(" Twitter : "));
-	wxHyperlinkCtrl* lien_twitter = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("@FLisMyName"), _T("https://twitter.com/FLisMyName"));
+	wxStaticText *label_virgule_1 = new wxStaticText(fenetre,wxID_ANY, _T(", "));
+	wxStaticText *label_virgule_2 = new wxStaticText(fenetre,wxID_ANY, _T(", "));
+	
+	wxStaticText *label_email=  new wxStaticText(fenetre,wxID_ANY, _T("Email : "));
+	wxStaticText *label_twitter=  new wxStaticText(fenetre,wxID_ANY, _T("Twitter : "));
+	wxHyperlinkCtrl* lien_twitter_gusfl   = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("@FLisMyName"), _T("https://twitter.com/FLisMyName"));
+	wxHyperlinkCtrl* lien_twitter_krnruth = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("@krnruth"), _T("https://twitter.com/krnruth"));
 
-
-	wxHyperlinkCtrl* lien_email = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
+	wxHyperlinkCtrl* lien_email_gusfl = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("gusfl@free.fr"), _T("mailto:gusfl@free.fr"));
+	wxHyperlinkCtrl* lien_email_krnruth = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("krnruth91@gmail.com"), _T("mailto:krnruth91@gmail.com"));
 	wxHyperlinkCtrl* lien_github = new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNotes/issues"));
-
-	sizer_twitter->Add(label_twitter);
-	sizer_twitter->Add(lien_twitter);
-	sizer_email->Add(label_email);
-	sizer_email->Add(lien_email);
-	sizer_github->Add(label_github);
-	sizer_github->Add(lien_github);
-	sizer_github->Add(label_github_2);
-
+	
+	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
+	
+	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT, 15 );
+	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT, 15);
+	
+	sizer_droite->Add(texte_version);
 	sizer_droite->Add(texte_haut);
 	sizer_droite->Add(sizer_twitter);
 	sizer_droite->Add(sizer_email);
 	sizer_droite->Add(texte_bas);
 	sizer_droite->Add(sizer_github);
 
+	sizer_twitter->Add(label_twitter);
+	sizer_twitter->Add(lien_twitter_gusfl);
+	sizer_twitter->Add(label_virgule_1);
+	sizer_twitter->Add(lien_twitter_krnruth);
+	
+	sizer_email->Add(label_email);
+	sizer_email->Add(lien_email_gusfl);
+	sizer_email->Add(label_virgule_2);
+	sizer_email->Add(lien_email_krnruth);
+	
+	sizer_github->Add(label_github);
+	sizer_github->Add(lien_github);
+	sizer_github->Add(label_github_2);
 
-	wxStaticBitmap *image = new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));
-	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT, 15 );
-
-	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT, 15);
+	
 	fenetre->SetSizer(sizer_horisontal);
 
 	frame_about->ShowModal();
