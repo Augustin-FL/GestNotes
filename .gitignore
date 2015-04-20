@@ -1,3 +1,4 @@
 /bin/GestNotes.exe
 /bin/bdd.sqlite
-/obj/
+/obj
+/GestNotes.layout
