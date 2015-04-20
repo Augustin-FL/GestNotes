@@ -5,7 +5,7 @@ GestNotes est un logiciel de gestion de notes écrit en C++ !
 
 ## Comment utiliser le programme : 
 
-Téléchargez [la dernière relase](https://github.com/gusfl/GestNotes/releases) de GestNotes dans un dossier de votre ordinateur, puis lancez GestNotes.exe.
+Téléchargez (https://github.com/gusfl/GestNotes/releases)[la dernière relase]de GestNotes dans un dossier de votre ordinateur, puis lancez GestNotes.exe.
 
 Le programme fonctionne actuellement en local sur un ordinateur. 
 
@@ -61,14 +61,15 @@ pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or direc
 
 futur proche :
 * Terminer l'interface de gestion des administrateurs
-* -> Supporter la suppression d'un étudiant/élève/prof
-* -> Supporter la modification d'un étudiant/élève/prof
+	* Supporter la suppression d'un étudiant/élève/prof
+	* Supporter la modification d'un étudiant/élève/prof
+	* Saisir les appréciations générales
 * Créer l'interface de gestion pour les professeurs
-* -> Saisie des notes
-* -> Saisie des groupes
-* Créer l'interface de gestion pour les élèves
-* Ajouter une fonctionnalité : l'impression des buletins
-* Ajouter les menus graphiques
+	* Saisie des notes
+	* Saisie des groupes
+* Compléter l'interface de gestion pour les élèves
+	* Modifier ses infos
+* Pour tous : changer son mot de passe
 
 
 
