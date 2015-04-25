@@ -23,7 +23,7 @@
 	
 	class Frame_principale;
 	class Frame_admin;
-	class Frame_admin_ajouter;
+	class Frame_ajout_modification_membre;
 	class Frame_login;
 
 	enum
@@ -101,10 +101,10 @@
 			
 	};
 
-	class Frame_admin_ajouter : public wxDialog
+	class Frame_ajout_modification_membre : public wxDialog
 	{
 		public:
-			Frame_admin_ajouter(Frame_principale* parent_arg,connexion_bdd*& bdd);
+			Frame_ajout_modification_membre(Frame_principale* parent_arg,connexion_bdd*& bdd,int matricule=PAS_CONNECTE,int acces=ADMIN);
 			void onClick_radio(wxCommandEvent &evenement);
 			void onChange_select(wxCommandEvent &evenement);
 			void onClick(wxCommandEvent &evenement);
