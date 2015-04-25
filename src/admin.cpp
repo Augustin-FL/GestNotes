@@ -101,7 +101,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 
 void Frame_admin::onAjouter(wxCommandEvent &evenement)
 {
-	Frame_admin_ajouter(this,bdd);
+	Frame_ajout_modification_membre(this,bdd);
 }
 
 void Frame_admin::onCheck_Buletins(wxCommandEvent &evenement)
@@ -154,7 +154,7 @@ void Frame_admin::onChange_arrondi(wxCommandEvent &evenement)
 }
 // -------------
 
-Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*& bdd_private) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
+Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principale* parent,connexion_bdd*& bdd_private, int matricule,int acces) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
 {
 	bdd=bdd_private;
 
@@ -298,21 +298,21 @@ Frame_admin_ajouter::Frame_admin_ajouter(Frame_principale* parent,connexion_bdd*
 	conteneur_ajout_droite->Add(label_ajout_eleve__groupe);
 	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
 
-	bouton_valider_ajout->Bind(      wxEVT_BUTTON,		&Frame_admin_ajouter::onClick,			this);
-	input_select_matiere_ajout->Bind(wxEVT_COMBOBOX,    &Frame_admin_ajouter::onChange_select, 	this);
-	input_ajout_eleve__classe->Bind( wxEVT_COMBOBOX,    &Frame_admin_ajouter::onChange_select, 	this);
-	input_radio_prof->Bind(          wxEVT_RADIOBUTTON, &Frame_admin_ajouter::onClick_radio, 	this);
-	input_radio_eleve->Bind(         wxEVT_RADIOBUTTON, &Frame_admin_ajouter::onClick_radio,	this);
-	input_radio_admin->Bind(         wxEVT_RADIOBUTTON, &Frame_admin_ajouter::onClick_radio,	this);
-	input_radio_matricule_oui->Bind( wxEVT_RADIOBUTTON ,&Frame_admin_ajouter::onClick_radio,	this);
-	input_radio_matricule_non->Bind( wxEVT_RADIOBUTTON ,&Frame_admin_ajouter::onClick_radio,	this);
+	bouton_valider_ajout->Bind(      wxEVT_BUTTON,		&Frame_ajout_modification_membre::onClick,			this);
+	input_select_matiere_ajout->Bind(wxEVT_COMBOBOX,    &Frame_ajout_modification_membre::onChange_select, 	this);
+	input_ajout_eleve__classe->Bind( wxEVT_COMBOBOX,    &Frame_ajout_modification_membre::onChange_select, 	this);
+	input_radio_prof->Bind(          wxEVT_RADIOBUTTON, &Frame_ajout_modification_membre::onClick_radio, 	this);
+	input_radio_eleve->Bind(         wxEVT_RADIOBUTTON, &Frame_ajout_modification_membre::onClick_radio,	this);
+	input_radio_admin->Bind(         wxEVT_RADIOBUTTON, &Frame_ajout_modification_membre::onClick_radio,	this);
+	input_radio_matricule_oui->Bind( wxEVT_RADIOBUTTON ,&Frame_ajout_modification_membre::onClick_radio,	this);
+	input_radio_matricule_non->Bind( wxEVT_RADIOBUTTON ,&Frame_ajout_modification_membre::onClick_radio,	this);
 
 
 	fenetre->SetSizer(contenu_fenetre_sans_marge);
 	this->ShowModal();
 }
 
-void Frame_admin_ajouter::onClick_radio(wxCommandEvent &evenement)
+void Frame_ajout_modification_membre::onClick_radio(wxCommandEvent &evenement)
 {
 	if(input_radio_matricule_non->GetValue())
 	{
@@ -425,7 +425,7 @@ void Frame_admin_ajouter::onClick_radio(wxCommandEvent &evenement)
 
 
 
-void Frame_admin_ajouter::onChange_select(wxCommandEvent &evenement)
+void Frame_ajout_modification_membre::onChange_select(wxCommandEvent &evenement)
 {
 	if((unsigned int)input_select_matiere_ajout->GetSelection()==texte_select.GetCount()-1)
 	{
@@ -449,7 +449,7 @@ void Frame_admin_ajouter::onChange_select(wxCommandEvent &evenement)
 	}
 }
 
-void Frame_admin_ajouter::onClick(wxCommandEvent &evenement)
+void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 {
 	requete_sql *req=NULL;
 	int type_ajout=-1;
