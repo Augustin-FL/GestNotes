@@ -86,4 +86,12 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 }
 
 
+/*
+
+onModifier notes
+
+->calculer moyenne eleve. Si <10 prévenir prof responsable
+*/
+
+
 
