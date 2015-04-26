@@ -9,6 +9,7 @@
 	#include <wx/hyperlink.h>
 	#include <wx/filename.h>
 	#include <wx/listctrl.h>
+	#include <wx/dataview.h>
 	
 
 	#include <SQLite/sqlite3.h>
