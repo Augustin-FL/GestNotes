@@ -55,6 +55,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	liste_notes->AppendColumn(_T("Matière"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("CE"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("TAI"),wxLIST_FORMAT_CENTER);
+	liste_notes->AppendColumn(_T("Projet"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("DE"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("Moyenne"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("Commentaires"),wxLIST_FORMAT_CENTER);
@@ -86,10 +87,10 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		
 		if(req->getColumn_int(2)==0)//si il y a une note à afficher
 		{
-			if(req->getColumn_int(4)==4)
+			if(req->getColumn_int(4)==5)
 			{
 				texte_note<<req->getColumn_text(3);
-				position_y=5;
+				position_y=6;
 			}
 			else 
 			{
@@ -103,8 +104,22 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	}
 	req->closeCursor();
 	
-	//consulter les notes (tableau) +imprimer buletin de notes
-	//consulter son groupe
+	
+	for(it=liste_matiere.begin();it!=liste_matiere.end();it++)
+	{
+		int moyenne=-1;
+		wxString note_en_cours;
+		
+		for(int i=1;i<4;i++)
+		{
+			note_en_cours=liste_notes->GetItemText(it->second,i);
+			if(note_en_cours!="")moyenne= (moyenne==-1)?atoi(note_en_cours):(moyenne+atoi(note_en_cours))/2;
+		}
+		if(moyenne!=-1) liste_notes->SetItem(it->second,5,wxString::Format("%d",moyenne));
+	}
+	
+	
+	//TODO : imprimer buletin de notes
 	//voir (modifier?) contacts
 
 	bdd->exec("select * from reglages");
