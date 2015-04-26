@@ -77,6 +77,12 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	int position_y;
 	wxString texte_note;
 	
+	/*
+	
+		TODO : les commentaires
+	
+	*/
+	
 	while(req->fetch())
 	{
 		texte_note="";
