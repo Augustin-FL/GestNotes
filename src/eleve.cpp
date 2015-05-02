@@ -5,7 +5,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxString texte_groupe(_T("Groupe : ")),string_classe(_T("Classe : "));
 	int classe=0;
 	
-	requete_sql* req=bdd->prepare("select * FROM eleve JOIN classes ON classes.id=eleve.classe WHERE eleve.id=:matricule");
+	requete_sql* req=bdd->prepare("select * FROM eleves JOIN classes ON classes.id=eleves.classe WHERE eleves.id=:matricule");
 	req->bind(":matricule",matricule);
 	req->fetch();
 	if(req->getColumn_int(3)==0) texte_groupe<<_T("A");

@@ -63,7 +63,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 
 
 
-		this->exec("CREATE TABLE IF NOT EXISTS eleve(											\
+		this->exec("CREATE TABLE IF NOT EXISTS eleves(											\
 						id					INTEGER NOT NULL,									\
 						prenom				TEXT 	NOT NULL,									\
 						nom 				TEXT	NOT NULL,									\
@@ -79,7 +79,8 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						nom_responsable		TEXT,												\
 						prenom_responsable	TEXT,												\
 						tel_responsable		INTEGER,											\
-						mail_responsable	TEXT												\
+						mail_responsable	TEXT,												\
+						appreciation		TEXT												\
 					);");
 
 		this->exec("CREATE TABLE IF NOT EXISTS admin(											\
@@ -91,6 +92,12 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						notes_hors_bareme	INTEGER NOT NULL,									\
 						precision			INTEGER NOT NULL, 									\
 						affichage_buletins	INTEGER NOT NULL									\
+					);");
+		
+		this->exec("CREATE TABLE IF NOT EXISTS commentaires(									\
+						id_matiere			INTEGER NOT NULL,									\
+						id_classe			INTEGER NOT NULL,									\
+						commentaire			TEXT	NOT NULL									\
 					);");
 
 		this->req=0;
@@ -104,10 +111,11 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO profs VALUES (2,'Obiwan','Kenobi',1,0)");
 			this->exec("INSERT INTO classes VALUES (0,'1\xe8\x72\x65 S 1','')");
 			this->exec("INSERT INTO notes VALUES (3,1,8,1)");
-			this->exec("INSERT INTO eleve VALUES (3,'Camille','Sunaara',0,0,0,'','Rue qui n''existe pas',12,75001,'Paris',060102030405,'Boiseck','Colombette',01203040506,'howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO eleves VALUES (3,'Camille','Sunaara',0,0,0,'','Rue qui n''existe pas',12,75001,'Paris',060102030405,'Boiseck','Colombette',01203040506,'howyouloveme@yopmail.com','rien a ajouter')");
 			this->exec("INSERT INTO matieres VALUES (1,'maths')");
 			this->exec("INSERT INTO matieres VALUES (2,'physique')");
 			this->exec("INSERT INTO reglages VALUES (0,100,0)");
+			this->exec("INSERT INTO commentaires VALUES (1,0,'test commentaire')");
 		}
 	/*}
 	else
