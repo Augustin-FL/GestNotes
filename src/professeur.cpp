@@ -8,7 +8,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	wxArrayString texte_choix_classes;
 	
 	//on parcourt la liste des matières
-	requete_sql *req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere, profs.nom,profs.prenom FROM profs join matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
+	requete_sql *req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere, profs.nom,profs.prenom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
 	req->bind(":matricule",matricule);
 	while(req->fetch())
 	{
@@ -23,7 +23,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	premiere_fois=true;
 	//On séléctionne les classes correspondant à la matière.
-	req=bdd->prepare("SELECT classes.nom, classes.id FROM profs join classes ON classes.id=profs.classe WHERE profs.id=:matricule AND profs.matiere=:matiere");
+	req=bdd->prepare("SELECT classes.nom, classes.id FROM profs JOIN classes ON classes.id=profs.classe WHERE profs.id=:matricule AND profs.matiere=:matiere");
 	req->bind(":matricule",matricule);
 	req->bind(":matiere",id_matiere_en_cours);
 	
@@ -63,13 +63,13 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	liste_notes->AppendTextColumn(_T("DE"),wxDATAVIEW_CELL_EDITABLE);
 	liste_notes->AppendTextColumn(_T("Commentaires"),wxDATAVIEW_CELL_EDITABLE);
 			
-	req=bdd->prepare("SELECT eleve.id,eleve.nom,eleve.prenom, 0 AS pas_de_note, notes.note,notes.type_note FROM eleve 	\
-															LEFT OUTER JOIN notes ON notes.id_eleve=eleve.id 			\
-							WHERE notes.id_matiere=:matiere																\
-					UNION																								\
-					 SELECT eleve.id,eleve.nom,eleve.prenom, 1 AS pas_de_note, notes.note,notes.type_note FROM eleve  	\
-															LEFT OUTER JOIN notes ON notes.id_eleve=eleve.id 			\
-							WHERE eleve.classe=:classe AND notes.note is null");
+	req=bdd->prepare("SELECT eleves.id,eleves.nom,eleves.prenom, 0 AS pas_de_note, notes.note,notes.type_note FROM eleves	\
+															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
+							WHERE notes.id_matiere=:matiere																	\
+					UNION																									\
+					 SELECT eleves.id,eleves.nom,eleves.prenom, 1 AS pas_de_note, notes.note,notes.type_note FROM eleves  	\
+															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
+							WHERE eleves.classe=:classe AND notes.note IS null");
 	
 	req->bind(":classe",id_classe_en_cours);
 	req->bind(":matiere",id_matiere_en_cours);
@@ -80,7 +80,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	int position_y;
 	wxString texte_note;
 	
-	for(int i=0;i<5;i++) ligne.push_back(wxVariant(""));
+	for(int i=0;i<6;i++) ligne.push_back(wxVariant(""));
     
 	while(req->fetch())
 	{
@@ -105,6 +105,21 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 		}
 	}
 	req->closeCursor();
+	
+	req=bdd->prepare("SELECT * FROM commentaires WHERE id_matiere=:matiere AND id_classe=:classe");
+	req->bind(":matiere",id_matiere_en_cours);
+	req->bind(":classe",id_classe_en_cours);
+	
+	while(req->fetch())
+	{
+		it=liste_eleves.find(req->getColumn_int(0));
+		if(it!=liste_eleves.end())
+		{
+			liste_notes->SetTextValue(req->getColumn_text(2),liste_eleves[req->getColumn_int(0)],6);
+		}
+	}
+	req->closeCursor();
+	
 	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &Frame_prof::onDbclick_notes,this);
 	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &Frame_prof::onChange_notes,this);
 	
@@ -160,7 +175,7 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 	req->fetch();
 	
 	texte_req=(req->getColumn_int(0)==1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
-		"UPDATE notes set note=:note WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note":
+		"UPDATE notes SET note=:note WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note":
 		"INSERT INTO notes VALUES (:id_eleve,:id_matiere,:note,:type_note)";
 	req->closeCursor();
 	

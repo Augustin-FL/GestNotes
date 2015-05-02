@@ -78,7 +78,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	input_radio__arrondi_un->Bind(			wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
 	input_checkbox__notes_hors_bareme->Bind(wxEVT_CHECKBOX,		&Frame_admin::onClick_hors_bareme,this);
 	
-	bdd->exec("select * from reglages");
+	bdd->exec("SELECT * FROM reglages");
 	
 	if(bdd->getColumn_int(2)==1)//affichage buletins
 	{
@@ -150,7 +150,6 @@ void Frame_admin::onChange_arrondi(wxCommandEvent &evenement)
 	req->fetch();
 	
 	req->closeCursor();
-	//bdd->exec("COMMIT;");
 }
 // -------------
 
@@ -158,9 +157,9 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 {
 	bdd=bdd_private;
 
-	while(bdd->exec("select nom from matieres")) texte_select.Add(bdd->getColumn_text(0));
+	while(bdd->exec("SELECT nom FROM matieres")) texte_select.Add(bdd->getColumn_text(0));
 	texte_select.Add(_T("<Ajouter Une Matière>"));
-	while(bdd->exec("select nom from classes")) texte_classes.Add(bdd->getColumn_text(0));
+	while(bdd->exec("SELECT nom FROM classes")) texte_classes.Add(bdd->getColumn_text(0));
 	texte_classes.Add(_T("<Ajouter Une Classe>"));
 	
 	wxPanel          *fenetre					= new wxPanel(this,-1);
@@ -499,7 +498,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			matricule=wxAtoi(input_ajout_matricule->GetValue());
 			req->closeCursor();
 
-			req=bdd->prepare("select nom, prenom from profs where id=?");
+			req=bdd->prepare("SELECT nom, prenom from PROFS where id=?");
 			req->bind(1,matricule);
 			req->fetch();
 			input_ajout_nom->SetValue(req->getColumn_text(0));
@@ -509,21 +508,21 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 		}
 		else
 		{
-			req=bdd->prepare("INSERT INTO `login_centralise` (mdp, type) VALUES(:mdp,:type)");
+			req=bdd->prepare("INSERT INTO login_centralise (mdp, type) VALUES(:mdp,:type)");
 			req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
 			req->bind(":type",type_ajout);
 
 			req->fetch();
 			req->closeCursor();
 
-			bdd->exec("select last_insert_rowid() AS ligne FROM login_centralise limit 1");
+			bdd->exec("SELECT last_insert_rowid() AS ligne FROM login_centralise LIMIT 1");
 			matricule=bdd->getColumn_int(0);
 		}
 		
 		//si c'est un prof ou un éleve : on doit lui affecter une classe
 		if( (type_ajout==PROF || type_ajout==ELEVE) && input_ajout_eleve__classe->GetSelection()==wxNOT_FOUND)//si on as une nouvelle classe : on l'ajoute en BDD ! :p
 		{																									//l'id d'une classe est input_ajout_eleve__classe.GetSelection()-1
-			req=bdd->prepare("insert into classes (nom)  values(:nom_classe)");
+			req=bdd->prepare("INSERT INTO classes (nom)  VALUES(:nom_classe)");
 			req->bind(":nom_classe", string(input_ajout_eleve__classe->GetValue().mb_str()));
 			req->fetch();
 			req->closeCursor();
