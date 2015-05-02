@@ -5,7 +5,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxString texte_groupe(_T("Groupe : ")),string_classe(_T("Classe : "));
 	int classe=0;
 	
-	requete_sql* req=bdd->prepare("select * from eleve join classes on classes.id=eleve.classe where eleve.id=:matricule");
+	requete_sql* req=bdd->prepare("select * FROM eleve JOIN classes ON classes.id=eleve.classe WHERE eleve.id=:matricule");
 	req->bind(":matricule",matricule);
 	req->fetch();
 	if(req->getColumn_int(3)==0) texte_groupe<<_T("A");
@@ -22,8 +22,8 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxBoxSizer *sizer_haut      = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_modifier  = new wxBoxSizer(wxVERTICAL);//il est impossible de centrer correctement
 	wxBoxSizer *sizer_buletin   = new wxBoxSizer(wxVERTICAL);//dans un sizer Horizontal.
-	wxBoxSizer *sizer_infos    = new wxBoxSizer(wxVERTICAL);// on dois donc faire 3 sizers verticaux inutiles...
-	wxBoxSizer *sizer_infos_2   = new wxBoxSizer(wxVERTICAL);// pour les infos : on les aligne sur plusieurs lignes (d'ou les 2 sizers: l'un sera dans l'autre)...
+	wxBoxSizer *sizer_infos    = new wxBoxSizer(wxVERTICAL);// ON dois donc faire 3 sizers verticaux inutiles...
+	wxBoxSizer *sizer_infos_2   = new wxBoxSizer(wxVERTICAL);// pour les infos : ON les aligne sur plusieurs lignes (d'ou les 2 sizers: l'un sera dans l'autre)...
 
 	
 	wxStaticBoxSizer *sizer_notes= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Notes : "));
@@ -60,14 +60,14 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	liste_notes->AppendColumn(_T("Moyenne"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("Commentaires"),wxLIST_FORMAT_CENTER);
 
-	req=bdd->prepare("select matieres.id_matiere,matieres.nom,0 as pas_de_note, notes.note,notes.type_note from matieres \
-															left outer join profs on matieres.id_matiere=profs.matiere	 \
-															left outer join notes on notes.id_matiere=matieres.id_matiere\
-								where classe=:classe and id_eleve=:matricule															 \
-				UNION select matieres.id_matiere,matieres.nom,1 as pas_de_note, notes.note,notes.type_note from matieres \
-															left outer join profs on matieres.id_matiere=profs.matiere	 \
-															left outer join notes on notes.id_matiere=matieres.id_matiere\
-								where classe=:classe and id_eleve is null");
+	req=bdd->prepare("select matieres.id_matiere,matieres.nom,0 AS pas_de_note, notes.note,notes.type_note FROM matieres \
+															LEFT OUTER JOIN profs ON matieres.id_matiere=profs.matiere	 \
+															LEFT OUTER JOIN notes ON notes.id_matiere=matieres.id_matiere\
+								WHERE classe=:classe and id_eleve=:matricule															 \
+				UNION select matieres.id_matiere,matieres.nom,1 AS pas_de_note, notes.note,notes.type_note FROM matieres \
+															LEFT OUTER JOIN profs ON matieres.id_matiere=profs.matiere	 \
+															LEFT OUTER JOIN notes ON notes.id_matiere=matieres.id_matiere\
+								WHERE classe=:classe and id_eleve is null");
 								
 	req->bind(":classe",classe);
 	req->bind(":matricule",matricule);
@@ -105,7 +105,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 			}
 			
 			liste_notes->SetItem(liste_matiere[req->getColumn_int(0)], position_y,texte_note);
-			//if(il y a une note a afficher) on affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
+			//if(il y a une note a afficher) ON affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
 		}
 	}
 	req->closeCursor();
@@ -128,7 +128,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	//TODO : imprimer buletin de notes
 	//voir (modifier?) contacts
 
-	bdd->exec("select * from reglages");
+	bdd->exec("select * FROM reglages");
 	if(bdd->getColumn_int(2)==0) bouton_imprimer_buletin->Disable();//affichage buletins si autorisé
 	
 

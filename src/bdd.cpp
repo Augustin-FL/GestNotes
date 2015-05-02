@@ -20,7 +20,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		if(sqlite3_open(path_fichier.c_str(), &bdd)!=SQLITE_OK)
 		{
 			wxString texte=sqlite3_errmsg(bdd);
-			wxMessageBox(_T("Erreur lors de la connexion à la  BDD : ")+texte,"erreur");
+			wxMessageBox(_T("Erreur lors de la connexion à la  Base de donnée : ")+texte,"erreur");
 			exit(0);
 		}
 

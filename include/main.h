@@ -167,6 +167,9 @@
 			
 		private:
 			wxDataViewListCtrl   *liste_notes;
+			std::map<int,int> liste_eleves;
+			int id_matiere_en_cours,id_classe_en_cours;
+	
 		
 	};
 	
