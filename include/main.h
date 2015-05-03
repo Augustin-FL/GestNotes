@@ -99,6 +99,7 @@
 			virtual void onClose(wxCloseEvent &evenement);
 			virtual void onQuit(wxCommandEvent &evenement);
 			virtual void onAbout(wxCommandEvent &evenement);
+			virtual void onChangeMdp(wxCommandEvent &evenement);
 			
 	};
 

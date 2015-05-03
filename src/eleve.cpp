@@ -59,15 +59,21 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	liste_notes->AppendColumn(_T("DE"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("Moyenne"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("Commentaires"),wxLIST_FORMAT_CENTER);
-
+	
 	req=bdd->prepare("select matieres.id_matiere,matieres.nom,0 AS pas_de_note, notes.note,notes.type_note FROM matieres \
 															LEFT OUTER JOIN profs ON matieres.id_matiere=profs.matiere	 \
 															LEFT OUTER JOIN notes ON notes.id_matiere=matieres.id_matiere\
-								WHERE classe=:classe and id_eleve=:matricule															 \
+								WHERE id_eleve=:matricule																 \
 				UNION select matieres.id_matiere,matieres.nom,1 AS pas_de_note, notes.note,notes.type_note FROM matieres \
 															LEFT OUTER JOIN profs ON matieres.id_matiere=profs.matiere	 \
 															LEFT OUTER JOIN notes ON notes.id_matiere=matieres.id_matiere\
-								WHERE classe=:classe and id_eleve is null");
+								WHERE classe=:classe and (id_eleve!=:matricule or id_eleve is null)");
+	/*
+		on récupère 
+			- les notes de l'élève concerné (en liant les matières & les profs aux notes)
+			- les matières affectés a une classe mais ou le prof n'a encore mis aucune note à l'élève (en liant  les matières & les profs, pareil)
+	
+	*/
 								
 	req->bind(":classe",classe);
 	req->bind(":matricule",matricule);
@@ -130,12 +136,15 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		if(moyenne!=-1) liste_notes->SetItem(it->second,5,wxString::Format("%d",moyenne));
 	}
 	
-	
+	//for(int i=0;i<6;i++)
+		liste_notes->SetColumnWidth(0,wxLIST_AUTOSIZE_USEHEADER);
+		liste_notes->SetColumnWidth(6,wxLIST_AUTOSIZE_USEHEADER);
 	//TODO : imprimer buletin de notes
 	//voir (modifier?) contacts
 
 	bdd->exec("select * FROM reglages");
 	if(bdd->getColumn_int(2)==0) bouton_imprimer_buletin->Disable();//affichage buletins si autorisé
+	
 	
 
 	bouton_modifier->Bind(wxEVT_BUTTON,&Frame_eleve::OnClick_modifier,this);

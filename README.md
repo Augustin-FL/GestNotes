@@ -65,12 +65,11 @@ futur proche :
 	* Supporter la modification d'un étudiant/élève/prof
 	* Saisir les appréciations générales
 * Créer l'interface de gestion pour les professeurs
-	* Saisie des notes
 	* Saisie des groupes
 * Compléter l'interface de gestion pour les élèves
 	* Modifier ses infos
 * Pour tous : changer son mot de passe
-
+* Empécher la saisie de lettres lors d'un champ où un nombre est attendu.
 
 
 futur éloigné : 
@@ -78,3 +77,5 @@ futur éloigné :
 * Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale 
 * Creer un installateur à l'aide de NSIS
 
+Fonctionnalités : 
+* Calculer la moyenne d'un élêve. Si celle ci est inférieure à 10, prévenir un prof responsable. Mais quel prof dois on prévenir? et comment? 
