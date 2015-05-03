@@ -220,11 +220,12 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	input_ajout_eleve__sexe		= new wxChoice     (fenetre, -1, wxDefaultPosition,wxDefaultSize,strings_sexes);
 	input_ajout_eleve__groupe	= new wxChoice     (fenetre, -1, wxDefaultPosition,wxDefaultSize,strings_groupes);
 
-	input_radio_prof  			= new wxRadioButton(fenetre, -1, _T("Professeur"));
+	input_radio_matricule_oui	= new wxRadioButton(fenetre, -1, _T("Oui"));
+	input_radio_matricule_non	= new wxRadioButton(fenetre, -1, _T("Non"));
+	input_radio_prof  			= new wxRadioButton(fenetre, -1, _T("Professeur"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
 	input_radio_admin 			= new wxRadioButton(fenetre, -1, _T("Administrateur"));
 	input_radio_eleve 			= new wxRadioButton(fenetre, -1, _T("Élève"));
-	input_radio_matricule_oui	= new wxRadioButton(fenetre, -1, _T("Oui"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
-	input_radio_matricule_non	= new wxRadioButton(fenetre, -1, _T("Non"));
+	
 	input_ajout_eleve__classe	= new wxComboBox   (fenetre, -1, _T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_classes);
 	input_select_matiere_ajout	= new wxComboBox   (fenetre, -1, _T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
 	bouton_valider_ajout		= new wxButton     (fenetre, -1, _T("Valider"));
@@ -296,7 +297,24 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	conteneur_ajout_droite->Add(input_ajout_eleve__tel_mobile);
 	conteneur_ajout_droite->Add(label_ajout_eleve__groupe);
 	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
+	
+	
+	input_select_matiere_ajout->MoveAfterInTabOrder(input_radio_prof); // l'ordre de déplacement à l'aide de la touche TAB
+	input_ajout_eleve__classe->MoveAfterInTabOrder(input_radio_eleve);
+	
+	input_ajout_eleve__nom_responsable->MoveAfterInTabOrder(input_ajout_eleve__classe);
+	input_ajout_eleve__prenom_responsable->MoveAfterInTabOrder(input_ajout_eleve__nom_responsable);
+	input_ajout_eleve__tel_responsable->MoveAfterInTabOrder(input_ajout_eleve__prenom_responsable);
+	input_ajout_eleve__mail_responsable->MoveAfterInTabOrder(input_ajout_eleve__tel_responsable);
+	input_ajout_eleve__sexe->MoveAfterInTabOrder(input_ajout_eleve__mail_responsable);
+	input_ajout_eleve__nom_rue->MoveAfterInTabOrder(input_ajout_eleve__sexe);
+	input_ajout_eleve__rue->MoveAfterInTabOrder(input_ajout_eleve__nom_rue);
+	input_ajout_eleve__code_postal->MoveAfterInTabOrder(input_ajout_eleve__rue);
+	input_ajout_eleve__ville->MoveAfterInTabOrder(input_ajout_eleve__code_postal);
+	input_ajout_eleve__tel_mobile->MoveAfterInTabOrder(input_ajout_eleve__ville);
+	input_ajout_eleve__groupe->MoveAfterInTabOrder(input_ajout_eleve__tel_mobile);
 
+	
 	bouton_valider_ajout->Bind(      wxEVT_BUTTON,		&Frame_ajout_modification_membre::onClick,			this);
 	input_select_matiere_ajout->Bind(wxEVT_COMBOBOX,    &Frame_ajout_modification_membre::onChange_select, 	this);
 	input_ajout_eleve__classe->Bind( wxEVT_COMBOBOX,    &Frame_ajout_modification_membre::onChange_select, 	this);
@@ -553,14 +571,14 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 
 			}
 
-			req=bdd->prepare("insert into profs values (:matricule,:nom,:prenom,:matiere,:classe)");
+			req=bdd->prepare("INSERT INTO profs VALUES (:matricule,:nom,:prenom,:matiere,:classe)");
 			req->bind(":matiere",input_select_matiere_ajout->GetSelection()-1);
 			req->bind(":classe",input_ajout_eleve__classe->GetSelection()-1);
 
 		}
 		else if(type_ajout==ELEVE)
 		{
-			req=bdd->prepare("insert into eleve values (:matricule,:prenom,:nom,:classe,:groupe,:sexe,:date_inscription,:rue,:num_rue,:code_postal,:ville,:tel_mobile,:nom_responsable,:prenom_responsable:tel_responsable,:mail_responsable)");
+			req=bdd->prepare("INSERT INTO eleves VALUES (:matricule,:prenom,:nom,:classe,:groupe,:sexe,:date_inscription,:rue,:nom_rue,:code_postal,:ville,:tel_mobile,:nom_responsable,:prenom_responsable,:tel_responsable,:mail_responsable)");
 			req->bind(":groupe",input_ajout_eleve__groupe->GetSelection());
 			req->bind(":sexe",  input_ajout_eleve__sexe->  GetSelection());
 			req->bind(":date_inscription",time(NULL));
@@ -572,10 +590,9 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			req->bind(":tel_mobile",wxAtoi(input_ajout_eleve__tel_mobile->GetValue()));
 			req->bind(":nom_responsable",string(input_ajout_eleve__nom_responsable->GetValue().mb_str()));
 			req->bind(":prenom_responsable",string(input_ajout_eleve__prenom_responsable->GetValue().mb_str()));
-			req->bind(":adresse_responsable",string(input_ajout_eleve__tel_responsable->GetValue().mb_str()));
 			req->bind(":mail_responsable",string(input_ajout_eleve__mail_responsable->GetValue().mb_str()));
 		}
-		else if(type_ajout==ADMIN)  req=bdd->prepare("insert into admin values (:matricule,:nom,:prenom)");
+		else if(type_ajout==ADMIN)  req=bdd->prepare("INSERT INTO admin VALUES (:matricule,:nom,:prenom)");
 	}
 	else
 	{
