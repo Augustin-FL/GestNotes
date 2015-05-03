@@ -5,13 +5,13 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxString texte_groupe(_T("Groupe : ")),string_classe(_T("Classe : "));
 	int classe=0;
 	
-	requete_sql* req=bdd->prepare("select * FROM eleves JOIN classes ON classes.id=eleves.classe WHERE eleves.id=:matricule");
+	requete_sql* req=bdd->prepare("select eleves.*,classes.nom AS classe FROM eleves JOIN classes ON classes.id=eleves.classe WHERE eleves.id=:matricule");
 	req->bind(":matricule",matricule);
 	req->fetch();
-	if(req->getColumn_int(3)==0) texte_groupe<<_T("A");
-	else if(req->getColumn_int(3)==1)texte_groupe<<_T("B");
-	classe=req->getColumn_int(4);
-	string_classe<<req->getColumn_text(17);
+	if(req->getColumn_int(4)==0) texte_groupe<<_T("A");
+	else if(req->getColumn_int(4)==1)texte_groupe<<_T("B");
+	classe=req->getColumn_int(3);
+	string_classe<<req->getColumn_text(16);
 	req->closeCursor();
 	
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
@@ -93,16 +93,9 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		
 		if(req->getColumn_int(2)==0)//si il y a une note à afficher
 		{
-			if(req->getColumn_int(4)==5)
-			{
-				texte_note<<req->getColumn_text(3);
-				position_y=6;
-			}
-			else 
-			{
-				position_y=req->getColumn_int(4);
-				texte_note<<req->getColumn_int(3);
-			}
+			
+			position_y=req->getColumn_int(4);
+			texte_note<<req->getColumn_int(3);
 			
 			liste_notes->SetItem(liste_matiere[req->getColumn_int(0)], position_y,texte_note);
 			//if(il y a une note a afficher) ON affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
@@ -110,6 +103,19 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	}
 	req->closeCursor();
 	
+	req=bdd->prepare("SELECT * FROM commentaires WHERE id_eleve=:matricule AND id_matiere!=-1");
+	req->bind(":matricule",matricule);
+	
+	while(req->fetch())
+	{
+		it=liste_matiere.find(req->getColumn_int(0));
+		
+		if(it!=liste_matiere.end())
+		{
+			liste_notes->SetItem(liste_matiere[req->getColumn_int(0)],6,req->getColumn_text(2));
+		}
+	}
+	req->closeCursor();
 	
 	for(it=liste_matiere.begin();it!=liste_matiere.end();it++)
 	{
