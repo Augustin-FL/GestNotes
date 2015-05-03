@@ -1,5 +1,14 @@
 #include "main.h"
 
+
+/*
+
+todo : editer les groupes
+calculer moyenne eleve. Si <10 prévenir prof responsable
+
+*/
+
+
 Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
 	bool premiere_fois=true;
@@ -57,10 +66,10 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	liste_classes->SetSelection(0);
 	
 	liste_notes->AppendTextColumn(_T("Élève"));
-	liste_notes->AppendTextColumn(_T("CE"),wxDATAVIEW_CELL_EDITABLE);
-	liste_notes->AppendTextColumn(_T("TAI"),wxDATAVIEW_CELL_EDITABLE);
-	liste_notes->AppendTextColumn(_T("Projet"),wxDATAVIEW_CELL_EDITABLE);
-	liste_notes->AppendTextColumn(_T("DE"),wxDATAVIEW_CELL_EDITABLE);
+	liste_notes->AppendTextColumn(_T("CE"),			 wxDATAVIEW_CELL_EDITABLE);
+	liste_notes->AppendTextColumn(_T("TAI"),		 wxDATAVIEW_CELL_EDITABLE);
+	liste_notes->AppendTextColumn(_T("Projet"),		 wxDATAVIEW_CELL_EDITABLE);
+	liste_notes->AppendTextColumn(_T("DE"),			 wxDATAVIEW_CELL_EDITABLE);
 	liste_notes->AppendTextColumn(_T("Commentaires"),wxDATAVIEW_CELL_EDITABLE);
 			
 	req=bdd->prepare("SELECT eleves.id,eleves.nom,eleves.prenom, 0 AS pas_de_note, notes.note,notes.type_note FROM eleves	\
@@ -80,7 +89,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	int position_y;
 	wxString texte_note;
 	
-	for(int i=0;i<6;i++) ligne.push_back(wxVariant(""));
+	for(int i=0;i<6;i++) ligne.push_back(wxVariant(""));//on crée une ligne avec que des colonnes vides
     
 	while(req->fetch())
 	{
@@ -106,23 +115,24 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	}
 	req->closeCursor();
 	
-	req=bdd->prepare("SELECT commentaires.id_eleve,commentaires.commentaire FROM commentaires join eleves on eleves.id=commentaires.id_eleve where commentaires.id_matiere=:matiere AND eleves.classe=:classe");
+	//puis on s'occupe des commentaires :
+	req=bdd->prepare("SELECT commentaires.id_eleve,commentaires.commentaire FROM commentaires JOIN eleves ON eleves.id=commentaires.id_eleve WHERE commentaires.id_matiere=:matiere AND eleves.classe=:classe");
 	req->bind(":matiere",id_matiere_en_cours);
 	req->bind(":classe",id_classe_en_cours);
 	
-	while(req->fetch())
+	while(req->fetch())//on affiche tout les commentaires correspondant au prof en cours/matière en cours
 	{
 		it=liste_eleves.find(req->getColumn_int(0));
 		
-		if(it!=liste_eleves.end())
+		if(it!=liste_eleves.end())//pour éviter une erreur interne au programme (normalement ca peux pas arriver, mais bon...)
 		{
 			liste_notes->SetTextValue(req->getColumn_text(1),liste_eleves[req->getColumn_int(0)],5);
 		}
 	}
 	req->closeCursor();
 	
-	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &Frame_prof::onDbclick_notes,this);
-	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &Frame_prof::onChange_notes,this);
+	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, 	&Frame_prof::onDbclick_notes,this);// lorsqu'on double clique sur les notes
+	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,&Frame_prof::onChange_notes,this);// lorsque la valeur est changée
 	
 	sizer_principal->Add(texte_header,0,wxALIGN_CENTER);
 	sizer_principal->Add(conteneur_choix_matiere_classe,0,wxALIGN_CENTER);
@@ -151,8 +161,9 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 {
 	if(evenement.GetColumn()==-1 || evenement.GetColumn()==0) return ;
 		
-	int id_eleve,note;
+	int id_eleve;
 	bool pas_trouve=true;
+	wxString note;
 	
 	std::string texte_req;
 	std::map<int,int>::iterator it=liste_eleves.begin();
@@ -169,27 +180,35 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 	
 	if(evenement.GetColumn()==5) return this->onChange_commentaires(id_eleve);
 	
-	note=wxAtoi(liste_notes->GetTextValue(liste_notes->GetSelectedRow(),evenement.GetColumn()));//et on récupère la note modifiée à partir de la ligne/colonne en cours.
-	
-	requete_sql *req=bdd->prepare("SELECT count(note) FROM notes WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note");
-	req->bind(":id_matiere",id_matiere_en_cours);
-	req->bind(":id_eleve",id_eleve);
-	req->bind(":type_note",evenement.GetColumn());//on regarde si cette note existe déja
-	req->fetch();
-	
-	texte_req=(req->getColumn_int(0)==1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
-		"UPDATE notes SET note=:note WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note":
-		"INSERT INTO notes VALUES (:id_eleve,:id_matiere,:note,:type_note)";
-	req->closeCursor();
-	
-	
-	req=bdd->prepare(texte_req);
-	req->bind(":id_matiere",id_matiere_en_cours);
-	req->bind(":id_eleve",id_eleve);
-	req->bind(":type_note",evenement.GetColumn());
-	req->bind(":note",note);
-	req->fetch();
-	req->closeCursor();
+
+	note=liste_notes->GetTextValue(liste_notes->GetSelectedRow(),evenement.GetColumn());//et on récupère la note modifiée à partir de la ligne/colonne en cours.
+	if(!note.IsEmpty())
+	{
+		requete_sql *req=bdd->prepare("SELECT count(note) FROM notes WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note");
+		req->bind(":id_matiere",id_matiere_en_cours);
+		req->bind(":id_eleve",id_eleve);
+		req->bind(":type_note",evenement.GetColumn());//on regarde si cette note existe déja
+		req->fetch();
+		
+		texte_req=(req->getColumn_int(0)==1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
+			"UPDATE notes SET note=:note WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note":
+			"INSERT INTO notes VALUES (:id_eleve,:id_matiere,:note,:type_note)";
+		req->closeCursor();
+		
+		req=bdd->prepare(texte_req);
+		req->bind(":id_matiere",id_matiere_en_cours);
+		req->bind(":id_eleve",id_eleve);
+		req->bind(":type_note",evenement.GetColumn());
+		req->bind(":note",wxAtoi(note));
+		req->fetch();
+		req->closeCursor();
+		
+		//toDO ->calculer moyenne eleve. Si <10 prévenir prof responsable
+	}
+	else//toDo : supprimer note
+	{
+		
+	}
 }
 
 void Frame_prof::onChange_commentaires(int id_eleve)
@@ -226,13 +245,5 @@ void Frame_prof::onDbclick_notes(wxDataViewEvent &evenement)
 	
 	liste_notes->EditItem(item,colonne);
 }
-
-/*
-
-onModifier notes
-
-->calculer moyenne eleve. Si <10 prévenir prof responsable
-*/
-
 
 

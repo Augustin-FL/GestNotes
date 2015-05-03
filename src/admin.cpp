@@ -16,31 +16,33 @@ AUTHOR :
 Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
-
 	wxPanel *fenetre = new wxPanel(this);
 
-	wxBoxSizer *sizer_principal = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *sizer_principal_haut= new wxBoxSizer(wxHORIZONTAL);
-	wxStaticBoxSizer *sizer_principal_bas= new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Autres : "));
-	wxBoxSizer *sizer_gauche= new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *sizer_centre=new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *sizer_droite=new wxBoxSizer(wxVERTICAL);
-	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Utilisateurs : "));
-	wxStaticBoxSizer *texte_conteneur_arrondi = new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Arrondi des moyennes : "));
-	wxStaticText *texte=new wxStaticText(fenetre, -1, _T("Gestion des utilisateurs\nde GestNotes :\n\n"));
-	wxButton *button_ajouter= new wxButton(fenetre, -1, _T("Ajouter"));
-	wxButton *button_modifier= new wxButton(fenetre, -1, _T("Modifier"));
-	wxButton *button_supprimer= new wxButton(fenetre, -1, _T("Supprimer"));
+	wxBoxSizer *sizer_principal 		 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *sizer_principal_haut	 = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *sizer_gauche			 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *sizer_centre			 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *sizer_droite			 = new wxBoxSizer(wxVERTICAL);
+	
+	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,  fenetre, _T("Utilisateurs : "));
+	wxStaticBoxSizer *texte_conteneur_arrondi 	= new wxStaticBoxSizer(wxVERTICAL,  fenetre, _T("Arrondi des moyennes : "));
+	wxStaticBoxSizer *sizer_principal_bas		= new wxStaticBoxSizer(wxHORIZONTAL,fenetre, _T("Autres : "));
+	
+	wxStaticText *texte					 = new wxStaticText(fenetre, -1, _T("Gestion des utilisateurs\nde GestNotes :\n\n"));
+	wxStaticText *label_arrondir_moyenne = new wxStaticText(fenetre, -1, _T("Arrondir les moyennes sur les buletins\n(n'affecte pas les calculs)\n\n"));
+	
+	wxButton *button_ajouter			 = new wxButton(	fenetre, -1, _T("Ajouter"));
+	wxButton *button_modifier			 = new wxButton(	fenetre, -1, _T("Modifier"));
+	wxButton *button_supprimer			 = new wxButton(	fenetre, -1, _T("Supprimer"));
 
-	input_checkbox__notes_hors_bareme=new wxCheckBox(fenetre,-1,_T("Autoriser les notes hors barème\n(au dessus de 20)\n\n"));
-	input_checkbox__afficher_buletins=new wxCheckBox(fenetre,-1,_T("Autoriser l'affichage/impression des buletins"));
+	input_checkbox__notes_hors_bareme	 =new wxCheckBox(	fenetre, -1, _T("Autoriser les notes hors barème\n(au dessus de 20)\n\n"));
+	input_checkbox__afficher_buletins	 =new wxCheckBox(	fenetre, -1, _T("Autoriser l'affichage/impression des buletins"));
 
 	//Arrondi des moyennes (n'affecte pas les calculs)
-	wxStaticText  *label_arrondir_moyenne 	= new wxStaticText(fenetre, -1, _T("Arrondir les moyennes sur les buletins\n(n'affecte pas les calculs)\n\n"));
-	input_radio__arrondi_cent=new wxRadioButton(fenetre,-1,_T("Arrondi au 1/100° de point"));
-	input_radio__arrondi_dix=new wxRadioButton(fenetre,-1,_T("Arrondi au 1/10° de point"));
-	input_radio__arrondi_demi=new wxRadioButton(fenetre,-1,_T("Arrondi au demi point"));
-	input_radio__arrondi_un=new wxRadioButton(fenetre,-1,_T("Arrondi au point"));
+	input_radio__arrondi_cent			 =new wxRadioButton(fenetre, -1, _T("Arrondi au 1/100° de point"));
+	input_radio__arrondi_dix			 =new wxRadioButton(fenetre, -1, _T("Arrondi au 1/10° de point"));
+	input_radio__arrondi_demi			 =new wxRadioButton(fenetre, -1, _T("Arrondi au demi point"));
+	input_radio__arrondi_un				 =new wxRadioButton(fenetre, -1, _T("Arrondi au point"));
 
 	sizer_principal->Add(sizer_principal_haut,1);
 	sizer_principal->Add(sizer_principal_bas,1,wxEXPAND|wxALL,15);
@@ -115,7 +117,7 @@ void Frame_admin::onCheck_Buletins(wxCommandEvent &evenement)
 		return ;
 	}
 		
-	bdd->exec("update reglages set affichage_buletins=1");
+	bdd->exec("UPDATE reglages SET affichage_buletins=1");
 	input_checkbox__afficher_buletins->SetValue(true);
 	input_checkbox__afficher_buletins->Disable();
 }
@@ -131,8 +133,8 @@ void Frame_admin::onModifier(wxCommandEvent &evenement)
 }
 void Frame_admin::onClick_hors_bareme(wxCommandEvent &evenement)
 {
-	if(input_checkbox__notes_hors_bareme->IsChecked()) bdd->exec("update reglages set notes_hors_bareme=1");
-	else bdd->exec("update reglages set notes_hors_bareme=0");
+	if(input_checkbox__notes_hors_bareme->IsChecked()) bdd->exec("UPDATE reglages SET notes_hors_bareme=1");
+	else bdd->exec("UPDATE reglages SET notes_hors_bareme=0");
 }
 
 void Frame_admin::onChange_arrondi(wxCommandEvent &evenement)
@@ -144,8 +146,7 @@ void Frame_admin::onChange_arrondi(wxCommandEvent &evenement)
 	else if(input_radio__arrondi_un->GetValue()) 	valeur=1;
 	else wxMessageBox("erreur !");
 	
-	wxMessageBox("test");
-	requete_sql* req=bdd->prepare("update reglages set precision=?;");
+	requete_sql* req=bdd->prepare("UPDATE reglages SET precision=?;");
 	req->bind(1,valeur);
 	req->fetch();
 	
@@ -275,20 +276,20 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	this->onChange_select(*(new wxCommandEvent()));
 
 
-	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable);
-	conteneur_ajout_droite->Add(input_ajout_eleve__nom_responsable);
 	conteneur_ajout_droite->Add(label_ajout_eleve__prenom_responsable);
 	conteneur_ajout_droite->Add(input_ajout_eleve__prenom_responsable);
+	conteneur_ajout_droite->Add(label_ajout_eleve__nom_responsable);
+	conteneur_ajout_droite->Add(input_ajout_eleve__nom_responsable);
 	conteneur_ajout_droite->Add(label_ajout_eleve__tel_responsable);
 	conteneur_ajout_droite->Add(input_ajout_eleve__tel_responsable);
 	conteneur_ajout_droite->Add(label_ajout_eleve__mail_responsable);
 	conteneur_ajout_droite->Add(input_ajout_eleve__mail_responsable);
 	conteneur_ajout_droite->Add(label_ajout_eleve__sexe);
 	conteneur_ajout_droite->Add(input_ajout_eleve__sexe);
-	conteneur_ajout_droite->Add(label_ajout_eleve__nom_rue);
-	conteneur_ajout_droite->Add(input_ajout_eleve__nom_rue);
 	conteneur_ajout_droite->Add(label_ajout_eleve__rue);
 	conteneur_ajout_droite->Add(input_ajout_eleve__rue);
+	conteneur_ajout_droite->Add(label_ajout_eleve__nom_rue);
+	conteneur_ajout_droite->Add(input_ajout_eleve__nom_rue);
 	conteneur_ajout_droite->Add(label_ajout_eleve__code_postal);
 	conteneur_ajout_droite->Add(input_ajout_eleve__code_postal);
 	conteneur_ajout_droite->Add(label_ajout_eleve__ville);
@@ -302,14 +303,14 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	input_select_matiere_ajout->MoveAfterInTabOrder(input_radio_prof); // l'ordre de déplacement à l'aide de la touche TAB
 	input_ajout_eleve__classe->MoveAfterInTabOrder(input_radio_eleve);
 	
-	input_ajout_eleve__nom_responsable->MoveAfterInTabOrder(input_ajout_eleve__classe);
-	input_ajout_eleve__prenom_responsable->MoveAfterInTabOrder(input_ajout_eleve__nom_responsable);
-	input_ajout_eleve__tel_responsable->MoveAfterInTabOrder(input_ajout_eleve__prenom_responsable);
+	input_ajout_eleve__prenom_responsable->MoveAfterInTabOrder(input_ajout_eleve__classe);
+	input_ajout_eleve__nom_responsable->MoveAfterInTabOrder(input_ajout_eleve__prenom_responsable);
+	input_ajout_eleve__tel_responsable->MoveAfterInTabOrder(input_ajout_eleve__nom_responsable);
 	input_ajout_eleve__mail_responsable->MoveAfterInTabOrder(input_ajout_eleve__tel_responsable);
 	input_ajout_eleve__sexe->MoveAfterInTabOrder(input_ajout_eleve__mail_responsable);
-	input_ajout_eleve__nom_rue->MoveAfterInTabOrder(input_ajout_eleve__sexe);
-	input_ajout_eleve__rue->MoveAfterInTabOrder(input_ajout_eleve__nom_rue);
-	input_ajout_eleve__code_postal->MoveAfterInTabOrder(input_ajout_eleve__rue);
+	input_ajout_eleve__rue->MoveAfterInTabOrder(input_ajout_eleve__sexe);
+	input_ajout_eleve__nom_rue->MoveAfterInTabOrder(input_ajout_eleve__rue);
+	input_ajout_eleve__code_postal->MoveAfterInTabOrder(input_ajout_eleve__nom_rue);
 	input_ajout_eleve__ville->MoveAfterInTabOrder(input_ajout_eleve__code_postal);
 	input_ajout_eleve__tel_mobile->MoveAfterInTabOrder(input_ajout_eleve__ville);
 	input_ajout_eleve__groupe->MoveAfterInTabOrder(input_ajout_eleve__tel_mobile);
@@ -495,7 +496,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 	
 		if(input_radio_matricule_oui->GetValue())// si on demande a associer la professeur a un matricule existant
 		{
-			req=bdd->prepare("SELECT count(*) as nbr, type from login_centralise where matricule=:matricule");
+			req=bdd->prepare("SELECT count(*) AS nbr, type FROM login_centralise WHERE matricule=:matricule");
 			req->bind(":matricule",string(input_ajout_matricule->GetValue().mb_str()));
 			req->fetch();
 
@@ -516,7 +517,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			matricule=wxAtoi(input_ajout_matricule->GetValue());
 			req->closeCursor();
 
-			req=bdd->prepare("SELECT nom, prenom from PROFS where id=?");
+			req=bdd->prepare("SELECT nom, prenom FROM profs WHERE id=?");
 			req->bind(1,matricule);
 			req->fetch();
 			input_ajout_nom->SetValue(req->getColumn_text(0));
@@ -532,7 +533,6 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 
 			req->fetch();
 			req->closeCursor();
-
 			bdd->exec("SELECT last_insert_rowid() AS ligne FROM login_centralise LIMIT 1");
 			matricule=bdd->getColumn_int(0);
 		}
@@ -557,7 +557,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 		{
 			if(input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)//si on as une nouvelle matière : on l'ajoute en BDD ! :p
 			{//l'id de la matiere est texte_select.GetSelection()-1
-				req=bdd->prepare("insert into matieres (nom) values (:nom_matiere)");
+				req=bdd->prepare("INSERT INTO matieres (nom) VALUES (:nom_matiere)");
 				req->bind(":nom_matiere", string(input_select_matiere_ajout->GetValue().mb_str()));
 				req->fetch();
 				req->closeCursor();
@@ -572,8 +572,8 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			}
 
 			req=bdd->prepare("INSERT INTO profs VALUES (:matricule,:nom,:prenom,:matiere,:classe)");
-			req->bind(":matiere",input_select_matiere_ajout->GetSelection()-1);
-			req->bind(":classe",input_ajout_eleve__classe->GetSelection()-1);
+			req->bind(":matiere",input_select_matiere_ajout->GetSelection());
+			req->bind(":classe",input_ajout_eleve__classe->GetSelection());
 
 		}
 		else if(type_ajout==ELEVE)
@@ -585,7 +585,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 
 			req->bind(":nom_rue",string(input_ajout_eleve__nom_rue->GetValue().mb_str()));
 			req->bind(":code_postal",wxAtoi(input_ajout_eleve__code_postal->GetValue()));
-			req->bind(":classe",input_ajout_eleve__classe->GetSelection()-1);
+			req->bind(":classe",input_ajout_eleve__classe->GetSelection());
 			req->bind(":ville",string(input_ajout_eleve__ville->GetValue().mb_str()));
 			req->bind(":tel_mobile",wxAtoi(input_ajout_eleve__tel_mobile->GetValue()));
 			req->bind(":nom_responsable",string(input_ajout_eleve__nom_responsable->GetValue().mb_str()));
@@ -596,7 +596,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 	}
 	else
 	{
-		wxMessageBox("Erreur ! Avez vous rempli tout les champs?");//tout n'est pas ok
+		wxMessageBox(_T("Erreur ! Avez vous rempli tout les champs?"));//tout n'est pas ok
 		return ;
 	}
 	
