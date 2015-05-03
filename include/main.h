@@ -164,6 +164,7 @@
 			Frame_prof(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
 			void onDbclick_notes(wxDataViewEvent &evenement);
 			void onChange_notes(wxDataViewEvent &evenement);
+			void onChange_commentaires(int id_eleve);
 			
 		private:
 			wxDataViewListCtrl   *liste_notes;

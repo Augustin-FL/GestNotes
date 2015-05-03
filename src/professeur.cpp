@@ -51,7 +51,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	wxStaticText *texte_header=new wxStaticText(fenetre, -1, _T("Gestion des notes")); // boite de choix pour les notes
 	
-	liste_notes=new wxDataViewListCtrl(fenetre,-1, wxDefaultPosition, wxDefaultSize);
+	liste_notes=new wxDataViewListCtrl(fenetre,-1, wxDefaultPosition, wxDefaultSize,wxDV_HORIZ_RULES);
 	
 	liste_matieres->SetSelection(0);
 	liste_classes->SetSelection(0);
@@ -106,16 +106,17 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	}
 	req->closeCursor();
 	
-	req=bdd->prepare("SELECT * FROM commentaires WHERE id_matiere=:matiere AND id_classe=:classe");
+	req=bdd->prepare("SELECT commentaires.id_eleve,commentaires.commentaire FROM commentaires join eleves on eleves.id=commentaires.id_eleve where commentaires.id_matiere=:matiere AND eleves.classe=:classe");
 	req->bind(":matiere",id_matiere_en_cours);
 	req->bind(":classe",id_classe_en_cours);
 	
 	while(req->fetch())
 	{
 		it=liste_eleves.find(req->getColumn_int(0));
+		
 		if(it!=liste_eleves.end())
 		{
-			liste_notes->SetTextValue(req->getColumn_text(2),liste_eleves[req->getColumn_int(0)],6);
+			liste_notes->SetTextValue(req->getColumn_text(1),liste_eleves[req->getColumn_int(0)],5);
 		}
 	}
 	req->closeCursor();
@@ -149,7 +150,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 {
 	if(evenement.GetColumn()==-1 || evenement.GetColumn()==0) return ;
-	
+		
 	int id_eleve,note;
 	bool pas_trouve=true;
 	
@@ -162,11 +163,13 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 		else it++;// (on parcourt la map des élèves pour retrouver l'id)
 	}
 	
-	if(pas_trouve==true) return;//si il y a une erreur interne au programme (c'est pas censé arriver mais bon...)
+	if(pas_trouve==true) return;//si il y a une erreur interne au programme (c'est pas censé arriver, mais bon...)
 	
+	id_eleve=it->first;
+	
+	if(evenement.GetColumn()==5) return this->onChange_commentaires(id_eleve);
 	
 	note=wxAtoi(liste_notes->GetTextValue(liste_notes->GetSelectedRow(),evenement.GetColumn()));//et on récupère la note modifiée à partir de la ligne/colonne en cours.
-	id_eleve=it->first;
 	
 	requete_sql *req=bdd->prepare("SELECT count(note) FROM notes WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note");
 	req->bind(":id_matiere",id_matiere_en_cours);
@@ -188,6 +191,31 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 	req->fetch();
 	req->closeCursor();
 }
+
+void Frame_prof::onChange_commentaires(int id_eleve)
+{
+	std::string texte_req;
+	std::string commentaire=std::string(liste_notes->GetTextValue(liste_notes->GetSelectedRow(),5));
+	
+	requete_sql *req=bdd->prepare("SELECT count(*) FROM commentaires WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere");
+	req->bind(":id_eleve",id_eleve);
+	req->bind(":id_matiere",id_matiere_en_cours);
+	req->fetch();
+	
+	texte_req=(req->getColumn_int(0)==1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
+		"UPDATE commentaires SET commentaire=:commentaire WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere":
+		"INSERT INTO commentaire VALUES (id_matiere,id_eleve,:commentaire)";
+	req->closeCursor();
+	
+	
+	req=bdd->prepare(texte_req);
+	req->bind(":commentaire",commentaire);
+	req->bind(":id_eleve",id_eleve);
+	req->bind(":id_matiere",id_matiere_en_cours);
+	req->fetch();
+	req->closeCursor();
+}
+
 
 void Frame_prof::onDbclick_notes(wxDataViewEvent &evenement)
 {
