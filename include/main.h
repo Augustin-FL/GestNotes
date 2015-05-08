@@ -120,6 +120,7 @@
 			virtual void onQuit(wxCommandEvent &evenement);
 			virtual void onAbout(wxCommandEvent &evenement);
 			virtual void onChangeMdp(wxCommandEvent &evenement);
+			virtual	void onAfficherMembres(wxCommandEvent &evenement);
 			
 	};
 
@@ -177,6 +178,25 @@
 
 			wxButton *bouton_valider_ajout;
 			Frame_principale* frame_parente;
+	};
+	
+	
+	class Frame_modifier_mdp : public wxDialog
+	{
+		
+		public:
+			Frame_modifier_mdp(Frame_principale*,connexion_bdd*&, int &matricule);
+			~Frame_modifier_mdp(){}
+			void onClick(wxCommandEvent& evenement);
+			void onChange(wxCommandEvent& evenement);
+			
+		private:
+			connexion_bdd* bdd;
+			int matricule;
+			wxTextCtrl *input_mdp, *input_mdp_confirmation;
+			wxButton *bouton_valider;
+			wxStaticText *message_mdp,*message_confirmation;
+			
 	};
 	
 	class Frame_prof : public Frame_principale

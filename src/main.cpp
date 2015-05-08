@@ -31,17 +31,20 @@ int App_GestNotes::OnExit()
 
 
 
-Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule,connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,wxSize(500,500))
+Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule_arg,connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,wxSize(500,500))
 {
 	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
-	parent=parent_arg;
-	bdd=bdd_arg;
+	this->parent=parent_arg;
+	this->bdd=bdd_arg;
+	this->matricule=matricule_arg;
+	
 	wxMenuBar *barre_menu= new wxMenuBar();
 
 	wxMenu *menu_fichier = new wxMenu();
 	wxMenu *menu_aide	 = new wxMenu();
 
-	menu_fichier->Append(wxID_HIGHEST+1, _T("Modifier mon mot de passe"), _T("Modifier mon mot de passe"));
+	menu_fichier->Append(wxID_HIGHEST+1, _T("Modifier mon mot de passe"),_T("Modifier mon mot de passe"));
+	menu_fichier->Append(wxID_HIGHEST+2, _T("Liste Des Utilisateurs"),	 _T("Afficher la liste des membres de GestNotes"));
 	menu_fichier->Append(wxID_EXIT,		 _T("Quitter"),					 _T("Quitter GestNotes"));
 	menu_aide->Append(wxID_ABOUT,  		 _T("A Propos"),				 _T("Quelques infos sur le créateur..."));
 	this->SetMenuBar(barre_menu);
@@ -55,6 +58,7 @@ Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule,connex
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onQuit, 		this, wxID_EXIT);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onAbout,	 	this, wxID_ABOUT);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onChangeMdp, this, wxID_HIGHEST+1);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onAfficherMembres, this, wxID_HIGHEST+2);
 	
 }
 
@@ -140,17 +144,110 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 
 void Frame_principale::onChangeMdp(wxCommandEvent &evenement)
 {
-	wxMessageBox(_T("En construction ;p "));
+	Frame_modifier_mdp(this,bdd,matricule);
+}
+
+Frame_modifier_mdp::Frame_modifier_mdp(Frame_principale* parent,connexion_bdd*& bdd_arg,int &matricule_arg) : wxDialog(parent, wxID_ANY,_T("GestNotes - Modifier mon Mot de Passe"),wxDefaultPosition,wxSize(400,215))
+{
+	this->bdd=bdd_arg;
+	this->matricule=matricule_arg;
+
+	wxPanel    		*fenetre 				= new wxPanel(this, -1);
+	wxBoxSizer 		*sizer_horisontal 		= new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer*sizer_mdp				= new wxStaticBoxSizer(wxVERTICAL, fenetre, _T("Nouveau Mot de Passe"));
+	wxFlexGridSizer *conteneur_mdp			= new wxFlexGridSizer(2,2,5,0);
+	wxBoxSizer		*sizer_message			= new wxBoxSizer(wxVERTICAL);
+	
+	wxStaticText	*texte_explicatif		= new wxStaticText(fenetre, -1, _T("\n\nVeuillez saisir votre nouveau Mot de Passe.\n"));
+	wxStaticText	*label_mdp				= new wxStaticText(fenetre, -1, _T("Mot de Passe :                 "));
+	wxStaticText	*label_mdp_confirmation	= new wxStaticText(fenetre, -1, _T("Confirmation du Mot de Passe : "));
+	
+	message_mdp				= new wxStaticText(fenetre, -1, _T("Le mot de passe est trop court (minimum : 4 carractères)"));
+	message_confirmation	= new wxStaticText(fenetre, -1, _T("Les 2 mots de passes ne correspondent pas."));
+	
+	input_mdp				= new wxTextCtrl(fenetre, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
+	input_mdp_confirmation	= new wxTextCtrl(fenetre, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
+	
+	bouton_valider			= new wxButton(  fenetre, -1, _T("Valider"));// Des champs d'input
+    
+	conteneur_mdp->Add(label_mdp);
+	conteneur_mdp->Add(input_mdp);
+	
+	conteneur_mdp->Add(label_mdp_confirmation);
+	conteneur_mdp->Add(input_mdp_confirmation);
+	
+	sizer_mdp->Add(conteneur_mdp);
+
+	sizer_message->Add(message_mdp);
+	sizer_message->Add(message_confirmation);
+	
+	message_mdp->SetForegroundColour(wxColour(255, 0, 0));
+	message_confirmation->SetForegroundColour (wxColour(255, 0, 0));
+	
+	message_mdp->Hide();
+	message_confirmation->Hide();
+	bouton_valider->Disable();
+	
+	sizer_horisontal->Add(texte_explicatif,0,wxALIGN_CENTER);
+	sizer_horisontal->Add(sizer_mdp,0,wxALIGN_CENTER|wxLEFT|wxRIGHT,5);
+	sizer_horisontal->Add(sizer_message,0,wxALIGN_CENTER|wxTOP,5);
+	sizer_horisontal->Add(bouton_valider,0,wxALIGN_CENTER|wxTOP,20);
+	
+	bouton_valider->Bind(		 wxEVT_BUTTON, &Frame_modifier_mdp::onClick, this);
+	input_mdp->Bind(    		 wxEVT_TEXT,   &Frame_modifier_mdp::onChange,this);
+	input_mdp_confirmation->Bind(wxEVT_TEXT,   &Frame_modifier_mdp::onChange,this);
+	
+	fenetre->SetSizer(sizer_horisontal);
+	this->ShowModal();	
+}
+
+void Frame_modifier_mdp::onChange(wxCommandEvent& evenement)
+{
+	message_mdp->Hide();
+	message_confirmation->Hide();
+	bouton_valider->Disable();
+	
+	if(input_mdp->GetValue().Length()<3 || input_mdp_confirmation->GetValue().Length()<3)
+	{	
+		message_mdp->Move(50,138);
+		message_mdp->Show();
+	}
+	else if(input_mdp->GetValue()!=input_mdp_confirmation->GetValue())
+	{
+		message_confirmation->Move(80,138);
+		message_confirmation->Show();
+	}
+	else bouton_valider->Enable();
+}
+
+void Frame_modifier_mdp::onClick(wxCommandEvent& evenement)
+{
+	requete_sql *req=bdd->prepare("UPDATE login_centralise SET mdp=:mdp WHERE matricule=:matricule");
+	req->bind(":matricule",matricule);
+	req->bind(":mdp",string(input_mdp->GetValue().mb_str()));
+	req->fetch();
+	req->closeCursor();
+	
+	wxMessageBox(_T("Le Mot de Passe à bien été modifié !"));
+	this->Close();
+}
+
+
+void Frame_principale::onAfficherMembres(wxCommandEvent &evenement)
+{
+	wxMessageBox(_T("En construction :p"));
 	
 	
 }
-
 
 wxTextRegexpValidator::wxTextRegexpValidator(wxString regexp, wxString* pointeur) : m_regEx(regexp)//constructeur : création d'un wxValidator
 {
    m_stringValue = pointeur;
    m_reString = regexp;
 }
+
+
+
 
 
 wxObject* wxTextRegexpValidator::Clone() const // le constructeur de clonage
