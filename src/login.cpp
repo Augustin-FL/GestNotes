@@ -22,7 +22,7 @@ Frame_login::Frame_login( connexion_bdd*& arg_bdd): wxFrame(NULL, wxID_ANY,_T("G
     bouton_valider	= new wxButton(    fenetre, -1, _T("Valider"));// Des champs d'input
     bouton_annuler 	= new wxButton(    fenetre, -1, _T("Quitter"));
     input_mdp		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);// un input password
-    input_login		= new wxTextCtrl(  fenetre, -1, _T(""));
+    input_login		= new wxTextCtrl(  fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextValidator(wxFILTER_DIGITS));
 
     contenu_fenetre_sans_marge->Add(texte_explicatif, 			1, wxALIGN_CENTER);//la fenetre contient :
     contenu_fenetre_sans_marge->Add(conteneur_authentification, 1, wxALIGN_CENTER);//un texte explicatif, la zone de

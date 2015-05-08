@@ -60,7 +60,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	wxStaticText *texte_header=new wxStaticText(fenetre, -1, _T("Gestion des notes")); // boite de choix pour les notes
 	
-	liste_notes=new wxDataViewListCtrl(fenetre,-1, wxDefaultPosition, wxDefaultSize,wxDV_HORIZ_RULES);
+	liste_notes=new wxDataViewListCtrl(fenetre,-1, wxDefaultPosition, wxDefaultSize);
 	
 	liste_matieres->SetSelection(0);
 	liste_classes->SetSelection(0);
