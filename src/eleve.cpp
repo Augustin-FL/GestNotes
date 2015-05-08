@@ -14,6 +14,10 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	string_classe<<req->getColumn_text(16);
 	req->closeCursor();
 	
+	bdd->exec("select * FROM reglages");
+	bool affichages_buletins=(bdd->getColumn_int(2)==0)?false:true;
+	int arrondi_affichage_notes=bdd->getColumn_int(1);
+	
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
 
 	wxPanel *fenetre = new wxPanel(this);
@@ -22,7 +26,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxBoxSizer *sizer_haut      = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_modifier  = new wxBoxSizer(wxVERTICAL);//il est impossible de centrer correctement
 	wxBoxSizer *sizer_buletin   = new wxBoxSizer(wxVERTICAL);//dans un sizer Horizontal.
-	wxBoxSizer *sizer_infos    = new wxBoxSizer(wxVERTICAL);// ON dois donc faire 3 sizers verticaux inutiles...
+	wxBoxSizer *sizer_infos     = new wxBoxSizer(wxVERTICAL);// ON dois donc faire 3 sizers verticaux inutiles...
 	wxBoxSizer *sizer_infos_2   = new wxBoxSizer(wxVERTICAL);// pour les infos : ON les aligne sur plusieurs lignes (d'ou les 2 sizers: l'un sera dans l'autre)...
 
 	
@@ -101,9 +105,8 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		{
 			
 			position_y=req->getColumn_int(4);
-			texte_note<<req->getColumn_int(3);
 			
-			liste_notes->SetItem(liste_matiere[req->getColumn_int(0)], position_y,texte_note);
+			liste_notes->SetItem(liste_matiere[req->getColumn_int(0)], position_y,wxString::Format("%g",arrondi(arrondi_affichage_notes,req->getColumn_float(3))));
 			//if(il y a une note a afficher) ON affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
 		}
 	}
@@ -136,14 +139,13 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		if(moyenne!=-1) liste_notes->SetItem(it->second,5,wxString::Format("%d",moyenne));
 	}
 	
-	//for(int i=0;i<6;i++)
 		liste_notes->SetColumnWidth(0,wxLIST_AUTOSIZE_USEHEADER);
 		liste_notes->SetColumnWidth(6,wxLIST_AUTOSIZE_USEHEADER);
+	
 	//TODO : imprimer buletin de notes
 	//voir (modifier?) contacts
 
-	bdd->exec("select * FROM reglages");
-	if(bdd->getColumn_int(2)==0) bouton_imprimer_buletin->Disable();//affichage buletins si autorisé
+	if(!affichages_buletins) bouton_imprimer_buletin->Disable();//affichage buletins si autorisé
 	
 	
 

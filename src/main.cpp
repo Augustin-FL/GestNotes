@@ -207,7 +207,7 @@ void Frame_modifier_mdp::onChange(wxCommandEvent& evenement)
 	message_confirmation->Hide();
 	bouton_valider->Disable();
 	
-	if(input_mdp->GetValue().Length()<3 || input_mdp_confirmation->GetValue().Length()<3)
+	if(input_mdp->GetValue().length()<3 || input_mdp_confirmation->GetValue().length()<3)
 	{	
 		message_mdp->Move(50,138);
 		message_mdp->Show();
@@ -236,8 +236,7 @@ void Frame_modifier_mdp::onClick(wxCommandEvent& evenement)
 void Frame_principale::onAfficherMembres(wxCommandEvent &evenement)
 {
 	wxMessageBox(_T("En construction :p"));
-	
-	
+
 }
 
 wxTextRegexpValidator::wxTextRegexpValidator(wxString regexp, wxString* pointeur) : m_regEx(regexp)//constructeur : création d'un wxValidator
@@ -276,3 +275,4 @@ bool wxTextRegexpValidator::TransferFromWindow(void)//
 
     return false;
 }
+

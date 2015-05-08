@@ -492,7 +492,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 	( (type_ajout==PROF && 
 		((unsigned int)input_select_matiere_ajout->GetSelection()!=(texte_select.GetCount()-1) && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))) ||
 	  (type_ajout==ELEVE && 
-		(!input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty() && input_ajout_eleve__code_postal->GetValue().Length()==5 && input_ajout_eleve__tel_mobile->GetValue().Length()==10 && input_ajout_eleve__tel_responsable->GetValue().Length()==10)) ||
+		(!input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty() && input_ajout_eleve__code_postal->GetValue().length()==5 && input_ajout_eleve__tel_mobile->GetValue().length()==10 && input_ajout_eleve__tel_responsable->GetValue().length()==10)) ||
 		type_ajout==ADMIN
 	))
 		
@@ -585,7 +585,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			req=bdd->prepare("INSERT INTO eleves VALUES (:matricule,:prenom,:nom,:classe,:groupe,:sexe,:date_inscription,:rue,:nom_rue,:code_postal,:ville,:tel_mobile,:nom_responsable,:prenom_responsable,:tel_responsable,:mail_responsable)");
 			req->bind(":groupe",input_ajout_eleve__groupe->GetSelection());
 			req->bind(":sexe",  input_ajout_eleve__sexe->  GetSelection());
-			req->bind(":date_inscription",time(NULL));
+			req->bind(":date_inscription",(int)time(NULL));
 
 			req->bind(":nom_rue",string(input_ajout_eleve__nom_rue->GetValue().mb_str()));
 			req->bind(":code_postal",wxAtoi(input_ajout_eleve__code_postal->GetValue()));

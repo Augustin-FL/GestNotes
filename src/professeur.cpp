@@ -6,6 +6,8 @@
 todo : editer les groupes
 calculer moyenne eleve. Si <10 prévenir prof responsable
 
+onchange_matiere
+
 */
 
 
@@ -15,6 +17,10 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
     wxArrayString texte_choix_matieres;
 	wxArrayString texte_choix_classes;
+	
+	bdd->exec("SELECT * FROM reglages");
+	this->notes_hors_bareme=(bdd->getColumn_int(0)==1)?false:true;
+	this->arrondi_affichage_notes=bdd->getColumn_int(1);
 	
 	//on parcourt la liste des matières
 	requete_sql *req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere, profs.nom,profs.prenom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
@@ -65,8 +71,8 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	liste_matieres->SetSelection(0);
 	liste_classes->SetSelection(0);
 	
-	liste_notes->AppendTextColumn(_T("Élève"));
-	liste_notes->AppendTextColumn(_T("CE"),			 wxDATAVIEW_CELL_EDITABLE);
+	liste_notes->AppendTextColumn(_T("Élève"),  	 wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
+	liste_notes->AppendTextColumn(_T("CE"),			 wxDATAVIEW_CELL_EDITABLE);// 
 	liste_notes->AppendTextColumn(_T("TAI"),		 wxDATAVIEW_CELL_EDITABLE);
 	liste_notes->AppendTextColumn(_T("Projet"),		 wxDATAVIEW_CELL_EDITABLE);
 	liste_notes->AppendTextColumn(_T("DE"),			 wxDATAVIEW_CELL_EDITABLE);
@@ -107,7 +113,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 		if(req->getColumn_int(3)==0)//si il y a une note a afficher
 		{
 			position_y=req->getColumn_int(5);
-			texte_note<<req->getColumn_int(4);
+			texte_note<<arrondi(arrondi_affichage_notes,req->getColumn_float(4));
 
 			liste_notes->SetTextValue(texte_note,liste_eleves[req->getColumn_int(0)],position_y);
 			//if(il y a une note a afficher) ON affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
@@ -164,6 +170,8 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 	int id_eleve;
 	bool pas_trouve=true;
 	wxString note;
+	double note_double, ancienne_note=-1;
+	requete_sql *req;
 	
 	std::string texte_req;
 	std::map<int,int>::iterator it=liste_eleves.begin();
@@ -182,33 +190,57 @@ void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 	
 
 	note=liste_notes->GetTextValue(liste_notes->GetSelectedRow(),evenement.GetColumn());//et on récupère la note modifiée à partir de la ligne/colonne en cours.
+	note.Replace(',','.');
+	
+	req=bdd->prepare("SELECT note FROM notes WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note");
+	req->bind(":id_matiere",id_matiere_en_cours);
+	req->bind(":id_eleve",id_eleve);
+	req->bind(":type_note",evenement.GetColumn());//on regarde si cette note existe déja
+	
+	if(req->fetch()) ancienne_note=req->getColumn_float(0);
+	
+	req->closeCursor();
+	
 	if(!note.IsEmpty())
-	{
-		requete_sql *req=bdd->prepare("SELECT count(note) FROM notes WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note");
-		req->bind(":id_matiere",id_matiere_en_cours);
-		req->bind(":id_eleve",id_eleve);
-		req->bind(":type_note",evenement.GetColumn());//on regarde si cette note existe déja
-		req->fetch();
-		
-		texte_req=(req->getColumn_int(0)==1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
+	{		
+		if(note.ToDouble(&note_double) && note_double>=0.0 && (!notes_hors_bareme || note_double<20.0))//on vérifie que on peux ajouter la note.
+		{
+			texte_req=(ancienne_note!=-1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
 			"UPDATE notes SET note=:note WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note":
 			"INSERT INTO notes VALUES (:id_eleve,:id_matiere,:note,:type_note)";
-		req->closeCursor();
 		
-		req=bdd->prepare(texte_req);
-		req->bind(":id_matiere",id_matiere_en_cours);
-		req->bind(":id_eleve",id_eleve);
-		req->bind(":type_note",evenement.GetColumn());
-		req->bind(":note",wxAtoi(note));
-		req->fetch();
-		req->closeCursor();
-		
+			req=bdd->prepare(texte_req);
+			req->bind(":id_matiere",id_matiere_en_cours);
+			req->bind(":id_eleve",id_eleve);
+			req->bind(":type_note",evenement.GetColumn());
+			req->bind(":note",note_double);
+			req->fetch();
+			req->closeCursor();
+			
+			if(fabs(arrondi(arrondi_affichage_notes,note_double)-note_double)>0.001)// si la nouvelle note est trop précise : on la "rogne" a l'arrondi
+				liste_notes->SetTextValue(wxString::Format("%g",arrondi(arrondi_affichage_notes,note_double)),liste_notes->GetSelectedRow(),evenement.GetColumn());
+		}
+		else
+		{
+			wxMessageBox(_T("Erreur ! la note n'est pas valide !"),_T("Erreur"));//si la note est invalide : on remet la valeur précédente (si il y en avait une)
+			if(ancienne_note==-1) liste_notes->SetTextValue("",								  					 liste_notes->GetSelectedRow(),evenement.GetColumn());
+			else liste_notes->SetTextValue(wxString::Format("%g",arrondi(arrondi_affichage_notes,ancienne_note)),liste_notes->GetSelectedRow(),evenement.GetColumn());
+		}
 		//toDO ->calculer moyenne eleve. Si <10 prévenir prof responsable
 	}
-	else//toDo : supprimer note
+	else 
 	{
-		
+		if(ancienne_note!=-1)
+		{
+			req=bdd->prepare("DELETE FROM notes WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere AND type_note=:type_note");
+			req->bind(":id_matiere",id_matiere_en_cours);//si une note existait : on la dégage
+			req->bind(":id_eleve",id_eleve);
+			req->bind(":type_note",evenement.GetColumn());
+			req->fetch();
+			req->closeCursor();
+		}
 	}
+	
 }
 
 void Frame_prof::onChange_commentaires(int id_eleve)
