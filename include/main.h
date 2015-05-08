@@ -42,8 +42,11 @@
 			requete_sql(sqlite3 *&bdd,const string& texte);
 			int bind(const string &cle,const string &valeur);
 			int bind(const string &cle,int valeur);
+			int bind(const string &cle,double valeur);
 			int bind(int cle,int valeur);
 			int bind(int cle,const string &valeur);
+			int bind(int cle,double valeur);
+			
 			int fetch();
 			int getColumn_int(int numero);
 			string getColumn_text(int numero);
@@ -210,7 +213,8 @@
 		private:
 			wxDataViewListCtrl   *liste_notes;
 			std::map<int,int> liste_eleves;
-			int id_matiere_en_cours,id_classe_en_cours;
+			int id_matiere_en_cours,id_classe_en_cours, arrondi_affichage_notes;
+			bool notes_hors_bareme;
 	
 		
 	};
@@ -268,5 +272,23 @@
 			void onClick_valider(wxCommandEvent &evenement);
 			
 	};
+	
+	inline double arrondi(int precision, double nombre)//une fonction inline doit être définie dans le header
+	{
+		double partie_entiere,partie_decimale;
+		
+		if(precision==2) 
+		{
+			partie_decimale = modf(nombre,&partie_entiere);
+		 
+			if(partie_decimale >= 0.25 && partie_decimale <= 0.74) return  (int)nombre + 0.5;
+			else return ((int)nombre + (partie_decimale > 0.5));
+		}
+		
+		modf(nombre*precision,&partie_entiere);
+		
+		return partie_entiere/precision;
+	}
+
 
 #endif

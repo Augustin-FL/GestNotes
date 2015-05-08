@@ -39,7 +39,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		this->exec("CREATE TABLE IF NOT EXISTS notes (											\
 						id_eleve	INTEGER NOT NULL,											\
 						id_matiere	INTEGER NOT NULL,											\
-						note		INTEGER NOT NULL,											\
+						note		REAL    NOT NULL,											\
 						type_note   INTEGER														\
 					);");
 		this->exec("CREATE TABLE IF NOT EXISTS classes ( 										\
@@ -206,9 +206,32 @@ int requete_sql::bind(const string &cle,int valeur)
 	{
 		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
 		return -1;
-
 	}
 	return sqlite3_bind_int(requete, sqlite3_bind_parameter_index(requete,cle.c_str()), valeur);
+}
+
+int requete_sql::bind(const string &cle,double valeur)
+{
+
+	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
+	{
+		wxMessageBox(_T("Erreur ! \"")+cle+_T("\" : cette clé n'existe pas"),"Erreur");
+		return -1;
+	}
+	return sqlite3_bind_double(requete, sqlite3_bind_parameter_index(requete,cle.c_str()), valeur);
+}
+
+
+int requete_sql::bind(int cle,double valeur)
+{
+	if(sqlite3_bind_double(requete,cle, valeur)!= SQLITE_OK)
+	{
+		wxString a;
+		a<<_T("Erreur lors du bind ! clé")<<cle<<_T(" : valeur=")<<valeur;
+		wxMessageBox(a,"Erreur !");
+		return -1;
+	}
+	return 0;
 }
 
 
@@ -242,8 +265,6 @@ int requete_sql::bind(int cle,int valeur)
 
 int requete_sql::bind(int cle,const string &valeur)
 {
-
-
 	return sqlite3_bind_text(requete,cle, valeur.c_str(),strlen(valeur.c_str()),SQLITE_STATIC);
 }
 
