@@ -195,21 +195,21 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	label_ajout_eleve__groupe				= new wxStaticText(fenetre, -1, _T("Groupe : "));
 	label_ajout_eleve__nom_responsable 		= new wxStaticText(fenetre, -1, _T("Nom du responsable : "));
 	label_ajout_eleve__classe		 		= new wxStaticText(fenetre, -1, _T("Classe : "));
-	input_ajout_matricule					= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_matricule					= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextValidator(wxFILTER_DIGITS));
 	input_ajout_nom							= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_prenom						= new wxTextCtrl(fenetre, -1, _T(""));
 
 	input_ajout_mdp							= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,wxTE_PASSWORD);
 	input_ajout_eleve__prenom_responsable	= new wxTextCtrl(fenetre, -1, _T(""));
-	input_ajout_eleve__tel_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
-	input_ajout_eleve__mail_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__tel_responsable		= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextValidator(wxFILTER_DIGITS));
+	input_ajout_eleve__mail_responsable		= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextRegexpValidator("[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\\.[a-zA-Z]{2,4}"));
 
 	input_ajout_eleve__nom_responsable		= new wxTextCtrl(fenetre, -1, _T(""));
 	input_ajout_eleve__nom_rue				= new wxTextCtrl(fenetre, -1, _T(""));
-	input_ajout_eleve__rue					= new wxTextCtrl(fenetre, -1, _T(""));
-	input_ajout_eleve__code_postal			= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__rue					= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextValidator(wxFILTER_DIGITS));
+	input_ajout_eleve__code_postal			= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextValidator(wxFILTER_DIGITS));
 	input_ajout_eleve__ville				= new wxTextCtrl(fenetre, -1, _T(""));
-	input_ajout_eleve__tel_mobile			= new wxTextCtrl(fenetre, -1, _T(""));
+	input_ajout_eleve__tel_mobile			= new wxTextCtrl(fenetre, -1, _T(""),wxDefaultPosition,wxDefaultSize,0,wxTextValidator(wxFILTER_DIGITS));
 	
 	wxArrayString strings_sexes;
 	wxArrayString strings_groupes;
@@ -231,7 +231,7 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	input_select_matiere_ajout	= new wxComboBox   (fenetre, -1, _T("<séléctionner>"), wxDefaultPosition,wxDefaultSize,texte_select);
 	bouton_valider_ajout		= new wxButton     (fenetre, -1, _T("Valider"));
 
-
+	
 	contenu_fenetre_sans_marge->Add(texte_conteneur_ajout,0,  wxALL, 5);
 
 	texte_conteneur_ajout->Add(texte_ajouter_prof,0,wxALIGN_CENTER);
@@ -299,6 +299,10 @@ Frame_ajout_modification_membre::Frame_ajout_modification_membre(Frame_principal
 	conteneur_ajout_droite->Add(label_ajout_eleve__groupe);
 	conteneur_ajout_droite->Add(input_ajout_eleve__groupe);
 	
+	input_ajout_eleve__tel_responsable->SetMaxLength(10);
+	input_ajout_eleve__tel_mobile->SetMaxLength(10);
+	input_ajout_eleve__code_postal->SetMaxLength(5);
+
 	
 	input_select_matiere_ajout->MoveAfterInTabOrder(input_radio_prof); // l'ordre de déplacement à l'aide de la touche TAB
 	input_ajout_eleve__classe->MoveAfterInTabOrder(input_radio_eleve);
@@ -480,15 +484,15 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 	//si ((les 3 inputs principaux sont ok && id non existant) || (id existant&& id_non_vide))
 	//&& (admin || ((prof || eleve) && le combobox classe est ok))
 	//&& (prof && le combobox matière est ok)
-	//|| (eleve && 
+	//|| (eleve && les champs sont tous OK)
 	
-	if( ((!(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && input_radio_matricule_non->GetValue()) || (input_radio_matricule_oui->GetValue() && !input_ajout_matricule->IsEmpty())) && 
+	if(this->Validate() && ((!(input_ajout_mdp->IsEmpty() || input_ajout_nom->IsEmpty() ||input_ajout_prenom->IsEmpty()) && input_radio_matricule_non->GetValue()) || (input_radio_matricule_oui->GetValue() && !input_ajout_matricule->IsEmpty())) && 
 	
 	(((type_ajout==PROF || type_ajout==ELEVE) && (unsigned int)input_ajout_eleve__classe->GetSelection()!=(texte_classes.GetCount()-1) && (input_ajout_eleve__classe->GetSelection()!=wxNOT_FOUND || (input_ajout_eleve__classe->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_ajout_eleve__classe->GetValue().Cmp(_T(""))!=0))) ||type_ajout==ADMIN) &&
 	( (type_ajout==PROF && 
 		((unsigned int)input_select_matiere_ajout->GetSelection()!=(texte_select.GetCount()-1) && (input_select_matiere_ajout->GetSelection()!=wxNOT_FOUND || (input_select_matiere_ajout->GetValue().Cmp(_T("<séléctionner>"))!=0 && input_select_matiere_ajout->GetValue().Cmp(_T(""))!=0)))) ||
 	  (type_ajout==ELEVE && 
-		(!input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty())) ||
+		(!input_ajout_eleve__nom_responsable->IsEmpty() && input_ajout_eleve__groupe->GetSelection()!=wxNOT_FOUND && input_ajout_eleve__sexe->GetSelection()!=wxNOT_FOUND && !input_ajout_eleve__nom_rue->IsEmpty() && !input_ajout_eleve__code_postal->IsEmpty() && !input_ajout_eleve__ville->IsEmpty() && !input_ajout_eleve__tel_mobile->IsEmpty() && !input_ajout_eleve__nom_responsable->IsEmpty() && ! input_ajout_eleve__prenom_responsable->IsEmpty() && !input_ajout_eleve__tel_responsable->IsEmpty() && !input_ajout_eleve__mail_responsable->IsEmpty() && input_ajout_eleve__code_postal->GetValue().Length()==5 && input_ajout_eleve__tel_mobile->GetValue().Length()==10 && input_ajout_eleve__tel_responsable->GetValue().Length()==10)) ||
 		type_ajout==ADMIN
 	))
 		

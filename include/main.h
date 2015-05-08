@@ -7,6 +7,7 @@
 	#include <wx/statline.h>
 	#include <wx/stdpaths.h>
 	#include <wx/hyperlink.h>
+	#include <wx/regex.h>
 	#include <wx/filename.h>
 	#include <wx/listctrl.h>
 	#include <wx/dataview.h>
@@ -77,6 +78,25 @@
 
 	};
 
+	
+	
+		
+	class wxTextRegexpValidator : public wxTextValidator//Classe permettant un wxValidator via regexp
+	{
+		protected:
+		   wxRegEx m_regEx;
+		   wxString m_reString;
+
+		public:
+		   wxTextRegexpValidator(wxString regexp, wxString* valeur = NULL);
+		   ~wxTextRegexpValidator(){}
+
+		   wxObject* Clone() const;
+
+		   virtual bool TransferToWindow();
+		   virtual bool TransferFromWindow(void);
+	};
+	
 	class App_GestNotes : public wxApp
 	{
 		public :
