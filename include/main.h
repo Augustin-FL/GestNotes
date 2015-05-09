@@ -11,6 +11,7 @@
 	#include <wx/filename.h>
 	#include <wx/listctrl.h>
 	#include <wx/dataview.h>
+	#include <wx/notebook.h>
 	
 
 	#include <SQLite/sqlite3.h>
@@ -116,6 +117,7 @@
 			connexion_bdd* bdd;
 			int matricule;
 			Frame_login *parent;
+			wxMenu *menu_fichier, *menu_aide;
 			
 		public:
 			Frame_principale(Frame_login *parent,int &matricule,connexion_bdd*& bdd);
@@ -123,7 +125,6 @@
 			virtual void onQuit(wxCommandEvent &evenement);
 			virtual void onAbout(wxCommandEvent &evenement);
 			virtual void onChangeMdp(wxCommandEvent &evenement);
-			virtual	void onAfficherMembres(wxCommandEvent &evenement);
 			
 	};
 
@@ -251,6 +252,7 @@
 			void onModifier(wxCommandEvent &evenement);
 			void onClick_hors_bareme(wxCommandEvent &evenement);
 			void onChange_arrondi(wxCommandEvent &evenement);
+			void onAfficherMembres(wxCommandEvent &evenement);
 	};
 
 	class Frame_login : public wxFrame
@@ -268,8 +270,21 @@
 			Frame_principale* frame_enfant;
 			Frame_login* frame_actuelle;
 			
-			void onChange(wxCommandEvent &evenement);
-			void onClick_valider(wxCommandEvent &evenement);
+			void onChange(wxCommandEvent&);
+			void onClick_valider(wxCommandEvent&);
+			
+	};
+	
+	
+	class Afficher_liste_membres : public wxFrame
+	{
+		public:
+			Afficher_liste_membres(Frame_principale*,connexion_bdd*&, int);
+			~Afficher_liste_membres(){}
+		
+		private:
+			connexion_bdd* bdd;
+			Frame_principale* parent;
 			
 	};
 	

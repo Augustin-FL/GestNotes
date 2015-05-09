@@ -19,7 +19,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	wxArrayString texte_choix_classes;
 	
 	bdd->exec("SELECT * FROM reglages");
-	this->notes_hors_bareme=(bdd->getColumn_int(0)==1)?false:true;
+	this->notes_hors_bareme=(bdd->getColumn_int(0)==1)?false:true;//on récupère si on a le droit aux notes hors barème
 	this->arrondi_affichage_notes=bdd->getColumn_int(1);
 	
 	//on parcourt la liste des matières

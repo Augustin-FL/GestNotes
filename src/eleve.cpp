@@ -1,5 +1,12 @@
 #include "main.h"
 
+/*
+ToDO : 
+> Imprimer le buletin
+> Modifier mes infos
+
+*/
+
 Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
 	wxString texte_groupe(_T("Groupe : ")),string_classe(_T("Classe : "));
@@ -87,12 +94,6 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	int position_y;
 	wxString texte_note;
 	
-	/*
-	
-		TODO : les commentaires
-	
-	*/
-	
 	while(req->fetch())
 	{
 		texte_note="";
@@ -103,9 +104,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		
 		if(req->getColumn_int(2)==0)//si il y a une note à afficher
 		{
-			
 			position_y=req->getColumn_int(4);
-			
 			liste_notes->SetItem(liste_matiere[req->getColumn_int(0)], position_y,wxString::Format("%g",arrondi(arrondi_affichage_notes,req->getColumn_float(3))));
 			//if(il y a une note a afficher) ON affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
 		}
@@ -117,7 +116,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	
 	while(req->fetch())
 	{
-		it=liste_matiere.find(req->getColumn_int(0));
+		it=liste_matiere.find(req->getColumn_int(0));// on s'occupe de l'affichage des commentaires correspondants aux matières
 		
 		if(it!=liste_matiere.end())
 		{
@@ -128,15 +127,18 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	
 	for(it=liste_matiere.begin();it!=liste_matiere.end();it++)
 	{
-		int moyenne=-1;
+		double moyenne=-1,double_note_en_cours;
 		wxString note_en_cours;
 		
 		for(int i=1;i<4;i++)
 		{
 			note_en_cours=liste_notes->GetItemText(it->second,i);
-			if(note_en_cours!="")moyenne= (moyenne==-1)?atoi(note_en_cours):(moyenne+atoi(note_en_cours))/2;
+			if(note_en_cours!="" && note_en_cours.ToDouble(&double_note_en_cours))
+			{
+				moyenne=(moyenne==-1)?double_note_en_cours:(moyenne+double_note_en_cours)/2;
+			}
 		}
-		if(moyenne!=-1) liste_notes->SetItem(it->second,5,wxString::Format("%d",moyenne));
+		if(moyenne!=-1) liste_notes->SetItem(it->second,5,wxString::Format("%g",arrondi(arrondi_affichage_notes,moyenne)));
 	}
 	
 		liste_notes->SetColumnWidth(0,wxLIST_AUTOSIZE_USEHEADER);
