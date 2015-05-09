@@ -12,6 +12,7 @@
 	#include <wx/listctrl.h>
 	#include <wx/dataview.h>
 	#include <wx/notebook.h>
+	#include <wx/srchctrl.h>
 	
 
 	#include <SQLite/sqlite3.h>
