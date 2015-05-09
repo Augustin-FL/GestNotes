@@ -40,11 +40,10 @@ Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule_arg,co
 	
 	wxMenuBar *barre_menu= new wxMenuBar();
 
-	wxMenu *menu_fichier = new wxMenu();
-	wxMenu *menu_aide	 = new wxMenu();
+	menu_fichier = new wxMenu();
+	menu_aide	 = new wxMenu();
 
 	menu_fichier->Append(wxID_HIGHEST+1, _T("Modifier mon mot de passe"),_T("Modifier mon mot de passe"));
-	menu_fichier->Append(wxID_HIGHEST+2, _T("Liste Des Utilisateurs"),	 _T("Afficher la liste des membres de GestNotes"));
 	menu_fichier->Append(wxID_EXIT,		 _T("Quitter"),					 _T("Quitter GestNotes"));
 	menu_aide->Append(wxID_ABOUT,  		 _T("A Propos"),				 _T("Quelques infos sur le créateur..."));
 	this->SetMenuBar(barre_menu);
@@ -58,8 +57,6 @@ Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule_arg,co
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onQuit, 		this, wxID_EXIT);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onAbout,	 	this, wxID_ABOUT);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onChangeMdp, this, wxID_HIGHEST+1);
-	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_principale::onAfficherMembres, this, wxID_HIGHEST+2);
-	
 }
 
 
@@ -233,19 +230,12 @@ void Frame_modifier_mdp::onClick(wxCommandEvent& evenement)
 }
 
 
-void Frame_principale::onAfficherMembres(wxCommandEvent &evenement)
-{
-	wxMessageBox(_T("En construction :p"));
-
-}
 
 wxTextRegexpValidator::wxTextRegexpValidator(wxString regexp, wxString* pointeur) : m_regEx(regexp)//constructeur : création d'un wxValidator
 {
    m_stringValue = pointeur;
    m_reString = regexp;
 }
-
-
 
 
 

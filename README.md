@@ -5,7 +5,7 @@ GestNotes est un logiciel de gestion de notes écrit en C++ !
 
 ## Comment utiliser le programme : 
 
-Téléchargez [la dernière relase](https://github.com/gusfl/GestNotes/releases) de GestNotes dans un dossier de votre ordinateur, puis lancez GestNotes.exe.
+Téléchargez [la dernière relase](https://github.com/gusfl/GestNotes/releases/latest) de GestNotes dans un dossier de votre ordinateur, puis lancez GestNotes.exe.
 
 Le programme fonctionne actuellement en local sur un ordinateur. 
 
@@ -54,7 +54,7 @@ Une fois ceci fait, vous pouvez compiler GestNotes, à l'aide du projet codebloc
 Note : si vous ne maitrisez ni les Makefile ni CodeBlocks : un fichier .vcxproj (pour Visual Studio) sera bientot ajouté au projet.
 
 pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or directory` lors de la compilation : 
-- si vous compilez à l'aide du makefile, la procédure pour déjouer ce problème est expliquéee dedant
+- si vous compilez à l'aide du makefile, la procédure pour déjouer ce problème est expliquéee dedans
 - si vous compilez à l'aide de codeblocks, la procédure est expliquée dans le fichier ressources.rc
 
 ## ToDo list : 
@@ -63,13 +63,12 @@ futur proche :
 * Terminer l'interface de gestion des administrateurs
 	* Supporter la suppression d'un étudiant/élève/prof
 	* Supporter la modification d'un étudiant/élève/prof
+	* Afficher la liste des utilisateurs
 	* Saisir les appréciations générales
 * Créer l'interface de gestion pour les professeurs
 	* Saisie des groupes
 * Compléter l'interface de gestion pour les élèves
 	* Modifier ses infos
-* Pour tous : changer son mot de passe
-* Empécher la saisie de lettres lors d'un champ où un nombre est attendu.
 
 
 futur éloigné : 
@@ -77,5 +76,5 @@ futur éloigné :
 * Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale 
 * Creer un installateur à l'aide de NSIS
 
-Fonctionnalités : 
+Fonctionnalités hypotétiques : 
 * Calculer la moyenne d'un élêve. Si celle ci est inférieure à 10, prévenir un prof responsable. Mais quel prof dois on prévenir? et comment? 

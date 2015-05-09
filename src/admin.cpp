@@ -68,6 +68,8 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	sizer_droite->Add(input_checkbox__notes_hors_bareme,1);
 	sizer_droite->Add(input_checkbox__afficher_buletins,1);
 
+	menu_fichier->Insert(1,wxID_HIGHEST+2, _T("Liste Des Utilisateurs"),	 _T("Afficher la liste des membres de GestNotes"));
+	
 	fenetre->SetSizer(sizer_principal);
 
 	button_ajouter->Bind(					wxEVT_BUTTON,		&Frame_admin::onAjouter,	 	  this);
@@ -79,6 +81,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	input_radio__arrondi_demi->Bind(		wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
 	input_radio__arrondi_un->Bind(			wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
 	input_checkbox__notes_hors_bareme->Bind(wxEVT_CHECKBOX,		&Frame_admin::onClick_hors_bareme,this);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_admin::onAfficherMembres, this, wxID_HIGHEST+2);
 	
 	bdd->exec("SELECT * FROM reglages");
 	
@@ -122,6 +125,14 @@ void Frame_admin::onCheck_Buletins(wxCommandEvent &evenement)
 	input_checkbox__afficher_buletins->Disable();
 }
 
+
+
+void Frame_admin::onAfficherMembres(wxCommandEvent &evenement)
+{
+	new Afficher_liste_membres(this,bdd,0);
+}
+
+
 void Frame_admin::onSupprimer(wxCommandEvent &evenement)
 {
 		
@@ -131,6 +142,7 @@ void Frame_admin::onModifier(wxCommandEvent &evenement)
 {
 	
 }
+
 void Frame_admin::onClick_hors_bareme(wxCommandEvent &evenement)
 {
 	if(input_checkbox__notes_hors_bareme->IsChecked()) bdd->exec("UPDATE reglages SET notes_hors_bareme=1");
