@@ -47,20 +47,21 @@
 			<Add library="libodbc32.a" />
 		</Linker>
 		<Unit filename="include/main.h" />
+		<Unit filename="include/ressources.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="include/ressources.xpm" />
 		<Unit filename="src/admin.cpp" />
+		<Unit filename="src/afficher_liste_membres.cpp" />
 		<Unit filename="src/bdd.cpp" />
 		<Unit filename="src/eleve.cpp" />
 		<Unit filename="src/login.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/professeur.cpp" />
-		<Unit filename="include/ressources.rc">
-			<Option compilerVar="WINDRES" />
-		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
-			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

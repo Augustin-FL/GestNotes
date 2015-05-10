@@ -3,11 +3,6 @@
 	#include "ressources.xpm"//ressources linux
 #endif
 
-
-/*
-	TODO : rechercher un membre
-*/
-
 Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, connexion_bdd*& bdd_arg,int acces_arg=0) : wxFrame(parent_arg, wxID_ANY,_T("GestNotes - Liste Des Utilisateurs"),wxDefaultPosition,wxSize(600,500))
 {
 	SetIcon(wxICON(icone));
