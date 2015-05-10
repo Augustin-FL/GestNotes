@@ -17,7 +17,7 @@
 
 	#include <SQLite/sqlite3.h>
 	
-	#define VERSION "0.0.1 alpha"
+	#define VERSION "0.0.6-alpha"
 
 	using namespace std;
 	
