@@ -1,4 +1,8 @@
 #include "main.h"
+#ifndef __WXMSW__
+	#include "ressources.xpm"//ressources linux
+#endif
+
 
 /*
 	TODO : rechercher un membre
