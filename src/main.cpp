@@ -33,7 +33,7 @@ int App_GestNotes::OnExit()
 
 Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule_arg,connexion_bdd*& bdd_arg) : wxFrame(NULL, wxID_ANY,_T("GestNotes"),wxDefaultPosition,wxSize(500,500))
 {
-	SetIcon(wxICON(icone)); // l'icone ne fonctionne que sous windows
+	SetIcon(wxICON(icone));
 	this->parent=parent_arg;
 	this->bdd=bdd_arg;
 	this->matricule=matricule_arg;

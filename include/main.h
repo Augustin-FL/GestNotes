@@ -29,6 +29,8 @@
 	class Frame_admin;
 	class Frame_ajout_modification_membre;
 	class Frame_login;
+	class wxTextRegexpValidator;
+	class Afficher_liste_membres;
 
 	enum
 	{
@@ -244,6 +246,7 @@
 						  *input_radio__arrondi_dix,
 						  *input_radio__arrondi_demi,
 						  *input_radio__arrondi_un;
+			Afficher_liste_membres *liste_membres;
 			
 		public:
 			Frame_admin(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
@@ -281,12 +284,20 @@
 	{
 		public:
 			Afficher_liste_membres(Frame_principale*,connexion_bdd*&, int);
-			~Afficher_liste_membres(){}
-		
+			~Afficher_liste_membres(){};
+			void afficher_liste(wxCommandEvent &evenement);
+			void onChange_onglet(wxCommandEvent &evenement);
+			void onClose(wxCloseEvent &evenement);
+			
 		private:
 			connexion_bdd* bdd;
 			Frame_principale* parent;
 			
+			std::map<int,int> correspondance_id_position_eleve,correspondance_id_position_profs,correspondance_id_position_admins;
+			wxNotebook* onglets;
+			wxSearchCtrl *rechercher;
+			wxListCtrl *liste_eleves,*liste_profs,*liste_admins;
+			int acces;
 	};
 	
 	inline double arrondi(int precision, double nombre)//une fonction inline doit être définie dans le header

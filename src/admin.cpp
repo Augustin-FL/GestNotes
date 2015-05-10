@@ -135,12 +135,12 @@ void Frame_admin::onAfficherMembres(wxCommandEvent &evenement)
 
 void Frame_admin::onSupprimer(wxCommandEvent &evenement)
 {
-		
+	new Afficher_liste_membres(this,bdd,2);	
 }
 
 void Frame_admin::onModifier(wxCommandEvent &evenement)
 {
-	
+	new Afficher_liste_membres(this,bdd,1);
 }
 
 void Frame_admin::onClick_hors_bareme(wxCommandEvent &evenement)
