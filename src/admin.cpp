@@ -1,15 +1,12 @@
-/*
-AUTHOR : 
-
-*/
 #include "main.h"
 
 /*
 
+TODO : 
+
 >Editer l'appréciation Générale d'une classe
 >Supprimer élève
->Modifier un élève
->Backend : 
+>Modifier élève
 
 */
 
