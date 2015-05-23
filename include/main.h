@@ -30,6 +30,7 @@
 	class Frame_ajout_modification_membre;
 	class Frame_login;
 	class wxTextRegexpValidator;
+	class wxComboBoxValidator;
 	class Afficher_liste_membres;
 
 	enum
@@ -65,7 +66,7 @@
 			int nb_colonnes;
 
 	};
-
+	
 	class connexion_bdd : public wxString
 	{
 		private:
@@ -92,7 +93,8 @@
 	{
 		protected:
 		   wxRegEx m_regEx;
-		   wxString m_reString;
+		   wxString m_regexp_texte;
+		   
 
 		public:
 		   wxTextRegexpValidator(wxString regexp, wxString* valeur = NULL);
@@ -101,8 +103,25 @@
 		   wxObject* Clone() const;
 
 		   virtual bool TransferToWindow();
-		   virtual bool TransferFromWindow(void);
+		   virtual bool TransferFromWindow();
 	};
+	
+		
+	class wxComboBoxValidator : public wxValidator//Classe permettant un wxValidator via regexp
+	{
+		protected:
+		    wxString* m_pointeur;
+
+		public:
+		   wxComboBoxValidator(wxString* valeur=NULL);
+		   ~wxComboBoxValidator(){}
+
+		   wxObject* Clone() const;
+
+		   virtual bool TransferToWindow();
+		   virtual bool TransferFromWindow();
+	};
+	
 	
 	class App_GestNotes : public wxApp
 	{
@@ -134,15 +153,21 @@
 	class Frame_ajout_modification_membre : public wxDialog
 	{
 		public:
-			Frame_ajout_modification_membre(Frame_principale* parent_arg,connexion_bdd*& bdd,int matricule=PAS_CONNECTE,int acces=ADMIN);
+			Frame_ajout_modification_membre(wxWindow* parent_arg,connexion_bdd*& bdd,int matricule_arg=-1,int matiere_arg=-1, int classe_arg=-1,int acces_arg=ADMIN);
 			void onClick_radio(wxCommandEvent &evenement);
 			void onChange_select(wxCommandEvent &evenement);
 			void onClick(wxCommandEvent &evenement);
+			void remplir_champs();
+			bool valider();
+			void Supprimer_ancien_membre();
+			int getAncienType();
+			int valider_ajouter_login_centralise();
+			void supprimer_prof(int,int,int);
 			
 		private:
-			int id, nombre_matiere;
+			int matricule, nombre_matiere,acces,classe, matiere;
 			connexion_bdd* bdd;
-			Frame_principale* parent;
+			wxFrame* parent;
 			wxArrayString texte_select,texte_classes;
 
 			wxRadioButton *input_radio_prof;
@@ -156,8 +181,8 @@
 						*input_ajout_eleve__prenom_responsable,
 						*input_ajout_eleve__tel_responsable,
 						*input_ajout_eleve__mail_responsable,
-						*input_ajout_eleve__nom_rue,
 						*input_ajout_eleve__rue,
+						*input_ajout_eleve__num_rue,
 						*input_ajout_eleve__code_postal,
 						*input_ajout_eleve__ville,
 						*input_ajout_eleve__tel_mobile,
@@ -169,8 +194,8 @@
 						*label_ajout_eleve__tel_responsable,
 						*label_ajout_eleve__mail_responsable,
 						*label_ajout_eleve__sexe,
-						*label_ajout_eleve__nom_rue,
 						*label_ajout_eleve__rue,
+						*label_ajout_eleve__num_rue,
 						*label_ajout_eleve__code_postal,
 						*label_ajout_eleve__ville,
 						*label_ajout_eleve__tel_mobile,
@@ -256,6 +281,8 @@
 			void onModifier(wxCommandEvent &evenement);
 			void onClick_hors_bareme(wxCommandEvent &evenement);
 			void onChange_arrondi(wxCommandEvent &evenement);
+			void onModifier_id_selectionne(wxListEvent &evenement);
+			void onSupprimer_id_selectionne(wxListEvent &evenement);
 			void onAfficherMembres(wxCommandEvent &evenement);
 	};
 
@@ -288,12 +315,13 @@
 			void afficher_liste(wxCommandEvent &evenement);
 			void onChange_onglet(wxCommandEvent &evenement);
 			void onClose(wxCloseEvent &evenement);
+			bool ongletProfs_selected();
+			wxListCtrl* getListCtrl();
 			
 		private:
 			connexion_bdd* bdd;
 			Frame_principale* parent;
 			
-			std::map<int,int> correspondance_id_position_eleve,correspondance_id_position_profs,correspondance_id_position_admins;
 			wxNotebook* onglets;
 			wxSearchCtrl *rechercher;
 			wxListCtrl *liste_eleves,*liste_profs,*liste_admins;

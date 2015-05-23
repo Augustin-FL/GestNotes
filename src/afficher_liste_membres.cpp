@@ -32,13 +32,16 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	
 	rechercher->SetDescriptiveText(_T("Rechercher"));
 	
+	liste_eleves->AppendColumn(_T("Matricule"),wxLIST_FORMAT_CENTER);
 	liste_eleves->AppendColumn(_T("Nom"),wxLIST_FORMAT_CENTER);
 	liste_eleves->AppendColumn(_T("Classe"),wxLIST_FORMAT_CENTER);
 	
+	liste_profs->AppendColumn(_T("Matricule"),wxLIST_FORMAT_CENTER);
 	liste_profs->AppendColumn(_T("Nom"),wxLIST_FORMAT_CENTER);
 	liste_profs->AppendColumn(_T("Matière"),wxLIST_FORMAT_CENTER);
 	liste_profs->AppendColumn(_T("Classe"),wxLIST_FORMAT_CENTER);
 	
+	liste_admins->AppendColumn(_T("Matricule"),wxLIST_FORMAT_CENTER);
 	liste_admins->AppendColumn(_T("Nom"),wxLIST_FORMAT_CENTER);
 	
 	this->afficher_liste(*new wxCommandEvent());
@@ -58,6 +61,19 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	
 	onglets->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &Afficher_liste_membres::afficher_liste,this);
 	rechercher->Bind(wxEVT_TEXT, &Afficher_liste_membres::afficher_liste,this);
+	if(acces==1)
+	{
+		liste_profs->Bind(wxEVT_LIST_ITEM_ACTIVATED,  &Frame_admin::onModifier_id_selectionne, (Frame_admin*)parent);
+		liste_eleves->Bind(wxEVT_LIST_ITEM_ACTIVATED, &Frame_admin::onModifier_id_selectionne, (Frame_admin*)parent);
+		liste_admins->Bind(wxEVT_LIST_ITEM_ACTIVATED, &Frame_admin::onModifier_id_selectionne, (Frame_admin*)parent);
+	}
+	else if(acces==2)
+	{
+		liste_profs->Bind(wxEVT_LIST_ITEM_ACTIVATED,  &Frame_admin::onSupprimer_id_selectionne, (Frame_admin*)parent);
+		liste_eleves->Bind(wxEVT_LIST_ITEM_ACTIVATED, &Frame_admin::onSupprimer_id_selectionne, (Frame_admin*)parent);
+		liste_admins->Bind(wxEVT_LIST_ITEM_ACTIVATED, &Frame_admin::onSupprimer_id_selectionne, (Frame_admin*)parent);
+
+	}
 	this->Bind(wxEVT_CLOSE_WINDOW, &Afficher_liste_membres::onClose,this);
 	
 	fenetre->SetSizer(sizer_principal);
@@ -70,7 +86,7 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 {
 	wxListCtrl *liste=liste_eleves;
-	std::map<int,int> *correspondance=&correspondance_id_position_eleve;
+	
 	std::string string_req=(rechercher->IsEmpty())?
 				"SELECT eleves.id, prenom, eleves.nom, classes.nom FROM eleves JOIN classes ON eleves.classe=classes.id ORDER BY eleves.nom":
 				"SELECT eleves.id, prenom, eleves.nom, classes.nom FROM eleves JOIN classes ON eleves.classe=classes.id WHERE eleves.nom LIKE :rechercher OR eleves.prenom LIKE :rechercher ORDER BY eleves.nom";
@@ -78,23 +94,20 @@ void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 	if(onglets->GetSelection()==2)
 	{
 		liste=liste_admins;
-		correspondance=&correspondance_id_position_admins;
 		string_req=(rechercher->IsEmpty())?
-				"SELECT id,prenom,nom FROM admin ORDER BY nom":
-				"SELECT id,prenom,nom FROM admin WHERE nom LIKE %:rechercher% OR prenom LIKE :rechercher ORDER BY nom";
+				"SELECT id,prenom,nom FROM admins ORDER BY nom":
+				"SELECT id,prenom,nom FROM admins WHERE nom LIKE %:rechercher% OR prenom LIKE :rechercher ORDER BY nom";
 	}
 	else if(onglets->GetSelection()==1)
 	{
 		liste=liste_profs;
-		correspondance=&correspondance_id_position_profs;
 		string_req=(rechercher->IsEmpty())?
 				"SELECT profs.id,profs.prenom,profs.nom,matieres.nom,classes.nom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere JOIN classes ON classes.id=profs.classe ORDER BY profs.nom":
 				"SELECT profs.id,profs.prenom,profs.nom,matieres.nom,classes.nom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere JOIN classes ON classes.id=profs.classe WHERE profs.nom LIKE :rechercher OR profs.prenom LIKE :rechercher ORDER BY profs.nom";
 	}
 	
 	liste->DeleteAllItems();
-	correspondance->clear();
-
+	
 	requete_sql *req=bdd->prepare(string_req);
 	
 	if(!rechercher->IsEmpty())req->bind(":rechercher","%"+string(rechercher->GetValue().mb_str())+"%");
@@ -102,23 +115,24 @@ void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 	int ligne=0;
 	while(req->fetch())
 	{
-		liste->InsertItem(ligne,wxString(req->getColumn_text(1))<<" "<<wxString(req->getColumn_text(2)));
+		liste->InsertItem(ligne,wxString::Format("%d",req->getColumn_int(0)));//matricule
+		liste->SetItem(ligne,1,wxString(req->getColumn_text(1))<<" "<<wxString(req->getColumn_text(2)));//prénom nom
 		
-		if(onglets->GetSelection()==1 || onglets->GetSelection()==0 || onglets->GetSelection()==wxNOT_FOUND) liste->SetItem(ligne,1,req->getColumn_text(3));
-		if(onglets->GetSelection()==1) liste->SetItem(ligne,2,req->getColumn_text(4));
-			
-		(*correspondance)[req->getColumn_int(0)]=ligne;
+		if(onglets->GetSelection()==1 || onglets->GetSelection()==0 || onglets->GetSelection()==wxNOT_FOUND) liste->SetItem(ligne,2,req->getColumn_text(3));//classe
+		if(onglets->GetSelection()==1) liste->SetItem(ligne,3,req->getColumn_text(4));//matiere
+
 		ligne++;
 	}
 	req->closeCursor();
 
 	if(rechercher->IsEmpty())
 	{
-		liste->SetColumnWidth(0,wxLIST_AUTOSIZE_USEHEADER);
+		liste->SetColumnWidth(1,wxLIST_AUTOSIZE_USEHEADER);
 		
 		if(onglets->GetSelection()==1)
-			liste->SetColumnWidth(1,wxLIST_AUTOSIZE_USEHEADER);//les profs ont 2 champs a resizer  : leur nom et leur matière
+			liste->SetColumnWidth(2,wxLIST_AUTOSIZE_USEHEADER);//les profs ont 2 champs a resizer  : leur nom et leur matière
 	}
+	
 }
 
 void Afficher_liste_membres::onChange_onglet(wxCommandEvent &evenement)
@@ -127,6 +141,15 @@ void Afficher_liste_membres::onChange_onglet(wxCommandEvent &evenement)
 	this->afficher_liste(*new wxCommandEvent());
 }
 
+bool Afficher_liste_membres::ongletProfs_selected()
+{
+	if(onglets->GetSelection()==1) return true;
+	else return false;
+}
+wxListCtrl*  Afficher_liste_membres::getListCtrl()
+{
+	return liste_profs;
+}
 
 void Afficher_liste_membres::onClose(wxCloseEvent &evenement)
 {
