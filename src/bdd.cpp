@@ -45,7 +45,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		this->exec("CREATE TABLE IF NOT EXISTS classes ( 										\
 					id						INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,	\
 					nom						TEXT NOT NULL,										\
-					appréciation_generale	TEXT										\
+					appréciation_generale	TEXT												\
 					);");
 
 		this->exec("CREATE TABLE IF NOT EXISTS matieres(										\
@@ -75,14 +75,14 @@ connexion_bdd::connexion_bdd()//const string &infos)
 						num_rue				INTEGER,											\
 						code_postal			INTEGER,											\
 						ville				INTEGER,											\
-						tel_mobile			INTEGER,											\
+						tel_mobile			TEXT,												\
 						nom_responsable		TEXT,												\
 						prenom_responsable	TEXT,												\
-						tel_responsable		INTEGER,											\
+						tel_responsable		TEXT,												\
 						mail_responsable	TEXT												\
 					);");
 
-		this->exec("CREATE TABLE IF NOT EXISTS admin(											\
+		this->exec("CREATE TABLE IF NOT EXISTS admins(											\
 						id					INTEGER NOT NULL,									\
 						nom					TEXT 	NOT NULL,									\
 						prenom				TEXT 	NOT NULL									\
@@ -106,14 +106,21 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO login_centralise VALUES (1,'test',2)");
 			this->exec("INSERT INTO login_centralise VALUES (2,'test',1)");
 			this->exec("INSERT INTO login_centralise VALUES (3,'test',0)");
-			this->exec("INSERT INTO admin VALUES (1,'FL','Augustin')");
+			this->exec("INSERT INTO login_centralise VALUES (4,'test',1)");
+			this->exec("INSERT INTO login_centralise VALUES (5,'test',0)");
+			this->exec("INSERT INTO admins VALUES (1,'FL','Augustin')");
 			this->exec("INSERT INTO profs VALUES (2,'Obiwan','Kenobi',0,0)");
-			this->exec("INSERT INTO profs VALUES (2,'Test','keke',1,0)");
+			this->exec("INSERT INTO profs VALUES (2,'Obiwan','Kenobi',1,0)");
+			this->exec("INSERT INTO profs VALUES (4,'banan','krn',2,1)");
 			this->exec("INSERT INTO classes VALUES (0,'1\xe8\x72\x65 S 1','')");
+			this->exec("INSERT INTO classes VALUES (1,'1\xe8\x72\x65 S 2','')");
+		
 			this->exec("INSERT INTO notes VALUES (3,0,8,1)");
-			this->exec("INSERT INTO eleves VALUES (3,'Camille','Sunaara',0,0,0,'','Rue qui n''existe pas',12,75001,'Paris',060102030405,'Boiseck','Colombette',01203040506,'howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO eleves VALUES (3,'Camille','Sunaara',0,0,0,1432282509,'Rue qui n''existe pas',12,75001,'Paris','0601020304','Boiseck','Colombette','0102030405','howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO eleves VALUES (5,'gomar','rock',1,0,0,1432282509,'test',2,94800,'Villejuif','0604020304','yolo','swagg','0102130405','he@yopmail.com')");
 			this->exec("INSERT INTO matieres VALUES (0,'maths')");
 			this->exec("INSERT INTO matieres VALUES (1,'physique')");
+			this->exec("INSERT INTO matieres VALUES (2,'anglais')");
 			this->exec("INSERT INTO reglages VALUES (0,100,0)");
 			this->exec("INSERT INTO commentaires VALUES (0,3,'test commentaire')");
 			this->exec("INSERT INTO commentaires VALUES (-1,3,'rien a ajouter')");
@@ -305,7 +312,7 @@ int requete_sql::getColumn_int(int numero)
 }
 string requete_sql::getColumn_text(int numero)
 {
-	if(numero>nb_colonnes-1 || numero<0  || types[numero]!=SQLITE_TEXT)  return "erreur - GetColumn_text()";
+	if(numero>nb_colonnes-1 || numero<0  || types[numero]!=SQLITE_TEXT)return "erreur - GetColumn_text()";
 	return string((const char*)sqlite3_column_text(requete, numero));
 }
 double requete_sql::getColumn_float(int numero)

@@ -35,8 +35,8 @@ RESSOURCES=
 RM_RES=
 endif
 	
-$(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/admin.o ./obj/professeur.o ./obj/eleve.o ./obj/afficher_liste_membres.o | ./bin
-	$(CC) "./obj/main.o" "./obj/bdd.o" "./obj/login.o" "./obj/admin.o" "./obj/professeur.o" "./obj/eleve.o" "./obj/afficher_liste_membres.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
+$(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/admin.o ./obj/professeur.o ./obj/eleve.o ./obj/afficher_liste_membres.o ./obj/validateurs.o | ./bin
+	$(CC) "./obj/main.o" "./obj/bdd.o" "./obj/login.o" "./obj/admin.o" "./obj/professeur.o" "./obj/eleve.o" "./obj/afficher_liste_membres.o" "./obj/validateurs.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
 	$(LANCER_PROG)
 
 
@@ -61,7 +61,8 @@ $(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/a
 	$(CC) "./src/eleve.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"
 ./obj/afficher_liste_membres.o: ./src/afficher_liste_membres.cpp
 	$(CC) "./src/afficher_liste_membres.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"
-	
+./obj/validateurs.o: ./src/validateurs.cpp
+	$(CC) "./src/validateurs.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"	
 	
 clean:
 	$(RM_RES)
