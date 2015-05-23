@@ -146,6 +146,12 @@ bool Afficher_liste_membres::ongletProfs_selected()
 	if(onglets->GetSelection()==1) return true;
 	else return false;
 }
+
+bool Afficher_liste_membres::ongletEleves_selected()
+{
+	if(onglets->GetSelection()==0) return true;
+	else return false;
+}
 wxListCtrl*  Afficher_liste_membres::getListCtrl()
 {
 	return liste_profs;
