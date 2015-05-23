@@ -163,6 +163,7 @@
 			int getAncienType();
 			int valider_ajouter_login_centralise();
 			void supprimer_prof(int,int,int);
+			void supprimer_eleve(int id,int classe);
 			
 		private:
 			int matricule, nombre_matiere,acces,classe, matiere;
@@ -284,6 +285,8 @@
 			void onModifier_id_selectionne(wxListEvent &evenement);
 			void onSupprimer_id_selectionne(wxListEvent &evenement);
 			void onAfficherMembres(wxCommandEvent &evenement);
+			void supprimer_eleve(int,int);
+			void supprimer_prof(int,int,int);
 	};
 
 	class Frame_login : public wxFrame
@@ -316,7 +319,9 @@
 			void onChange_onglet(wxCommandEvent &evenement);
 			void onClose(wxCloseEvent &evenement);
 			bool ongletProfs_selected();
+			bool ongletEleves_selected();
 			wxListCtrl* getListCtrl();
+			
 			
 		private:
 			connexion_bdd* bdd;

@@ -59,6 +59,7 @@
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/professeur.cpp" />
 		<Unit filename="src/validateurs.cpp" />
+		<Unit filename="src/ajout_modification_membre.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
