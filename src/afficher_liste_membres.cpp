@@ -44,7 +44,7 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	liste_admins->AppendColumn(_T("Matricule"),wxLIST_FORMAT_CENTER);
 	liste_admins->AppendColumn(_T("Nom"),wxLIST_FORMAT_CENTER);
 	
-	this->afficher_liste(*new wxCommandEvent());
+	this->changer_onglet(*new wxCommandEvent());
 	
 	sizer_haut->Add(sizer_texte,1,wxALIGN_CENTER,5);
 	sizer_haut->Add(sizer_rechercher,1,wxALIGN_RIGHT,5);
@@ -59,8 +59,13 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	sizer_principal->Add(sizer_haut,0,wxEXPAND|wxALL,8);
 	sizer_principal->Add(onglets,1,wxEXPAND);
 	
-	onglets->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &Afficher_liste_membres::afficher_liste,this);
+	onglets->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &Afficher_liste_membres::changer_onglet,this);
 	rechercher->Bind(wxEVT_TEXT, &Afficher_liste_membres::afficher_liste,this);
+	
+	liste_profs->Bind(wxEVT_LIST_COL_CLICK, &Afficher_liste_membres::changer_ordre,this);
+	liste_eleves->Bind(wxEVT_LIST_COL_CLICK, &Afficher_liste_membres::changer_ordre,this);
+	liste_admins->Bind(wxEVT_LIST_COL_CLICK, &Afficher_liste_membres::changer_ordre,this);
+	
 	if(acces==1)
 	{
 		liste_profs->Bind(wxEVT_LIST_ITEM_ACTIVATED,  &Frame_admin::onModifier_id_selectionne, (Frame_admin*)parent);
@@ -81,36 +86,105 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	parent->Disable();
 	
 }
- 
+
+void Afficher_liste_membres::changer_onglet(wxCommandEvent &evenement)
+{
+	ordre_colonne1=1;
+	ordre_colonne2=0;
+	ordre_colonne3=0;
+	
+	this->afficher_liste(*new wxCommandEvent());
+}
+
+void Afficher_liste_membres::changer_ordre(wxListEvent &evenement)
+{
+	int col = evenement.GetColumn();
+	
+	if(col==0) 
+	{
+		ordre_colonne2=0;
+		ordre_colonne3=0;
+		ordre_colonne4=0;
+		if(ordre_colonne1!=1) ordre_colonne1=1;
+		else ordre_colonne1=-1;
+	}
+	else if(col==1)
+	{	
+		ordre_colonne1=0;
+		ordre_colonne3=0;
+		if(ordre_colonne2!=1) ordre_colonne2=1;
+		else ordre_colonne2=-1;
+	}
+	else if(col==2)
+	{
+		ordre_colonne1=0;
+		ordre_colonne2=0;
+		ordre_colonne4=0;
+		if(ordre_colonne3!=1) ordre_colonne3=1;
+		else ordre_colonne3=-1;
+	}
+	else 
+	{
+		ordre_colonne1=0;
+		ordre_colonne2=0;
+		ordre_colonne3=0;
+		if(ordre_colonne4!=1) ordre_colonne4=1;
+		else ordre_colonne4=-1;
+	}
+	
+	this->afficher_liste(*new wxCommandEvent());
+}
  
 void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 {
 	wxListCtrl *liste=liste_eleves;
 	
-	std::string string_req=(rechercher->IsEmpty())?
-				"SELECT eleves.id, prenom, eleves.nom, classes.nom FROM eleves JOIN classes ON eleves.classe=classes.id ORDER BY eleves.nom":
-				"SELECT eleves.id, prenom, eleves.nom, classes.nom FROM eleves JOIN classes ON eleves.classe=classes.id WHERE eleves.nom LIKE :rechercher OR eleves.prenom LIKE :rechercher ORDER BY eleves.nom";
+	std::string string_req;
 	
 	if(onglets->GetSelection()==2)
 	{
 		liste=liste_admins;
-		string_req=(rechercher->IsEmpty())?
-				"SELECT id,prenom,nom FROM admins ORDER BY nom":
-				"SELECT id,prenom,nom FROM admins WHERE nom LIKE %:rechercher% OR prenom LIKE :rechercher ORDER BY nom";
+		string_req="SELECT id,prenom,nom FROM admins";
+		
+		if(!rechercher->IsEmpty()) string_req+=" WHERE nom LIKE :rechercher OR prenom LIKE :rechercher";
+		
+		if     (ordre_colonne1!=0) string_req+=" ORDER BY id";
+		else if(ordre_colonne2!=0) string_req+=" ORDER BY nom";
+		
+		if(ordre_colonne1==-1 || ordre_colonne2==-1) string_req+=" DESC";
 	}
 	else if(onglets->GetSelection()==1)
 	{
 		liste=liste_profs;
-		string_req=(rechercher->IsEmpty())?
-				"SELECT profs.id,profs.prenom,profs.nom,matieres.nom,classes.nom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere JOIN classes ON classes.id=profs.classe ORDER BY profs.nom":
-				"SELECT profs.id,profs.prenom,profs.nom,matieres.nom,classes.nom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere JOIN classes ON classes.id=profs.classe WHERE profs.nom LIKE :rechercher OR profs.prenom LIKE :rechercher ORDER BY profs.nom";
+		string_req="SELECT profs.id,profs.prenom,profs.nom,matieres.nom,classes.nom FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere JOIN classes ON classes.id=profs.classe";
+		
+		if(!rechercher->IsEmpty()) string_req+=" WHERE profs.nom LIKE :rechercher OR profs.prenom LIKE :rechercher OR matieres.nom LIKE :rechercher OR classes.nom LIKE :rechercher";
+		
+		if(ordre_colonne1!=0) 	   string_req+=" ORDER BY profs.id";
+		else if(ordre_colonne2!=0) string_req+=" ORDER BY profs.nom";
+		else if(ordre_colonne3!=0) string_req+=" ORDER BY matieres.nom";
+		else if(ordre_colonne4!=0) string_req+=" ORDER BY classes.nom";
+		
+		if(ordre_colonne1==-1 || ordre_colonne2==-1 || ordre_colonne3==-1 || ordre_colonne4==-1) string_req+=" DESC";
+	}
+	else 
+	{
+		string_req="SELECT eleves.id, prenom, eleves.nom, classes.nom FROM eleves JOIN classes ON eleves.classe=classes.id";
+		
+		if(!rechercher->IsEmpty()) string_req+=" WHERE eleves.nom LIKE :rechercher OR eleves.prenom LIKE :rechercher OR classes.nom LIKE :rechercher";
+		
+		if(ordre_colonne1!=0) 	   string_req+=" ORDER BY eleves.id";
+		else if(ordre_colonne2!=0) string_req+=" ORDER BY eleves.nom";
+		else if(ordre_colonne3!=0) string_req+=" ORDER BY classes.nom";
+		
+		if(ordre_colonne1==-1 || ordre_colonne2==-1 || ordre_colonne3==-1) string_req+=" DESC";
 	}
 	
 	liste->DeleteAllItems();
 	
 	requete_sql *req=bdd->prepare(string_req);
 	
-	if(!rechercher->IsEmpty())req->bind(":rechercher","%"+string(rechercher->GetValue().mb_str())+"%");
+	if(!rechercher->IsEmpty()) req->bind(":rechercher","%"+string(rechercher->GetValue().mb_str())+"%");
 	
 	int ligne=0;
 	while(req->fetch())

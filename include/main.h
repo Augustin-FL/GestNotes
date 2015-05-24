@@ -153,7 +153,7 @@
 	class Frame_ajout_modification_membre : public wxDialog
 	{
 		public:
-			Frame_ajout_modification_membre(wxWindow* parent_arg,connexion_bdd*& bdd,int matricule_arg=-1,int matiere_arg=-1, int classe_arg=-1,int acces_arg=ADMIN);
+			Frame_ajout_modification_membre(wxWindow* parent_arg,connexion_bdd*& bdd,int matricule_arg=-1,int matiere_arg=-1, int classe_arg=-1);
 			void onClick_radio(wxCommandEvent &evenement);
 			void onChange_select(wxCommandEvent &evenement);
 			void onClick(wxCommandEvent &evenement);
@@ -166,7 +166,7 @@
 			void supprimer_eleve(int id,int classe);
 			
 		private:
-			int matricule, nombre_matiere,acces,classe, matiere;
+			int matricule, nombre_matiere,classe, matiere;
 			connexion_bdd* bdd;
 			wxFrame* parent;
 			wxArrayString texte_select,texte_classes;
@@ -239,12 +239,20 @@
 			void onDbclick_notes(wxDataViewEvent &evenement);
 			void onChange_notes(wxDataViewEvent &evenement);
 			void onChange_commentaires(int id_eleve);
+			void preparer_matieres_classes();
+			void onChange_matiere(wxCommandEvent &evenement);
+			void onChange_classe(wxCommandEvent &evenement);
+			void afficher_liste();
 			
 		private:
 			wxDataViewListCtrl   *liste_notes;
 			std::map<int,int> liste_eleves;
 			int id_matiere_en_cours,id_classe_en_cours, arrondi_affichage_notes;
 			bool notes_hors_bareme;
+			
+			std::map<int,wxString> choix_matieres;
+			std::map<int,wxString> choix_classes;
+	
 	
 		
 	};
@@ -321,6 +329,8 @@
 			bool ongletProfs_selected();
 			bool ongletEleves_selected();
 			wxListCtrl* getListCtrl();
+			void changer_onglet(wxCommandEvent &evenement);
+			void changer_ordre(wxListEvent &evenement);
 			
 			
 		private:
@@ -330,7 +340,8 @@
 			wxNotebook* onglets;
 			wxSearchCtrl *rechercher;
 			wxListCtrl *liste_eleves,*liste_profs,*liste_admins;
-			int acces;
+			int acces, ordre_colonne1,ordre_colonne2,ordre_colonne3,ordre_colonne4;
+			
 	};
 	
 	inline double arrondi(int precision, double nombre)//une fonction inline doit être définie dans le header

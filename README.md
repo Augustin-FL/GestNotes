@@ -61,9 +61,6 @@ pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or direc
 
 futur proche :
 * Terminer l'interface de gestion des administrateurs
-	* Supporter la suppression d'un étudiant/élève/prof
-	* Supporter la modification d'un étudiant/élève/prof
-	* Afficher la liste des utilisateurs
 	* Saisir les appréciations générales
 * Créer l'interface de gestion pour les professeurs
 	* Saisie des groupes

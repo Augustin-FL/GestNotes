@@ -1,11 +1,10 @@
 #include "main.h"
 
 
-Frame_ajout_modification_membre::Frame_ajout_modification_membre(wxWindow* parent,connexion_bdd*& bdd_arg, int matricule_arg,int matiere_arg, int classe_arg, int acces_arg) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
+Frame_ajout_modification_membre::Frame_ajout_modification_membre(wxWindow* parent,connexion_bdd*& bdd_arg, int matricule_arg,int matiere_arg, int classe_arg) : wxDialog(parent, wxID_ANY,_T("GestNotes - Ajouter"),wxDefaultPosition,wxSize(670,510))
 {
 	bdd=bdd_arg;
 	matricule=matricule_arg;
-	acces=acces_arg;
 	matiere=matiere_arg;
 	classe=classe_arg;
 	
