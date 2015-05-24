@@ -17,7 +17,7 @@
 
 	#include <SQLite/sqlite3.h>
 	
-	#define VERSION "0.0.6-alpha"
+	#define VERSION "0.0.8-beta"
 
 	using namespace std;
 	
@@ -159,11 +159,11 @@
 			void onClick(wxCommandEvent &evenement);
 			void remplir_champs();
 			bool valider();
-			void Supprimer_ancien_membre();
 			int getAncienType();
 			int valider_ajouter_login_centralise();
 			void supprimer_prof(int,int,int);
 			void supprimer_eleve(int id,int classe);
+			
 			
 		private:
 			int matricule, nombre_matiere,classe, matiere;
@@ -333,6 +333,7 @@
 			wxListCtrl* getListCtrl();
 			void changer_onglet(wxCommandEvent &evenement);
 			void changer_ordre(wxListEvent &evenement);
+			void Ajouter_curseur(int,bool);
 			
 			
 		private:

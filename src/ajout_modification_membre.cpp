@@ -539,25 +539,41 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 	
 	if(type_ajout==PROF)
 	{
-		texte_req=(nessecite_update)?
-					"UPDATE profs SET id=:matricule,nom=:nom,prenom=:prenom,matiere=:matiere,classe=:classe WHERE id=:matricule_old AND matiere=:matiere_old AND classe=:classe_old":
-					"INSERT INTO profs VALUES (:matricule,:nom,:prenom,:matiere,:classe)";
-		req=bdd->prepare(texte_req);
-		req->bind(":matiere",input_select_matiere_ajout->GetSelection());
-		req->bind(":classe",input_ajout_eleve__classe->GetSelection());
-		req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
-		req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
-		req->bind(":matricule",matricule_modif);
-		
 		if(nessecite_update)
 		{
-			req->bind(":matiere_old",input_select_matiere_ajout->GetSelection());
-			req->bind(":classe_old",input_ajout_eleve__classe->GetSelection());
+
+			req=bdd->prepare("UPDATE profs SET matiere=:matiere,classe=:classe WHERE id=:matricule_old AND matiere=:matiere_old AND classe=:classe_old");//met a jours la classe/matiere
+			req->bind(":matiere",input_select_matiere_ajout->GetSelection());
+			req->bind(":classe",input_ajout_eleve__classe->GetSelection());
+			req->bind(":matiere_old",matiere);
+			req->bind(":classe_old",classe);
 			req->bind(":matricule_old",matricule);	
+			req->fetch();
+			req->closeCursor();
+			
+			req=bdd->prepare("UPDATE profs SET id=:matricule,nom=:nom,prenom=:prenom WHERE id=:matricule_old");//met a jour le prénom/nom
+			req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
+			req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+			req->bind(":matricule",matricule_modif);
+			req->bind(":matricule_old",matricule_modif);
+			req->fetch();
+			req->closeCursor();
+			
+		}
+		else
+		{
+			req=bdd->prepare("INSERT INTO profs VALUES (:matricule,:nom,:prenom,:matiere,:classe)");
+			req->bind(":matiere",input_select_matiere_ajout->GetSelection());
+			req->bind(":classe",input_ajout_eleve__classe->GetSelection());
+			req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
+			req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+			req->bind(":matricule",matricule_modif);
+		
+			req->fetch();
+			req->closeCursor();
 		}
 		
-		req->fetch();
-		req->closeCursor();
+		
 	}
 	else if(type_ajout==ELEVE)
 	{
@@ -681,13 +697,6 @@ bool Frame_ajout_modification_membre::valider()
 }
 
 
-void Frame_ajout_modification_membre::Supprimer_ancien_membre()
-{
-	
-	
-	
-}
-
 int Frame_ajout_modification_membre::getAncienType()
 {
 	requete_sql* req=bdd->prepare("SELECT type FROM login_centralise WHERE matricule=:matricule");
@@ -729,7 +738,7 @@ int Frame_ajout_modification_membre::valider_ajouter_login_centralise()
 		if(req->getColumn_int(1)!=type_ajout)
 		{
 			req->closeCursor();
-			wxMessageBox(_T("Erreur ! Impossible d'ajouter quelqu'un qui n'est pas du même type (prof, admin, élêve)"));
+			wxMessageBox(_T("Erreur ! Le matricule entré n'est pas un professeur"));
 			return -1;
 		}
 

@@ -13,7 +13,7 @@ onchange_matiere
 
 Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
-	/*
+	
 	std::map<int,wxString>::iterator it_matieres_classes;
 	
 	this->preparer_matieres_classes();
@@ -30,13 +30,13 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	bdd->exec("SELECT * FROM reglages");
 	notes_hors_bareme=(bdd->getColumn_int(0)==1)?false:true;//on récupère si on a le droit aux notes hors barème
 	arrondi_affichage_notes=bdd->getColumn_int(1);
-	*/
+	
 	
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
    
 	wxPanel *fenetre = new wxPanel(this);
     wxBoxSizer *sizer_principal = new wxBoxSizer(wxVERTICAL);
-/*
+
 	wxStaticBoxSizer *conteneur_choix_matiere_classe = new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Choisir la matière et la classe : "));
 	wxStaticBoxSizer *conteneur_notes 	             = new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Notes : "));
 	
@@ -61,8 +61,8 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, 	&Frame_prof::onDbclick_notes,this);// lorsqu'on double clique sur les notes
 	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,&Frame_prof::onChange_notes,this);// lorsque la valeur est changée
-	//liste_matieres->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_matiere,this);
-	//liste_classes->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_classe,this);
+	liste_matieres->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_matiere,this);
+	liste_classes->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_classe,this);
 	
 	sizer_principal->Add(texte_header,0,wxALIGN_CENTER);
 	sizer_principal->Add(conteneur_choix_matiere_classe,0,wxALIGN_CENTER);
@@ -73,7 +73,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	conteneur_notes->Add(liste_notes,1,wxALIGN_CENTER|wxEXPAND);
 	
-	*/
+	
 	fenetre->SetSizer(sizer_principal);
 
 	this->SetStatusText(_T("GestNotes - Accès Professeur"));
@@ -87,7 +87,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 			//ecrire des commentaires pour les bulletins
 }
 
-/*
+
 
 void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 {
@@ -213,20 +213,20 @@ void Frame_prof::preparer_matieres_classes()
 	
 	
 	//on parcourt la liste des matières
-	//req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
-	//req->bind(":matricule",matricule);
+	req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
+	req->bind(":matricule",matricule);
 	
-	//while(req->fetch())
-	//{	
-		//it=choix_matieres.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la matière en cour
+	while(req->fetch())
+	{	
+		it=choix_matieres.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la matière en cour
 		
-		//if(it== choix_matieres.end())  choix_matieres[req->getColumn_int(1)]=wxString(req->getColumn_text(0));
-	//}
-	//req->closeCursor();
+		if(it== choix_matieres.end())  choix_matieres[req->getColumn_int(1)]=wxString(req->getColumn_text(0));
+	}
+	req->closeCursor();
 	
-//	it = choix_matieres.begin();
-//	id_matiere_en_cours=it->first;
-	/*
+	it = choix_matieres.begin();
+	id_matiere_en_cours=it->first;
+	
 	//On séléctionne les classes correspondant à la matière.
 	req=bdd->prepare("SELECT classes.nom, classes.id FROM profs JOIN classes ON classes.id=profs.classe WHERE profs.id=:matricule AND profs.matiere=:matiere");
 	req->bind(":matricule",matricule);
@@ -307,6 +307,7 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 		
 		
 		liste_notes->DeleteAllItems();
+		liste_eleves.clear();
 		this->afficher_liste();
 
 	}
@@ -361,12 +362,13 @@ void Frame_prof::afficher_liste()
 		{
 			position_y=req->getColumn_int(5);
 			texte_note<<arrondi(arrondi_affichage_notes,req->getColumn_float(4));
-
+				
 			liste_notes->SetTextValue(texte_note,liste_eleves[req->getColumn_int(0)],position_y);
 			//if(il y a une note a afficher) ON affiche la note en (position_x/liste_matiere; position_y/le_type_de_note)
 		}
 	}
 	req->closeCursor();
+	
 	
 	//puis on s'occupe des commentaires :
 	req=bdd->prepare("SELECT commentaires.id_eleve,commentaires.commentaire FROM commentaires JOIN eleves ON eleves.id=commentaires.id_eleve WHERE commentaires.id_matiere=:matiere AND eleves.classe=:classe");
@@ -383,5 +385,5 @@ void Frame_prof::afficher_liste()
 		}
 	}
 	req->closeCursor();
+	
 }
-*/
