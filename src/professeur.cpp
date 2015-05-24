@@ -13,6 +13,7 @@ onchange_matiere
 
 Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
+	/*
 	std::map<int,wxString>::iterator it_matieres_classes;
 	
 	this->preparer_matieres_classes();
@@ -29,18 +30,18 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	bdd->exec("SELECT * FROM reglages");
 	notes_hors_bareme=(bdd->getColumn_int(0)==1)?false:true;//on récupère si on a le droit aux notes hors barème
 	arrondi_affichage_notes=bdd->getColumn_int(1);
-	
+	*/
 	
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
    
 	wxPanel *fenetre = new wxPanel(this);
     wxBoxSizer *sizer_principal = new wxBoxSizer(wxVERTICAL);
-
+/*
 	wxStaticBoxSizer *conteneur_choix_matiere_classe = new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Choisir la matière et la classe : "));
 	wxStaticBoxSizer *conteneur_notes 	             = new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Notes : "));
 	
-	wxChoice  *liste_matieres	= new wxChoice (fenetre, -1, wxDefaultPosition,wxDefaultSize,texte_choix_matieres);
-	wxChoice  *liste_classes	= new wxChoice (fenetre, -1, wxDefaultPosition,wxDefaultSize,texte_choix_classes);
+	liste_matieres	= new wxChoice (fenetre, -1, wxDefaultPosition,wxDefaultSize,texte_choix_matieres);
+	liste_classes	= new wxChoice (fenetre, -1, wxDefaultPosition,wxDefaultSize,texte_choix_classes);
 	
 	wxStaticText *texte_header=new wxStaticText(fenetre, -1, _T("Gestion des notes")); // boite de choix pour les notes
 	
@@ -60,8 +61,8 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, 	&Frame_prof::onDbclick_notes,this);// lorsqu'on double clique sur les notes
 	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,&Frame_prof::onChange_notes,this);// lorsque la valeur est changée
-	liste_matieres->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_matiere,this);
-	liste_classes->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_classe,this);
+	//liste_matieres->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_matiere,this);
+	//liste_classes->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_classe,this);
 	
 	sizer_principal->Add(texte_header,0,wxALIGN_CENTER);
 	sizer_principal->Add(conteneur_choix_matiere_classe,0,wxALIGN_CENTER);
@@ -72,7 +73,7 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	
 	conteneur_notes->Add(liste_notes,1,wxALIGN_CENTER|wxEXPAND);
 	
-	
+	*/
 	fenetre->SetSizer(sizer_principal);
 
 	this->SetStatusText(_T("GestNotes - Accès Professeur"));
@@ -85,6 +86,8 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 			//si accord de l'admin : changer les notes
 			//ecrire des commentaires pour les bulletins
 }
+
+/*
 
 void Frame_prof::onChange_notes(wxDataViewEvent &evenement)
 {
@@ -204,25 +207,26 @@ void Frame_prof::onDbclick_notes(wxDataViewEvent &evenement)
 
 void Frame_prof::preparer_matieres_classes()
 {
-	requete_sql *req;
+	requete_sql *req=NULL;
 	id_matiere_en_cours=-1;
 	std::map<int,wxString>::iterator it;
 	
+	
 	//on parcourt la liste des matières
-	req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
-	req->bind(":matricule",matricule);
+	//req=bdd->prepare("SELECT matieres.nom, matieres.id_matiere FROM profs JOIN matieres ON matieres.id_matiere=profs.matiere WHERE profs.id=:matricule");
+	//req->bind(":matricule",matricule);
 	
-	while(req->fetch())
-	{	
-		it=choix_matieres.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la matière en cour
+	//while(req->fetch())
+	//{	
+		//it=choix_matieres.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la matière en cour
 		
-		if(it== choix_matieres.end())  choix_matieres[req->getColumn_int(1)]=wxString(req->getColumn_text(0));
-	}
-	req->closeCursor();
+		//if(it== choix_matieres.end())  choix_matieres[req->getColumn_int(1)]=wxString(req->getColumn_text(0));
+	//}
+	//req->closeCursor();
 	
-	it = choix_matieres.begin();
-	id_matiere_en_cours=it->first;
-	
+//	it = choix_matieres.begin();
+//	id_matiere_en_cours=it->first;
+	/*
 	//On séléctionne les classes correspondant à la matière.
 	req=bdd->prepare("SELECT classes.nom, classes.id FROM profs JOIN classes ON classes.id=profs.classe WHERE profs.id=:matricule AND profs.matiere=:matiere");
 	req->bind(":matricule",matricule);
@@ -238,14 +242,74 @@ void Frame_prof::preparer_matieres_classes()
 	id_classe_en_cours=it->first;
 	
 	req->closeCursor(); 
+	
+	id_classe_en_cours=0;
+	id_matiere_en_cours=0;
 }
 
 void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 {
 	
+	if(liste_matieres->GetSelection()==wxNOT_FOUND)
+		return;
+
+	int i=0,nouvelle_matiere=-1;
+	std::map<int,wxString>::iterator it;
+	requete_sql* req;
+			
+	for(it=choix_matieres.begin();it!=choix_matieres.end();it++)
+	{
+		if(i==liste_matieres->GetSelection())
+		{
+			if(it->first==id_matiere_en_cours)
+				return;
+			
+			nouvelle_matiere=it->first;
+		}
+		i++;
+	}
 	
+	if(nouvelle_matiere!=-1)
+	{
+		choix_classes.clear();
+		//On séléctionne les classes correspondant à la matière.
+		req=bdd->prepare("SELECT classes.nom, classes.id FROM profs JOIN classes ON classes.id=profs.classe WHERE profs.id=:matricule AND profs.matiere=:matiere");
+		req->bind(":matricule",matricule);
+		req->bind(":matiere",nouvelle_matiere);
+		
+		
+		while(req->fetch())
+		{
+			it=choix_classes.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la matière en cour
+			
+			if(it== choix_classes.end())
+			{
+				choix_classes[req->getColumn_int(1)]=wxString(req->getColumn_text(0));
+			}
+		}
+		it = choix_classes.begin();
+		id_classe_en_cours=it->first;
+		
+		req->closeCursor(); 
+		
+		//------------------------------------------------
+		liste_classes->Clear();
+		
+		for(it=choix_classes.begin();it!=choix_classes.end();it++)
+			liste_classes->Append(it->second);
+		
+		liste_classes->SetSelection(0);
 	
-	
+		it=choix_classes.begin();
+		
+		id_matiere_en_cours=nouvelle_matiere;
+		id_classe_en_cours=it->first;
+		
+		
+		liste_notes->DeleteAllItems();
+		this->afficher_liste();
+
+	}
 }
 
 
@@ -320,3 +384,4 @@ void Frame_prof::afficher_liste()
 	}
 	req->closeCursor();
 }
+*/

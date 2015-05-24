@@ -236,6 +236,7 @@
 	{
 		public:
 			Frame_prof(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
+			~Frame_prof(){}
 			void onDbclick_notes(wxDataViewEvent &evenement);
 			void onChange_notes(wxDataViewEvent &evenement);
 			void onChange_commentaires(int id_eleve);
@@ -245,11 +246,12 @@
 			void afficher_liste();
 			
 		private:
+			
 			wxDataViewListCtrl   *liste_notes;
 			std::map<int,int> liste_eleves;
 			int id_matiere_en_cours,id_classe_en_cours, arrondi_affichage_notes;
 			bool notes_hors_bareme;
-			
+			wxChoice  *liste_matieres,*liste_classes;
 			std::map<int,wxString> choix_matieres;
 			std::map<int,wxString> choix_classes;
 	
