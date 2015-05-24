@@ -1,6 +1,17 @@
 #include "main.h"
+
 #ifndef __WXMSW__
 	#include "ressources.xpm"//ressources linux
+#else
+	#include <Commctrl.h>
+	
+	#ifndef HDF_SORTUP
+		#define HDF_SORTUP    0x0400
+	#endif
+
+	#ifndef HDF_SORTDOWN
+		#define HDF_SORTDOWN  0x0200
+	#endif
 #endif
 
 Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, connexion_bdd*& bdd_arg,int acces_arg=0) : wxFrame(parent_arg, wxID_ANY,_T("GestNotes - Liste Des Utilisateurs"),wxDefaultPosition,wxSize(600,500))
@@ -105,31 +116,63 @@ void Afficher_liste_membres::changer_ordre(wxListEvent &evenement)
 		ordre_colonne2=0;
 		ordre_colonne3=0;
 		ordre_colonne4=0;
-		if(ordre_colonne1!=1) ordre_colonne1=1;
-		else ordre_colonne1=-1;
+		if(ordre_colonne1!=1)
+		{
+			ordre_colonne1=1;
+			this->Ajouter_curseur(0,true);
+		}
+		else 
+		{
+			ordre_colonne1=-1;
+			this->Ajouter_curseur(0,false);
+		}
 	}
 	else if(col==1)
 	{	
 		ordre_colonne1=0;
 		ordre_colonne3=0;
-		if(ordre_colonne2!=1) ordre_colonne2=1;
-		else ordre_colonne2=-1;
+		if(ordre_colonne2!=1)
+		{
+			ordre_colonne2=1;
+			this->Ajouter_curseur(1,true);
+		}
+		else
+		{
+			ordre_colonne2=-1;
+			this->Ajouter_curseur(1,false);
+		}
 	}
 	else if(col==2)
 	{
 		ordre_colonne1=0;
 		ordre_colonne2=0;
 		ordre_colonne4=0;
-		if(ordre_colonne3!=1) ordre_colonne3=1;
-		else ordre_colonne3=-1;
+		if(ordre_colonne3!=1)
+		{
+			ordre_colonne3=1;
+			this->Ajouter_curseur(2,true);
+		}
+		else
+		{
+			ordre_colonne3=-1;
+			this->Ajouter_curseur(2,false);
+		}
 	}
 	else 
 	{
 		ordre_colonne1=0;
 		ordre_colonne2=0;
 		ordre_colonne3=0;
-		if(ordre_colonne4!=1) ordre_colonne4=1;
-		else ordre_colonne4=-1;
+		if(ordre_colonne4!=1)
+		{
+			ordre_colonne4=1;
+			this->Ajouter_curseur(3,true);
+		}
+		else
+		{
+			ordre_colonne4=-1;
+			this->Ajouter_curseur(3,false);
+		}
 	}
 	
 	this->afficher_liste(*new wxCommandEvent());
@@ -212,6 +255,7 @@ void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 void Afficher_liste_membres::onChange_onglet(wxCommandEvent &evenement)
 {
 	rechercher->SetValue("");
+	this->Ajouter_curseur(-1,true);
 	this->afficher_liste(*new wxCommandEvent());
 }
 
@@ -235,4 +279,36 @@ void Afficher_liste_membres::onClose(wxCloseEvent &evenement)
 {
 	parent->Enable();
 	this->Destroy();
+}
+
+
+
+void Afficher_liste_membres::Ajouter_curseur(int colonne, bool haut)
+{
+	#ifdef __WXMSW__	
+		wxListCtrl *liste=liste_eleves;
+		if(onglets->GetSelection()==1) liste=liste_profs;
+		else if(onglets->GetSelection()==2) liste=liste_admins;
+		
+		HWND hwnd = (HWND) liste->GetHWND();
+		HWND header = ListView_GetHeader(hwnd);
+		int nb_colonnes = Header_GetItemCount(header);
+
+		for (int i = 0; i<nb_colonnes; i++)
+		{
+			HDITEM fleche = {0};
+			fleche.mask = HDI_FORMAT;
+			Header_GetItem(header, i, &fleche);
+
+			fleche.fmt &= ~(HDF_SORTDOWN|HDF_SORTUP);
+				
+			if (i == colonne)
+			{
+				if(haut) fleche.fmt |= HDF_SORTUP;
+				else fleche.fmt |= HDF_SORTDOWN;
+			}
+			
+			Header_SetItem(header, i, &fleche);
+		}
+	#endif
 }
