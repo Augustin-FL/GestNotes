@@ -1,12 +1,8 @@
 #include "main.h"
 
-
 /*
-
 todo : editer les groupes
 calculer moyenne eleve. Si <10 prévenir prof responsable
-
-onchange_matiere
 
 */
 
@@ -181,7 +177,7 @@ void Frame_prof::onChange_commentaires(int id_eleve)
 	
 	texte_req=(req->getColumn_int(0)==1)?// si c'est pas le cas : on l'ajoute;sinon on la crée.
 		"UPDATE commentaires SET commentaire=:commentaire WHERE id_eleve=:id_eleve AND id_matiere=:id_matiere":
-		"INSERT INTO commentaire VALUES (id_matiere,id_eleve,:commentaire)";
+		"INSERT INTO commentaires VALUES (:id_matiere,:id_eleve,:commentaire)";
 	req->closeCursor();
 	
 	
@@ -249,14 +245,13 @@ void Frame_prof::preparer_matieres_classes()
 
 void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 {
-	
 	if(liste_matieres->GetSelection()==wxNOT_FOUND)
 		return;
 
 	int i=0,nouvelle_matiere=-1;
 	std::map<int,wxString>::iterator it;
 	requete_sql* req;
-			
+	
 	for(it=choix_matieres.begin();it!=choix_matieres.end();it++)
 	{
 		if(i==liste_matieres->GetSelection())
@@ -305,7 +300,6 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 		id_matiere_en_cours=nouvelle_matiere;
 		id_classe_en_cours=it->first;
 		
-		
 		liste_notes->DeleteAllItems();
 		liste_eleves.clear();
 		this->afficher_liste();
@@ -316,10 +310,28 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 
 void Frame_prof::onChange_classe(wxCommandEvent &evenement)
 {
+	if(liste_classes->GetSelection()==wxNOT_FOUND)
+		return;
+
+	int i=0,nouvelle_classe=-1;
+	std::map<int,wxString>::iterator it;
 	
+	for(it=choix_classes.begin();it!=choix_classes.end();it++)
+	{
+		if(i==liste_classes->GetSelection())
+		{
+			if(it->first==id_classe_en_cours)
+				return;
+			
+			nouvelle_classe=it->first;
+		}
+		i++;
+	}
+	id_classe_en_cours=nouvelle_classe;
 	
-	
-	
+	liste_notes->DeleteAllItems();
+	liste_eleves.clear();
+	this->afficher_liste();
 }
 
 void Frame_prof::afficher_liste()
@@ -328,7 +340,7 @@ void Frame_prof::afficher_liste()
 	
 	req=bdd->prepare("SELECT eleves.id,eleves.nom,eleves.prenom, 0 AS pas_de_note, notes.note,notes.type_note FROM eleves	\
 															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
-							WHERE notes.id_matiere=:matiere																	\
+							WHERE notes.id_matiere=:matiere	AND eleves.classe=:classe									\
 					UNION																									\
 					 SELECT eleves.id,eleves.nom,eleves.prenom, 1 AS pas_de_note, notes.note,notes.type_note FROM eleves  	\
 															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
