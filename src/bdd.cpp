@@ -1,5 +1,11 @@
 #include "main.h"
 
+/*
+ToDo :
+
+>Futur Lointain : Supporter mysql distant
+
+*/
 
 connexion_bdd::connexion_bdd()//const string &infos)
 {
@@ -90,7 +96,8 @@ connexion_bdd::connexion_bdd()//const string &infos)
 		this->exec("CREATE TABLE IF NOT EXISTS reglages(										\
 						notes_hors_bareme	INTEGER NOT NULL,									\
 						precision			INTEGER NOT NULL, 									\
-						affichage_buletins	INTEGER NOT NULL									\
+						affichage_buletins	INTEGER NOT NULL,									\
+						edition_notes 		INTEGER NOT NULL									\
 					);");
 		
 		this->exec("CREATE TABLE IF NOT EXISTS commentaires(									\
@@ -121,7 +128,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO matieres VALUES (0,'maths')");
 			this->exec("INSERT INTO matieres VALUES (1,'physique')");
 			this->exec("INSERT INTO matieres VALUES (2,'anglais')");
-			this->exec("INSERT INTO reglages VALUES (0,100,0)");
+			this->exec("INSERT INTO reglages VALUES (0,100,0,1)");
 			this->exec("INSERT INTO commentaires VALUES (0,3,'test commentaire')");
 			this->exec("INSERT INTO commentaires VALUES (-1,3,'rien a ajouter')");
 		}

@@ -1,9 +1,8 @@
 #include "main.h"
 
 /*
-todo : editer les groupes
-calculer moyenne eleve. Si <10 prévenir prof responsable
-
+ToDo : 
+> editer les groupes
 */
 
 
@@ -26,6 +25,8 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 	bdd->exec("SELECT * FROM reglages");
 	notes_hors_bareme=(bdd->getColumn_int(0)==1)?false:true;//on récupère si on a le droit aux notes hors barème
 	arrondi_affichage_notes=bdd->getColumn_int(1);
+	autoriser_edition=(bdd->getColumn_int(3)==0)?wxDATAVIEW_CELL_INERT:wxDATAVIEW_CELL_EDITABLE;
+	
 	
 	
 	this->SetSize(wxDefaultCoord,wxDefaultCoord,770,625);
@@ -35,52 +36,69 @@ Frame_prof::Frame_prof(Frame_login* parent,int& matricule,connexion_bdd*& bdd) :
 
 	wxStaticBoxSizer *conteneur_choix_matiere_classe = new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Choisir la matière et la classe : "));
 	wxStaticBoxSizer *conteneur_notes 	             = new wxStaticBoxSizer(wxHORIZONTAL,fenetre,_T("Notes : "));
+	wxBoxSizer 		 *conteneur_haut				 = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer 		 *conteneur_haut_matiere_classe	 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer 		 *conteneur_haut_groupe			 = new wxBoxSizer(wxVERTICAL);
 	
+	boutons_groupes	= new wxButton (fenetre, -1, _T("Éditer les groupes de la classe séléctionnée"));
 	liste_matieres	= new wxChoice (fenetre, -1, wxDefaultPosition,wxDefaultSize,texte_choix_matieres);
 	liste_classes	= new wxChoice (fenetre, -1, wxDefaultPosition,wxDefaultSize,texte_choix_classes);
 	
-	wxStaticText *texte_header=new wxStaticText(fenetre, -1, _T("Gestion des notes")); // boite de choix pour les notes
+	wxStaticText *texte_header			=new wxStaticText(fenetre, -1, _T("Gestion des notes")); // boite de choix pour les notes
+	wxStaticText *texte_edition_bloquee =new wxStaticText(fenetre, -1, _T("L'édition des notes a été fermée par un administrateur. Vous ne pouvez plus saisir ni modifier de notes.")); // boite de choix pour les notes
 	
 	liste_notes=new wxDataViewListCtrl(fenetre,-1, wxDefaultPosition, wxDefaultSize);
+	
+	menu_fichier->Insert(1,wxID_HIGHEST+3, _T("Éditer les groupes"), _T("Editer les groupes de la classe séléctionnée"));
 	
 	liste_matieres->SetSelection(0);
 	liste_classes->SetSelection(0);
 	
+	texte_edition_bloquee->SetForegroundColour(wxColour(255, 0, 0));
+	
+	
 	liste_notes->AppendTextColumn(_T("Élève"),  	 wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
-	liste_notes->AppendTextColumn(_T("CE"),			 wxDATAVIEW_CELL_EDITABLE);// 
-	liste_notes->AppendTextColumn(_T("TAI"),		 wxDATAVIEW_CELL_EDITABLE);
-	liste_notes->AppendTextColumn(_T("Projet"),		 wxDATAVIEW_CELL_EDITABLE);
-	liste_notes->AppendTextColumn(_T("DE"),			 wxDATAVIEW_CELL_EDITABLE);
-	liste_notes->AppendTextColumn(_T("Commentaires"),wxDATAVIEW_CELL_EDITABLE);
+	liste_notes->AppendTextColumn(_T("CE"),			 autoriser_edition);// 
+	liste_notes->AppendTextColumn(_T("TAI"),		 autoriser_edition);
+	liste_notes->AppendTextColumn(_T("Projet"),		 autoriser_edition);
+	liste_notes->AppendTextColumn(_T("DE"),			 autoriser_edition);
+	liste_notes->AppendTextColumn(_T("Commentaires"),autoriser_edition);
 			
 	this->afficher_liste();
 	
-	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, 	&Frame_prof::onDbclick_notes,this);// lorsqu'on double clique sur les notes
-	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,&Frame_prof::onChange_notes,this);// lorsque la valeur est changée
-	liste_matieres->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_matiere,this);
-	liste_classes->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_classe,this);
+	if(autoriser_edition==wxDATAVIEW_CELL_EDITABLE) texte_edition_bloquee->Hide();
 	
-	sizer_principal->Add(texte_header,0,wxALIGN_CENTER);
-	sizer_principal->Add(conteneur_choix_matiere_classe,0,wxALIGN_CENTER);
+	sizer_principal->Add(conteneur_haut,0,wxEXPAND,8);
+	
+	sizer_principal->Add(texte_edition_bloquee,0,wxALIGN_CENTER);
 	sizer_principal->Add(conteneur_notes,1,wxALIGN_CENTER|wxEXPAND,0);
+	
+	conteneur_haut->Add(conteneur_haut_matiere_classe,0,wxLEFT|wxEXPAND,25);//
+	conteneur_haut->Add(conteneur_haut_groupe,1,wxTOP,35);
+	
+	conteneur_haut_groupe->Add(boutons_groupes,0,wxALIGN_RIGHT|wxRIGHT,25);
+	
+	conteneur_haut_matiere_classe->Add(texte_header,0,wxALIGN_CENTER);
+	conteneur_haut_matiere_classe->Add(conteneur_choix_matiere_classe,0,wxALIGN_CENTER);
 	
 	conteneur_choix_matiere_classe->Add(liste_matieres,1,wxALIGN_CENTER|wxALL,5);
 	conteneur_choix_matiere_classe->Add(liste_classes,1,wxALIGN_CENTER|wxALL,5);
 	
 	conteneur_notes->Add(liste_notes,1,wxALIGN_CENTER|wxEXPAND);
 	
+	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, 	&Frame_prof::onDbclick_notes, this);// lorsqu'on double clique sur les notes
+	liste_notes->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,&Frame_prof::onChange_notes,  this);// lorsque la valeur est changée
+	liste_matieres->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_matiere,this);
+	liste_classes->Bind(wxEVT_CHOICE,					&Frame_prof::onChange_classe, this);
+	boutons_groupes->Bind(wxEVT_BUTTON,					&Frame_prof::onEditer_Groupe, this);
 	
 	fenetre->SetSizer(sizer_principal);
 
 	this->SetStatusText(_T("GestNotes - Accès Professeur"));
 	this->Show();
-
-	//liste déroulante en haut.->matière
-
-			//saisir notes
-			//changer groupe(NON)
-			//si accord de l'admin : changer les notes
-			//ecrire des commentaires pour les bulletins
+	
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_prof::onEditer_Groupe, this, wxID_HIGHEST+3);
+	
 }
 
 
@@ -275,7 +293,7 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 		
 		while(req->fetch())
 		{
-			it=choix_classes.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la matière en cour
+			it=choix_classes.find(req->getColumn_int(1));//getColumn_int(1) : l'id de la classe en cours
 			
 			if(it== choix_classes.end())
 			{
@@ -294,6 +312,7 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 			liste_classes->Append(it->second);
 		
 		liste_classes->SetSelection(0);
+		
 	
 		it=choix_classes.begin();
 		
@@ -303,7 +322,6 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 		liste_notes->DeleteAllItems();
 		liste_eleves.clear();
 		this->afficher_liste();
-
 	}
 }
 
@@ -340,7 +358,7 @@ void Frame_prof::afficher_liste()
 	
 	req=bdd->prepare("SELECT eleves.id,eleves.nom,eleves.prenom, 0 AS pas_de_note, notes.note,notes.type_note FROM eleves	\
 															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
-							WHERE notes.id_matiere=:matiere	AND eleves.classe=:classe									\
+							WHERE notes.id_matiere=:matiere	AND eleves.classe=:classe										\
 					UNION																									\
 					 SELECT eleves.id,eleves.nom,eleves.prenom, 1 AS pas_de_note, notes.note,notes.type_note FROM eleves  	\
 															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
@@ -381,7 +399,6 @@ void Frame_prof::afficher_liste()
 	}
 	req->closeCursor();
 	
-	
 	//puis on s'occupe des commentaires :
 	req=bdd->prepare("SELECT commentaires.id_eleve,commentaires.commentaire FROM commentaires JOIN eleves ON eleves.id=commentaires.id_eleve WHERE commentaires.id_matiere=:matiere AND eleves.classe=:classe");
 	req->bind(":matiere",id_matiere_en_cours);
@@ -397,5 +414,22 @@ void Frame_prof::afficher_liste()
 		}
 	}
 	req->closeCursor();
-	
 }
+
+
+void Frame_prof::onEditer_Groupe(wxCommandEvent &evenement)
+{
+	Frame_editer_groupes(parent,bdd,id_classe_en_cours);
+}
+
+
+Frame_editer_groupes::Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& bdd_arg, int classe_arg) : wxDialog(parent_arg, wxID_ANY,_T("GestNotes - Edition des groupes"),wxDefaultPosition,wxSize(670,510))
+{
+	bdd=bdd_arg;
+	parent=parent_arg;
+	classe=classe_arg;
+	
+	
+	this->ShowModal();
+}
+

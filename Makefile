@@ -35,8 +35,8 @@ RESSOURCES=
 RM_RES=
 endif
 	
-$(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/admin.o ./obj/professeur.o ./obj/eleve.o ./obj/afficher_liste_membres.o  ./obj/ajout_modification_membre.o ./obj/validateurs.o | ./bin
-	$(CC) "./obj/main.o" "./obj/bdd.o" "./obj/login.o" "./obj/admin.o" "./obj/professeur.o" "./obj/eleve.o" "./obj/afficher_liste_membres.o" "./obj/validateurs.o" "./obj/ajout_modification_membre.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
+$(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/admin.o ./obj/professeur.o ./obj/eleve.o ./obj/afficher_liste_membres.o  ./obj/ajout_modification_membre.o ./obj/validateurs.o ./obj/imprimer_buletin.o | ./bin
+	$(CC) "./obj/main.o" "./obj/bdd.o" "./obj/login.o" "./obj/admin.o" "./obj/professeur.o" "./obj/eleve.o" "./obj/afficher_liste_membres.o" "./obj/validateurs.o" "./obj/ajout_modification_membre.o" "./obj/imprimer_buletin.o" $(RESSOURCES) -o "./bin/$@"  $(LIBS)
 	$(LANCER_PROG)
 
 
@@ -65,6 +65,8 @@ $(PROGRAMME):./obj/ressources.res ./obj/login.o ./obj/main.o ./obj/bdd.o ./obj/a
 	$(CC) "./src/validateurs.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"	
 ./obj/ajout_modification_membre.o : ./src/ajout_modification_membre.cpp
 	$(CC) "./src/ajout_modification_membre.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"	
+./obj/imprimer_buletin.o : ./src/imprimer_buletin.cpp
+	$(CC) "./src/imprimer_buletin.cpp"  	 $(CFLAGS) $(INCLUDE) -c -o "$@"	
 	
 clean:
 	$(RM_RES)
