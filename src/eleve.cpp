@@ -3,7 +3,6 @@
 /*
 ToDO : 
 > Imprimer le buletin
-> Modifier mes infos
 
 */
 
@@ -31,15 +30,13 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 
 	wxBoxSizer *sizer_principal = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer_haut      = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *sizer_modifier  = new wxBoxSizer(wxVERTICAL);//il est impossible de centrer correctement
 	wxBoxSizer *sizer_buletin   = new wxBoxSizer(wxVERTICAL);//dans un sizer Horizontal.
-	wxBoxSizer *sizer_infos     = new wxBoxSizer(wxVERTICAL);// ON dois donc faire 3 sizers verticaux inutiles...
+	wxBoxSizer *sizer_infos     = new wxBoxSizer(wxVERTICAL);// ON dois donc faire 2 sizers verticaux inutiles...
 	wxBoxSizer *sizer_infos_2   = new wxBoxSizer(wxVERTICAL);// pour les infos : ON les aligne sur plusieurs lignes (d'ou les 2 sizers: l'un sera dans l'autre)...
 
 	
 	wxStaticBoxSizer *sizer_notes= new wxStaticBoxSizer(wxVERTICAL,fenetre,_T("Notes : "));
 
-	bouton_modifier=new wxButton(fenetre, -1, _T("Modifier mes coordonnées"));
 	bouton_imprimer_buletin=new wxButton(fenetre, -1, _T("Imprimer le buletin Scolaire"));
 	wxStaticText *affichage_texte_classe= new wxStaticText(fenetre,-1,string_classe);
 	wxStaticText *affichage_texte_groupe= new wxStaticText(fenetre,-1,texte_groupe);
@@ -49,19 +46,15 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	sizer_principal->Add(sizer_haut,0,wxEXPAND|wxALL,8);
 	sizer_principal->Add(sizer_notes,1,wxEXPAND|wxALL,8);
 
-	sizer_haut->Add(sizer_modifier,1,wxALIGN_LEFT,5);
-	sizer_haut->Add(sizer_buletin,1,wxALIGN_CENTER,5);
+	sizer_haut->Add(sizer_buletin,1,wxALIGN_LEFT,8);
 	sizer_haut->Add(sizer_infos,1,wxALIGN_RIGHT,5);
 
-	sizer_modifier->Add(bouton_modifier);
-	sizer_buletin->Add(bouton_imprimer_buletin,0,wxALIGN_CENTER);
+	sizer_buletin->Add(bouton_imprimer_buletin,0);
 	sizer_infos->Add(sizer_infos_2,0,wxALIGN_RIGHT);
 	
 	sizer_infos_2->Add(affichage_texte_classe);
 	sizer_infos_2->Add(affichage_texte_groupe);
 	
-
-
 	sizer_notes->Add(liste_notes,1,wxEXPAND);
 	liste_notes->AppendColumn(_T("Matière"),wxLIST_FORMAT_CENTER);
 	liste_notes->AppendColumn(_T("CE"),wxLIST_FORMAT_CENTER);
@@ -85,7 +78,6 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 			- les matières affectés a une classe mais ou le prof n'a encore mis aucune note à l'élève (en liant  les matières & les profs, pareil)
 	
 	*/
-								
 	req->bind(":classe",classe);
 	req->bind(":matricule",matricule);
 	
@@ -144,14 +136,10 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		liste_notes->SetColumnWidth(0,wxLIST_AUTOSIZE_USEHEADER);
 		liste_notes->SetColumnWidth(6,wxLIST_AUTOSIZE_USEHEADER);
 	
-	//TODO : imprimer buletin de notes
-	//voir (modifier?) contacts
-
+	
 	if(!affichages_buletins) bouton_imprimer_buletin->Disable();//affichage buletins si autorisé
 	
 	
-
-	bouton_modifier->Bind(wxEVT_BUTTON,&Frame_eleve::OnClick_modifier,this);
 	bouton_imprimer_buletin->Bind(wxEVT_BUTTON,&Frame_eleve::OnClick_imprimer_buletin,this);
 
 	fenetre->SetSizer(sizer_principal);
@@ -159,15 +147,8 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	this->Show();
 }
 
-void Frame_eleve::OnClick_modifier(wxCommandEvent &evenement)
-{
-
-}
-
 
 void Frame_eleve::OnClick_imprimer_buletin(wxCommandEvent &evenement)
 {
-
-
-
+	frame_imprimer_buletin=new Frame_imprimer_buletins(this,bdd);
 }

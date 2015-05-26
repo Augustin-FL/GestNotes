@@ -204,7 +204,11 @@ void Frame_modifier_mdp::onChange(wxCommandEvent& evenement)
 	message_confirmation->Hide();
 	bouton_valider->Disable();
 	
-	if(input_mdp->GetValue().length()<3 || input_mdp_confirmation->GetValue().length()<3)
+	if(input_mdp->IsEmpty() && input_mdp_confirmation->IsEmpty())
+	{
+		return ;
+	}
+	else if(input_mdp->GetValue().length()<3 || input_mdp_confirmation->GetValue().length()<3)
 	{	
 		message_mdp->Move(50,138);
 		message_mdp->Show();

@@ -3,7 +3,7 @@
 #ifndef __WXMSW__
 	#include "ressources.xpm"//ressources linux
 #else
-	#include <Commctrl.h>
+	#include <Commctrl.h> // pour ré-ordonner les listes
 	
 	#ifndef HDF_SORTUP
 		#define HDF_SORTUP    0x0400

@@ -32,6 +32,8 @@
 	class wxTextRegexpValidator;
 	class wxComboBoxValidator;
 	class Afficher_liste_membres;
+	class Frame_editer_groupes;
+	class Frame_imprimer_buletins;
 
 	enum
 	{
@@ -41,6 +43,30 @@
 		ADMIN=2,
 	};
 
+	class Frame_editer_groupes : public wxDialog
+	{
+		public:
+			Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& bdd_arg, int classe_arg);
+			~Frame_editer_groupes(){}
+		
+		private:
+			connexion_bdd* bdd;
+			wxWindow* parent;
+			int classe;
+	};
+	
+	class Frame_imprimer_buletins : public wxFrame
+	{
+		public:
+			Frame_imprimer_buletins(wxWindow* parent_arg, connexion_bdd*& bdd_arg);
+			~Frame_imprimer_buletins(){}
+			
+		private:
+			wxWindow* parent;
+			connexion_bdd* bdd;
+	};
+	
+	
 	class requete_sql : public wxString //connexion a la BDD
 	{
 		public:
@@ -244,6 +270,7 @@
 			void onChange_matiere(wxCommandEvent &evenement);
 			void onChange_classe(wxCommandEvent &evenement);
 			void afficher_liste();
+			void onEditer_Groupe(wxCommandEvent &evenement);
 			
 		private:
 			
@@ -252,42 +279,30 @@
 			int id_matiere_en_cours,id_classe_en_cours, arrondi_affichage_notes;
 			bool notes_hors_bareme;
 			wxChoice  *liste_matieres,*liste_classes;
-			std::map<int,wxString> choix_matieres;
-			std::map<int,wxString> choix_classes;
-	
-	
-		
+			std::map<int,wxString> choix_matieres, choix_classes;
+			wxButton *boutons_groupes;
+			wxDataViewCellMode autoriser_edition;
 	};
 	
 	class Frame_eleve: public Frame_principale
 	{
 		public:
 			Frame_eleve(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
-			void OnClick_modifier(wxCommandEvent &evenement);
 			void OnClick_imprimer_buletin(wxCommandEvent &evenement);
-			
 			
 		private:
 			wxButton *bouton_modifier,*bouton_imprimer_buletin;
+			Frame_imprimer_buletins *frame_imprimer_buletin;
 		
 	};
 
 	class Frame_admin : public Frame_principale
 	{
-		private:
-			wxCheckBox *input_checkbox__notes_hors_bareme,
-					   *input_checkbox__afficher_buletins;
-					   
-			wxRadioButton *input_radio__arrondi_cent,
-						  *input_radio__arrondi_dix,
-						  *input_radio__arrondi_demi,
-						  *input_radio__arrondi_un;
-			Afficher_liste_membres *liste_membres;
-			
 		public:
 			Frame_admin(Frame_login* parent,int &matricule,connexion_bdd*& bdd);
 			void onAjouter(wxCommandEvent &evenement);
 			void onCheck_Buletins(wxCommandEvent &evenement);
+			void onCheck_Modif_notes(wxCommandEvent &evenement);
 			void onSupprimer(wxCommandEvent &evenement);
 			void onModifier(wxCommandEvent &evenement);
 			void onClick_hors_bareme(wxCommandEvent &evenement);
@@ -297,6 +312,20 @@
 			void onAfficherMembres(wxCommandEvent &evenement);
 			void supprimer_eleve(int,int);
 			void supprimer_prof(int,int,int);
+			
+			
+		private:
+			wxCheckBox *input_checkbox__notes_hors_bareme,
+					   *input_checkbox__afficher_buletins,
+					   *input_checkbox__autoriser_modif_notes;
+					   
+			wxRadioButton *input_radio__arrondi_cent,
+						  *input_radio__arrondi_dix,
+						  *input_radio__arrondi_demi,
+						  *input_radio__arrondi_un;
+			Afficher_liste_membres *liste_membres;
+			wxDataViewListCtrl *liste_appreciations;
+			
 	};
 
 	class Frame_login : public wxFrame

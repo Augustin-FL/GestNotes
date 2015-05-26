@@ -1,12 +1,8 @@
 #include "main.h"
 
 /*
-
 TODO : 
-
->Editer l'appréciation Générale d'une classe
->Supprimer élève
->Modifier élève
+>Editer l'appréciation Générale de chaque élève
 
 */
 
@@ -21,9 +17,12 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxBoxSizer *sizer_centre			 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer_droite			 = new wxBoxSizer(wxVERTICAL);
 	
+	liste_appreciations=new wxDataViewListCtrl(fenetre,-1, wxDefaultPosition, wxDefaultSize);
+	
+	
 	wxStaticBoxSizer *texte_conteneur_ajout 	= new wxStaticBoxSizer(wxVERTICAL,  fenetre, _T("Utilisateurs : "));
 	wxStaticBoxSizer *texte_conteneur_arrondi 	= new wxStaticBoxSizer(wxVERTICAL,  fenetre, _T("Arrondi des moyennes : "));
-	wxStaticBoxSizer *sizer_principal_bas		= new wxStaticBoxSizer(wxHORIZONTAL,fenetre, _T("Autres : "));
+	wxStaticBoxSizer *sizer_principal_bas		= new wxStaticBoxSizer(wxHORIZONTAL,fenetre, _T("Appréciations Générales : "));
 	
 	wxStaticText *texte					 = new wxStaticText(fenetre, -1, _T("Gestion des utilisateurs\nde GestNotes :\n\n"));
 	wxStaticText *label_arrondir_moyenne = new wxStaticText(fenetre, -1, _T("Arrondir les moyennes sur les buletins\n(n'affecte pas les calculs)\n\n"));
@@ -34,19 +33,20 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 
 	input_checkbox__notes_hors_bareme	 =new wxCheckBox(	fenetre, -1, _T("Autoriser les notes hors barème\n(au dessus de 20)\n\n"));
 	input_checkbox__afficher_buletins	 =new wxCheckBox(	fenetre, -1, _T("Autoriser l'affichage/impression des buletins"));
-
+	input_checkbox__autoriser_modif_notes=new wxCheckBox(	fenetre, -1, _T("Autoriser l'éditions des notes par les professeurs"));
+	
 	//Arrondi des moyennes (n'affecte pas les calculs)
 	input_radio__arrondi_cent			 =new wxRadioButton(fenetre, -1, _T("Arrondi au 1/100° de point"));
 	input_radio__arrondi_dix			 =new wxRadioButton(fenetre, -1, _T("Arrondi au 1/10° de point"));
 	input_radio__arrondi_demi			 =new wxRadioButton(fenetre, -1, _T("Arrondi au demi point"));
 	input_radio__arrondi_un				 =new wxRadioButton(fenetre, -1, _T("Arrondi au point"));
 
-	sizer_principal->Add(sizer_principal_haut,1);
+	sizer_principal->Add(sizer_principal_haut,1,wxEXPAND);
 	sizer_principal->Add(sizer_principal_bas,1,wxEXPAND|wxALL,15);
 
-	sizer_principal_haut->Add(sizer_gauche,1,wxTOP |wxCENTER,1);
-	sizer_principal_haut->Add(sizer_centre,1,wxTOP|wxALIGN_CENTER,1);
-	sizer_principal_haut->Add(sizer_droite,1,wxTOP|wxALIGN_CENTER,1);
+	sizer_principal_haut->Add(sizer_gauche,1,wxALIGN_CENTER_VERTICAL,1);
+	sizer_principal_haut->Add(sizer_centre,1,wxALIGN_CENTER,1);
+	sizer_principal_haut->Add(sizer_droite,1,wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT,1);
 
 	sizer_centre->Add(texte_conteneur_arrondi);
 
@@ -64,7 +64,14 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 
 	sizer_droite->Add(input_checkbox__notes_hors_bareme,1);
 	sizer_droite->Add(input_checkbox__afficher_buletins,1);
-
+	sizer_droite->Add(input_checkbox__autoriser_modif_notes,1);
+	
+	sizer_principal_bas->Add(liste_appreciations,1,wxEXPAND);
+	
+	liste_appreciations->AppendTextColumn(_T("Classe"),  	  wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
+	liste_appreciations->AppendTextColumn(_T("Appréciation"), wxDATAVIEW_CELL_EDITABLE);// 
+	
+	
 	menu_fichier->Insert(1,wxID_HIGHEST+2, _T("Liste Des Utilisateurs"),	 _T("Afficher la liste des membres de GestNotes"));
 	
 	fenetre->SetSizer(sizer_principal);
@@ -78,6 +85,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	input_radio__arrondi_demi->Bind(		wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
 	input_radio__arrondi_un->Bind(			wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
 	input_checkbox__notes_hors_bareme->Bind(wxEVT_CHECKBOX,		&Frame_admin::onClick_hors_bareme,this);
+	input_checkbox__autoriser_modif_notes->Bind(wxEVT_CHECKBOX,		&Frame_admin::onCheck_Modif_notes,this);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_admin::onAfficherMembres, this, wxID_HIGHEST+2);
 	
 	bdd->exec("SELECT * FROM reglages");
@@ -86,6 +94,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	{
 		input_checkbox__afficher_buletins->SetValue(true);
 		input_checkbox__afficher_buletins->Disable();
+		input_checkbox__autoriser_modif_notes->Disable();
 	}
 	
 	if(bdd->getColumn_int(0)==1) input_checkbox__notes_hors_bareme->SetValue(true);//notes_hors_bareme
@@ -94,6 +103,8 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	else if(bdd->getColumn_int(1)==10)	input_radio__arrondi_dix-> SetValue(true);
 	else if(bdd->getColumn_int(1)==2)	input_radio__arrondi_demi->SetValue(true);
 	else if(bdd->getColumn_int(1)==1)	input_radio__arrondi_un->  SetValue(true);
+	
+	if(bdd->getColumn_int(3)==1) input_checkbox__autoriser_modif_notes->SetValue(true);//notes_hors_bareme
 	
 	this->SetStatusText(_T("GestNotes - Accès Admin"));
 	this->Show();
@@ -108,7 +119,7 @@ void Frame_admin::onAjouter(wxCommandEvent &evenement)
 
 void Frame_admin::onCheck_Buletins(wxCommandEvent &evenement)
 {
-	int reponse=wxMessageBox(_T("Voulez vous vraiment autoriser l'impression des buletins?\nVous ne pourrez pas annuler cette décision"), _T("Confirmer"), wxYES_NO);
+	int reponse=wxMessageBox(_T("Voulez vous vraiment autoriser l'impression des buletins?\nVous ne pourrez pas annuler cette décision, et cela entrainera l'interdiction de la modification des notes"), _T("Confirmer"), wxYES_NO);
     
 	if (reponse == wxNO)
 	{
@@ -118,10 +129,19 @@ void Frame_admin::onCheck_Buletins(wxCommandEvent &evenement)
 	}
 		
 	bdd->exec("UPDATE reglages SET affichage_buletins=1");
+	bdd->exec("UPDATE reglages SET edition_notes=0");
+	
 	input_checkbox__afficher_buletins->SetValue(true);
+	input_checkbox__autoriser_modif_notes->SetValue(false);
+	input_checkbox__autoriser_modif_notes->Disable();
 	input_checkbox__afficher_buletins->Disable();
 }
 
+void Frame_admin::onCheck_Modif_notes(wxCommandEvent &evenement)
+{
+	if(input_checkbox__autoriser_modif_notes->IsChecked()) bdd->exec("UPDATE reglages SET edition_notes=1");
+	else bdd->exec("UPDATE reglages SET edition_notes=0");
+}
 
 
 void Frame_admin::onAfficherMembres(wxCommandEvent &evenement)
