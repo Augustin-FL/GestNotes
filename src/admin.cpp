@@ -68,8 +68,8 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	
 	sizer_principal_bas->Add(liste_appreciations,1,wxEXPAND);
 	
-	liste_appreciations->AppendTextColumn(_T("Classe"),  	  wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
-	liste_appreciations->AppendTextColumn(_T("Appréciation"), wxDATAVIEW_CELL_EDITABLE);// 
+	liste_appreciations->AppendTextColumn(_T("lèves"),  	  wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
+	liste_appreciations->AppendTextColumn(_T("Appréciations"), wxDATAVIEW_CELL_EDITABLE);// 
 	
 	
 	menu_fichier->Insert(1,wxID_HIGHEST+2, _T("Liste Des Utilisateurs"),	 _T("Afficher la liste des membres de GestNotes"));
