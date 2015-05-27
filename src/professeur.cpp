@@ -320,8 +320,6 @@ void Frame_prof::onChange_matiere(wxCommandEvent &evenement)
 		id_matiere_en_cours=nouvelle_matiere;
 		id_classe_en_cours=it->first;
 		
-		liste_notes->DeleteAllItems();
-		liste_eleves.clear();
 		this->afficher_liste();
 	}
 }
@@ -348,8 +346,6 @@ void Frame_prof::onChange_classe(wxCommandEvent &evenement)
 	}
 	id_classe_en_cours=nouvelle_classe;
 	
-	liste_notes->DeleteAllItems();
-	liste_eleves.clear();
 	this->afficher_liste();
 }
 
@@ -357,13 +353,16 @@ void Frame_prof::afficher_liste()
 {
 	requete_sql *req;
 	
+	liste_notes->DeleteAllItems();
+	liste_eleves.clear();
+	
 	req=bdd->prepare("SELECT eleves.id,eleves.nom,eleves.prenom, 0 AS pas_de_note, notes.note,notes.type_note FROM eleves	\
 															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
 							WHERE notes.id_matiere=:matiere	AND eleves.classe=:classe										\
 					UNION																									\
 					 SELECT eleves.id,eleves.nom,eleves.prenom, 1 AS pas_de_note, notes.note,notes.type_note FROM eleves  	\
 															LEFT OUTER JOIN notes ON notes.id_eleve=eleves.id 				\
-							WHERE eleves.classe=:classe AND notes.note IS null");
+							WHERE eleves.classe=:classe AND (notes.note IS null OR notes.id_matiere!=1)");
 	
 	req->bind(":classe",id_classe_en_cours);
 	req->bind(":matiere",id_matiere_en_cours);

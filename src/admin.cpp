@@ -1,10 +1,5 @@
 #include "main.h"
 
-/*
-TODO : 
->Editer l'appréciation Générale de chaque élève
-
-*/
 
 Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd) : Frame_principale(parent,matricule,bdd)
 {
@@ -68,24 +63,34 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	
 	sizer_principal_bas->Add(liste_appreciations,1,wxEXPAND);
 	
-	liste_appreciations->AppendTextColumn(_T("lèves"),  	  wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
+	liste_appreciations->AppendTextColumn(_T("Matricule"),     wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
+	liste_appreciations->AppendTextColumn(_T("Élèves"),  	   wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
 	liste_appreciations->AppendTextColumn(_T("Appréciations"), wxDATAVIEW_CELL_EDITABLE);// 
 	
+	ordre_colonne1=1;
+	ordre_colonne2=0;
+	ordre_colonne3=0;
+	
+	this->Afficher_liste(*new wxDataViewEvent());
 	
 	menu_fichier->Insert(1,wxID_HIGHEST+2, _T("Liste Des Utilisateurs"),	 _T("Afficher la liste des membres de GestNotes"));
 	
 	fenetre->SetSizer(sizer_principal);
 
-	button_ajouter->Bind(					wxEVT_BUTTON,		&Frame_admin::onAjouter,	 	  this);
-	input_checkbox__afficher_buletins->Bind(wxEVT_CHECKBOX, 	&Frame_admin::onCheck_Buletins,	  this);
-	button_modifier->Bind(					wxEVT_BUTTON,		&Frame_admin::onModifier,		  this);
-	button_supprimer->Bind(					wxEVT_BUTTON,		&Frame_admin::onSupprimer,		  this);
-	input_radio__arrondi_cent->Bind(		wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
-	input_radio__arrondi_dix->Bind(			wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
-	input_radio__arrondi_demi->Bind(		wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
-	input_radio__arrondi_un->Bind(			wxEVT_RADIOBUTTON,	&Frame_admin::onChange_arrondi,	  this);
-	input_checkbox__notes_hors_bareme->Bind(wxEVT_CHECKBOX,		&Frame_admin::onClick_hors_bareme,this);
-	input_checkbox__autoriser_modif_notes->Bind(wxEVT_CHECKBOX,		&Frame_admin::onCheck_Modif_notes,this);
+	button_ajouter->Bind(					wxEVT_BUTTON,			&Frame_admin::onAjouter,			this);
+	input_checkbox__afficher_buletins->Bind(wxEVT_CHECKBOX, 		&Frame_admin::onCheck_Buletins,		this);
+	button_modifier->Bind(					wxEVT_BUTTON,			&Frame_admin::onModifier,			this);
+	button_supprimer->Bind(					wxEVT_BUTTON,			&Frame_admin::onSupprimer,			this);
+	input_radio__arrondi_cent->Bind(		wxEVT_RADIOBUTTON,		&Frame_admin::onChange_arrondi,		this);
+	input_radio__arrondi_dix->Bind(			wxEVT_RADIOBUTTON,		&Frame_admin::onChange_arrondi,		this);
+	input_radio__arrondi_demi->Bind(		wxEVT_RADIOBUTTON,		&Frame_admin::onChange_arrondi,		this);
+	input_radio__arrondi_un->Bind(			wxEVT_RADIOBUTTON,		&Frame_admin::onChange_arrondi,		this);
+	input_checkbox__notes_hors_bareme->Bind(wxEVT_CHECKBOX,			&Frame_admin::onClick_hors_bareme,	this);
+	input_checkbox__autoriser_modif_notes->Bind(wxEVT_CHECKBOX,		&Frame_admin::onCheck_Modif_notes,	this);
+	liste_appreciations->Bind(wxEVT_DATAVIEW_COLUMN_HEADER_CLICK,	&Frame_admin::onChanger_ordre,		this);
+	liste_appreciations->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,	&Frame_admin::onChange_commentaires,this);
+	liste_appreciations->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED,		&Frame_admin::onDbclick_commentaires,this);
+	
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, &Frame_admin::onAfficherMembres, this, wxID_HIGHEST+2);
 	
 	bdd->exec("SELECT * FROM reglages");
@@ -412,4 +417,105 @@ void Frame_admin::supprimer_eleve(int id,int classe)
 	req->bind(":matricule",id);
 	req->fetch();
 	req->closeCursor();
+}
+
+void Frame_admin::Afficher_liste(wxDataViewEvent &evenement)
+{
+	std::string texte_req="SELECT eleves.id AS id,eleves.nom AS nom,eleves.prenom AS prenom, 0 AS pas_dappreciation, commentaires.commentaire AS commentaire FROM commentaires JOIN eleves ON commentaires.id_eleve=eleves.id WHERE id_matiere=-1 UNION SELECT eleves.id AS id,eleves.nom AS nom,eleves.prenom AS prenom, 1 AS pas_dappreciation, null AS commentaire FROM eleves";
+	
+	if(ordre_colonne3!=0) texte_req+=" ORDER BY commentaire";
+	else if(ordre_colonne2!=0) texte_req+=" ORDER BY nom";
+	else texte_req+=" ORDER BY id";
+	
+	if(ordre_colonne3==-1 || ordre_colonne2==-1 || ordre_colonne1==-1) texte_req+=" DESC";
+	
+	wxVector<wxVariant> ligne;//wxWidgets à besoin d'un vecteur pour créer une ligne. Ce vecteurs doit contenir les champs des colonnes de cette ligne
+	std::map<int,int> liste_eleve;
+	liste_appreciations->DeleteAllItems();
+	liste_eleve.clear();
+	for(int i=0;i<3;i++) ligne.push_back(wxVariant(""));//on crée une ligne avec que des colonnes vides
+    
+	
+	while(bdd->exec(texte_req))
+	{
+		if(liste_eleve.find(bdd->getColumn_int(0))==liste_eleve.end())
+		{
+			ligne[0]=wxVariant(wxString::Format("%d",bdd->getColumn_int(0)));//on effectue l'ajout de la ligne
+			liste_appreciations->AppendItem(ligne);
+
+			liste_eleve[bdd->getColumn_int(0)]=liste_appreciations->GetItemCount()-1;			
+		}
+		
+		liste_appreciations->SetTextValue(string(bdd->getColumn_text(2))+" "+string(bdd->getColumn_text(1)),liste_eleve[bdd->getColumn_int(0)],1);//le nom d'un élève
+		if(bdd->getColumn_int(3)==0) liste_appreciations->SetTextValue(string(bdd->getColumn_text(4)),liste_eleve[bdd->getColumn_int(0)],2);// l'appréciation, si il y en a une
+			
+	}
+}
+
+void Frame_admin::onChange_commentaires(wxDataViewEvent &evenement)
+{
+	if(evenement.GetColumn()!=2) return ;
+	
+	liste_appreciations->GetSelectedRow();
+	
+	int id_tmp=wxAtoi(liste_appreciations->GetTextValue(liste_appreciations->GetSelectedRow(),0));
+	bool ajouter=true;
+	
+	std::string appreciation=std::string(liste_appreciations->GetTextValue(liste_appreciations->GetSelectedRow(),2));
+	
+	requete_sql* req=bdd->prepare("SELECT count(*) from commentaires WHERE id_eleve=:id_eleve AND id_matiere=-1");
+	req->bind(":id_eleve",id_tmp);
+	req->fetch();
+	ajouter=(req->getColumn_int(0)==0)?true:false;
+	req->closeCursor();
+	
+	
+	req=bdd->prepare((ajouter)?
+			"INSERT INTO commentaires VALUES (-1,:id_eleve,:commentaire)":
+			"UPDATE commentaires SET commentaire=:commentaire WHERE id_eleve=:id_eleve AND id_matiere=-1");
+	req->bind(":id_eleve",id_tmp);
+	req->bind(":commentaire",appreciation);
+	
+	req->fetch();
+	req->closeCursor();
+}
+
+void Frame_admin::onChanger_ordre(wxDataViewEvent &evenement)
+{
+	int col = evenement.GetColumn();
+	
+	if(col==0) 
+	{
+		ordre_colonne2=0;
+		ordre_colonne3=0;
+		if(ordre_colonne1!=1) ordre_colonne1=1;
+		else ordre_colonne1=-1;
+	}
+	else if(col==1)
+	{	
+		ordre_colonne1=0;
+		ordre_colonne3=0;
+		if(ordre_colonne2!=1) ordre_colonne2=1;
+		else ordre_colonne2=-1;
+	}
+	else
+	{
+		ordre_colonne1=0;
+		ordre_colonne2=0;
+		if(ordre_colonne3!=1) ordre_colonne3=1;
+		else ordre_colonne3=-1;
+	}
+	
+	this->Afficher_liste(*new wxDataViewEvent());
+}
+
+
+void Frame_admin::onDbclick_commentaires(wxDataViewEvent &evenement)
+{
+	if(evenement.GetColumn()!=2) return ;
+		
+	wxDataViewItem item=liste_appreciations->GetCurrentItem();
+	wxDataViewColumn *colonne=evenement.GetDataViewColumn();
+	
+	liste_appreciations->EditItem(item,colonne);
 }

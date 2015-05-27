@@ -312,6 +312,11 @@
 			void onAfficherMembres(wxCommandEvent &evenement);
 			void supprimer_eleve(int,int);
 			void supprimer_prof(int,int,int);
+			void onChanger_ordre(wxDataViewEvent &evenement);
+			void Afficher_liste(wxDataViewEvent &evenement);
+			void onChange_commentaires(wxDataViewEvent &evenement);
+			void Ajouter_curseur(int colonne, bool haut);
+			void onDbclick_commentaires(wxDataViewEvent &evenement);
 			
 			
 		private:
@@ -326,6 +331,8 @@
 			Afficher_liste_membres *liste_membres;
 			wxDataViewListCtrl *liste_appreciations;
 			
+			int ordre_colonne1,ordre_colonne2,ordre_colonne3;
+			
 	};
 
 	class Frame_login : public wxFrame
@@ -334,7 +341,8 @@
 			Frame_login(connexion_bdd*& arg_bdd);
 			virtual ~Frame_login(){};
 			void onClick_annuler(wxCommandEvent &evenement);
-			void onClose(wxCloseEvent &evenement);
+			void onClose(wxCloseEvent &
+			evenement);
 		private:
 			wxTextCtrl *input_login,*input_mdp;
 			wxButton *bouton_valider, *bouton_annuler;

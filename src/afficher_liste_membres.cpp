@@ -131,6 +131,7 @@ void Afficher_liste_membres::changer_ordre(wxListEvent &evenement)
 	{	
 		ordre_colonne1=0;
 		ordre_colonne3=0;
+		ordre_colonne4=0;
 		if(ordre_colonne2!=1)
 		{
 			ordre_colonne2=1;
