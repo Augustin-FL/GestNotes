@@ -60,18 +60,12 @@ pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or direc
 ## ToDo list : 
 
 futur proche :
-* Terminer l'interface de gestion des administrateurs
-	* Saisir les appréciations générales
-* Créer l'interface de gestion pour les professeurs
-	* Saisie des groupes
-* Compléter l'interface de gestion pour les élèves
-	* Modifier ses infos
+* Administrateurs : 
+	* Mettre a jour la liste des appréciations après la mise à jour d'un membre de GestNotes
 
-
-futur éloigné : 
 * Ajouter un chiffrement de la base de donnée à l'aide de la librairie crypto d'OpenSSL
 * Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale 
 * Creer un installateur à l'aide de NSIS
 
 Fonctionnalités hypotétiques : 
-* Calculer la moyenne d'un élêve. Si celle ci est inférieure à 10, prévenir un prof responsable. Mais quel prof dois on prévenir? et comment? 
+* Calculer la moyenne d'un élêve. Si celle ci est inférieure à 10, prévenir un prof responsable. 
