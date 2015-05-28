@@ -433,7 +433,72 @@ Frame_editer_groupes::Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& 
 	parent=parent_arg;
 	classe=classe_arg;
 	
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxGridSizer 	*conteneur_header= new wxGridSizer(3);
+	wxStaticText	*label_groupe_a	= new wxStaticText(this, -1, _T("Groupe A"));
+	wxStaticText	*label_groupe_b = new wxStaticText(this, -1, _T("Groupe B"));
+	wxStaticText	*label_central	= new wxStaticText(this, -1, _T(""));
 	
-	this->ShowModal();
+	
+	conteneur_header->Add(label_groupe_a,1,wxALIGN_CENTER);
+	conteneur_header->Add(label_central,1,wxALIGN_CENTER);
+	conteneur_header->Add(label_groupe_b,1,wxALIGN_CENTER);
+	
+	//----------------------------
+	
+    wxScrolledWindow* fenetre=new wxScrolledWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxVSCROLL|wxBORDER_THEME);
+	wxStaticText	*texte_vide, *texte_nom_prenom;
+	wxButton 		*bouton_central;
+	wxBoxSizer 		*sizer_interne=new wxBoxSizer(wxVERTICAL);
+    wxGridSizer	 	*grille= new wxGridSizer(3,0,0);
+	
+	requete_sql* req=bdd->prepare("SELECT id, nom, prenom,groupe FROM eleves WHERE classe=:id_classe");
+	req->bind(":id_classe",classe);
+	
+	while(req->fetch())
+	{
+		texte_vide = new wxStaticText(fenetre, -1, _T(""));
+		texte_nom_prenom=new wxStaticText(fenetre, -1, wxString(req->getColumn_text(2))+_T(" ")+wxString(req->getColumn_text(1)));
+		
+		if(req->getColumn_int(3)==0) 
+		{
+			bouton_central= new wxButton(fenetre, -1, _T("<<"));
+			
+			grille->Add(texte_vide,1,wxALIGN_CENTER);
+			grille->Add(bouton_central,1,wxALIGN_CENTER);
+			grille->Add(texte_nom_prenom,1,wxALIGN_CENTER);
+		}
+		else
+		{
+			bouton_central= new wxButton(fenetre, -1, _T(">>"));
+			
+			grille->Add(texte_nom_prenom,1,wxALIGN_CENTER);
+			grille->Add(bouton_central,1,wxALIGN_CENTER);
+			grille->Add(texte_vide,1,wxALIGN_CENTER);
+		}
+		
+		bouton_central->Bind(wxEVT_BUTTON,   &Frame_editer_groupes::onClick,this);
+	}
+	
+	
+	sizer_interne->Add(grille,0,wxEXPAND);
+	fenetre->SetSizer(sizer_interne);
+ 
+	fenetre->FitInside();
+	fenetre->SetScrollRate(5, 5);
+	
+	
+	// -------------------- 
+	
+	sizer->Add(conteneur_header,0, wxEXPAND|wxALL,5);
+	sizer->Add(fenetre, 1, wxEXPAND|wxALL,5);
+    this->SetSizer(sizer);
+ 
+    this->ShowModal();
+
 }
 
+void Frame_editer_groupes::onClick(wxCommandEvent &evenement)
+{
+	
+}
