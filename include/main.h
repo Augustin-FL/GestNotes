@@ -48,11 +48,13 @@
 		public:
 			Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& bdd_arg, int classe_arg);
 			~Frame_editer_groupes(){}
+			void onClick(wxCommandEvent&);
 		
 		private:
 			connexion_bdd* bdd;
 			wxWindow* parent;
 			int classe;
+			std::map<wxButton,int> correspondance;
 	};
 	
 	class Frame_imprimer_buletins : public wxFrame
@@ -331,7 +333,7 @@
 			Afficher_liste_membres *liste_membres;
 			wxDataViewListCtrl *liste_appreciations;
 			
-			int ordre_colonne1,ordre_colonne2,ordre_colonne3;
+			int ordre_colonne1,ordre_colonne2,ordre_colonne3,ordre_colonne4;
 			
 	};
 

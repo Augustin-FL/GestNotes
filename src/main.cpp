@@ -206,7 +206,7 @@ void Frame_modifier_mdp::onChange(wxCommandEvent& evenement)
 	{
 		return ;
 	}
-	else if(input_mdp->GetValue().length()<3 || input_mdp_confirmation->GetValue().length()<3)
+	else if(input_mdp->GetValue().length()<4 || input_mdp_confirmation->GetValue().length()<4)
 	{	
 		message_mdp->Move(50,138);
 		message_mdp->Show();

@@ -65,6 +65,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	
 	liste_appreciations->AppendTextColumn(_T("Matricule"),     wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
 	liste_appreciations->AppendTextColumn(_T("Élèves"),  	   wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
+	liste_appreciations->AppendTextColumn(_T("Classes"),  	   wxDATAVIEW_CELL_INERT	,wxCOL_WIDTH_AUTOSIZE);
 	liste_appreciations->AppendTextColumn(_T("Appréciations"), wxDATAVIEW_CELL_EDITABLE);// 
 	
 	ordre_colonne1=1;
@@ -87,7 +88,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	input_radio__arrondi_un->Bind(			wxEVT_RADIOBUTTON,		&Frame_admin::onChange_arrondi,		this);
 	input_checkbox__notes_hors_bareme->Bind(wxEVT_CHECKBOX,			&Frame_admin::onClick_hors_bareme,	this);
 	input_checkbox__autoriser_modif_notes->Bind(wxEVT_CHECKBOX,		&Frame_admin::onCheck_Modif_notes,	this);
-	liste_appreciations->Bind(wxEVT_DATAVIEW_COLUMN_HEADER_CLICK,	&Frame_admin::onChanger_ordre,		this);
+	//liste_appreciations->Bind(wxEVT_DATAVIEW_COLUMN_HEADER_CLICK,	&Frame_admin::onChanger_ordre,		this);
 	liste_appreciations->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,	&Frame_admin::onChange_commentaires,this);
 	liste_appreciations->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED,		&Frame_admin::onDbclick_commentaires,this);
 	
@@ -120,6 +121,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 void Frame_admin::onAjouter(wxCommandEvent &evenement)
 {
 	Frame_ajout_modification_membre(this,bdd);
+	//this->Afficher_liste(*new wxDataViewEvent());
 }
 
 void Frame_admin::onCheck_Buletins(wxCommandEvent &evenement)
@@ -197,6 +199,7 @@ void Frame_admin::onModifier_id_selectionne(wxListEvent &evenement)
 			Frame_ajout_modification_membre(liste_membres,bdd,wxAtoi(evenement.GetText()));
 		}
 		liste_membres->afficher_liste(*(new wxCommandEvent()));
+		//this->Afficher_liste(*new wxDataViewEvent());
 	}
 }
 
@@ -267,7 +270,6 @@ void Frame_admin::onSupprimer_id_selectionne(wxListEvent &evenement)
 			req->closeCursor();
 		}
 		liste_membres->afficher_liste(*(new wxCommandEvent()));
-		
 	}
 }
 
@@ -421,19 +423,20 @@ void Frame_admin::supprimer_eleve(int id,int classe)
 
 void Frame_admin::Afficher_liste(wxDataViewEvent &evenement)
 {
-	std::string texte_req="SELECT eleves.id AS id,eleves.nom AS nom,eleves.prenom AS prenom, 0 AS pas_dappreciation, commentaires.commentaire AS commentaire FROM commentaires JOIN eleves ON commentaires.id_eleve=eleves.id WHERE id_matiere=-1 UNION SELECT eleves.id AS id,eleves.nom AS nom,eleves.prenom AS prenom, 1 AS pas_dappreciation, null AS commentaire FROM eleves";
+	std::string texte_req="SELECT eleves.id AS id,eleves.nom AS nom,eleves.prenom AS prenom, classes.nom AS classe, 0 AS pas_dappreciation, commentaires.commentaire AS commentaire,classes.id AS id_classe FROM commentaires JOIN eleves ON commentaires.id_eleve=eleves.id JOIN classes ON classes.id=eleves.classe WHERE id_matiere=-1 UNION SELECT eleves.id AS id,eleves.nom AS nom,eleves.prenom AS prenom, classes.nom AS classe, 1 AS pas_dappreciation, '' AS commentaire, classes.id AS id_classe FROM eleves JOIN classes ON classes.id=eleves.classe";
 	
 	if(ordre_colonne3!=0) texte_req+=" ORDER BY commentaire";
 	else if(ordre_colonne2!=0) texte_req+=" ORDER BY nom";
+	else if(ordre_colonne3!=0) texte_req+=" ORDER BY id_classe";
 	else texte_req+=" ORDER BY id";
 	
-	if(ordre_colonne3==-1 || ordre_colonne2==-1 || ordre_colonne1==-1) texte_req+=" DESC";
+	if(ordre_colonne4==-1 || ordre_colonne3==-1 || ordre_colonne2==-1 || ordre_colonne1==-1) texte_req+=" DESC";
 	
 	wxVector<wxVariant> ligne;//wxWidgets à besoin d'un vecteur pour créer une ligne. Ce vecteurs doit contenir les champs des colonnes de cette ligne
 	std::map<int,int> liste_eleve;
 	liste_appreciations->DeleteAllItems();
 	liste_eleve.clear();
-	for(int i=0;i<3;i++) ligne.push_back(wxVariant(""));//on crée une ligne avec que des colonnes vides
+	for(int i=0;i<4;i++) ligne.push_back(wxVariant(""));//on crée une ligne avec que des colonnes vides
     
 	
 	while(bdd->exec(texte_req))
@@ -441,40 +444,44 @@ void Frame_admin::Afficher_liste(wxDataViewEvent &evenement)
 		if(liste_eleve.find(bdd->getColumn_int(0))==liste_eleve.end())
 		{
 			ligne[0]=wxVariant(wxString::Format("%d",bdd->getColumn_int(0)));//on effectue l'ajout de la ligne
+			
 			liste_appreciations->AppendItem(ligne);
-
 			liste_eleve[bdd->getColumn_int(0)]=liste_appreciations->GetItemCount()-1;			
 		}
-		
+	
 		liste_appreciations->SetTextValue(string(bdd->getColumn_text(2))+" "+string(bdd->getColumn_text(1)),liste_eleve[bdd->getColumn_int(0)],1);//le nom d'un élève
-		if(bdd->getColumn_int(3)==0) liste_appreciations->SetTextValue(string(bdd->getColumn_text(4)),liste_eleve[bdd->getColumn_int(0)],2);// l'appréciation, si il y en a une
-			
+		liste_appreciations->SetTextValue(string(bdd->getColumn_text(3)),liste_eleve[bdd->getColumn_int(0)],2);//La classe
+	
+		if(bdd->getColumn_int(4)==0) liste_appreciations->SetTextValue(string(bdd->getColumn_text(5)),liste_eleve[bdd->getColumn_int(0)],3);// l'appréciation, si il y en a une		
 	}
 }
 
+
 void Frame_admin::onChange_commentaires(wxDataViewEvent &evenement)
 {
-	if(evenement.GetColumn()!=2) return ;
+	if(evenement.GetColumn()!=3) return ;
 	
 	liste_appreciations->GetSelectedRow();
 	
 	int id_tmp=wxAtoi(liste_appreciations->GetTextValue(liste_appreciations->GetSelectedRow(),0));
-	bool ajouter=true;
+	bool deja_en_bdd=false;
 	
-	std::string appreciation=std::string(liste_appreciations->GetTextValue(liste_appreciations->GetSelectedRow(),2));
+	std::string appreciation=std::string(liste_appreciations->GetTextValue(liste_appreciations->GetSelectedRow(),3)),texte_req;
 	
 	requete_sql* req=bdd->prepare("SELECT count(*) from commentaires WHERE id_eleve=:id_eleve AND id_matiere=-1");
 	req->bind(":id_eleve",id_tmp);
 	req->fetch();
-	ajouter=(req->getColumn_int(0)==0)?true:false;
+	deja_en_bdd=(req->getColumn_int(0)==0)?false:true;
 	req->closeCursor();
 	
-	
-	req=bdd->prepare((ajouter)?
-			"INSERT INTO commentaires VALUES (-1,:id_eleve,:commentaire)":
-			"UPDATE commentaires SET commentaire=:commentaire WHERE id_eleve=:id_eleve AND id_matiere=-1");
+	if(deja_en_bdd && appreciation.empty()) texte_req="DELETE FROM commentaires WHERE id_eleve=:id_eleve AND id_matiere=-1";
+	else if(!deja_en_bdd && !appreciation.empty()) texte_req="INSERT INTO commentaires VALUES (-1,:id_eleve,:commentaire)";
+	else if(!appreciation.empty()) texte_req="UPDATE commentaires SET commentaire=:commentaire WHERE id_eleve=:id_eleve AND id_matiere=-1";
+	else return ;
+
+	req=bdd->prepare(texte_req);
 	req->bind(":id_eleve",id_tmp);
-	req->bind(":commentaire",appreciation);
+	if(!appreciation.empty())  req->bind(":commentaire",appreciation);
 	
 	req->fetch();
 	req->closeCursor();
@@ -488,6 +495,7 @@ void Frame_admin::onChanger_ordre(wxDataViewEvent &evenement)
 	{
 		ordre_colonne2=0;
 		ordre_colonne3=0;
+		ordre_colonne4=0;
 		if(ordre_colonne1!=1) ordre_colonne1=1;
 		else ordre_colonne1=-1;
 	}
@@ -495,15 +503,25 @@ void Frame_admin::onChanger_ordre(wxDataViewEvent &evenement)
 	{	
 		ordre_colonne1=0;
 		ordre_colonne3=0;
+		ordre_colonne4=0;
 		if(ordre_colonne2!=1) ordre_colonne2=1;
 		else ordre_colonne2=-1;
 	}
-	else
+	else if(col==1)
 	{
 		ordre_colonne1=0;
 		ordre_colonne2=0;
+		ordre_colonne4=0;
 		if(ordre_colonne3!=1) ordre_colonne3=1;
 		else ordre_colonne3=-1;
+	}
+	else 
+	{
+		ordre_colonne1=0;
+		ordre_colonne2=0;
+		ordre_colonne3=0;
+		if(ordre_colonne4!=1)ordre_colonne4=1;
+		else ordre_colonne4=-1;
 	}
 	
 	this->Afficher_liste(*new wxDataViewEvent());
@@ -512,7 +530,7 @@ void Frame_admin::onChanger_ordre(wxDataViewEvent &evenement)
 
 void Frame_admin::onDbclick_commentaires(wxDataViewEvent &evenement)
 {
-	if(evenement.GetColumn()!=2) return ;
+	if(evenement.GetColumn()!=3) return ;
 		
 	wxDataViewItem item=liste_appreciations->GetCurrentItem();
 	wxDataViewColumn *colonne=evenement.GetDataViewColumn();
