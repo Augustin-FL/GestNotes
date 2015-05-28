@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GestNotes"
-#define MyAppVersion "0.0.6-alpha"
+#define MyAppVersion "0.0.8-beta"
 #define MyAppPublisher "gusfl"
 #define MyAppURL "http://gestnotes.fr"
 #define MyAppExeName "GestNotes.exe"
