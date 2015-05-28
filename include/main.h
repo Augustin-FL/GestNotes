@@ -49,12 +49,15 @@
 			Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& bdd_arg, int classe_arg);
 			~Frame_editer_groupes(){}
 			void onClick(wxCommandEvent&);
+			void afficher_liste(bool detacher=false);
 		
 		private:
 			connexion_bdd* bdd;
 			wxWindow* parent;
 			int classe;
-			std::map<wxButton,int> correspondance;
+			std::map<wxButton*,int> correspondance;
+			wxScrolledWindow* fenetre;
+			wxGridSizer		*grille;
 	};
 	
 	class Frame_imprimer_buletins : public wxFrame

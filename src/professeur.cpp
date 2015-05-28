@@ -445,12 +445,56 @@ Frame_editer_groupes::Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& 
 	conteneur_header->Add(label_groupe_b,1,wxALIGN_CENTER);
 	
 	//----------------------------
+	fenetre=new wxScrolledWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxVSCROLL|wxBORDER_THEME);
 	
-    wxScrolledWindow* fenetre=new wxScrolledWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxVSCROLL|wxBORDER_THEME);
+	this->afficher_liste();
+
+	
+	// -------------------- 
+	
+	sizer->Add(conteneur_header,0, wxEXPAND|wxALL,5);
+	sizer->Add(fenetre, 1, wxEXPAND|wxALL,5);
+    this->SetSizer(sizer);
+ 
+    this->ShowModal();
+
+}
+
+void Frame_editer_groupes::onClick(wxCommandEvent &evenement)
+{
+	wxButton *objet=(wxButton*)evenement.GetEventObject();
+	int id=correspondance[objet],groupe;
+	
+	requete_sql* req=bdd->prepare("SELECT groupe FROM eleves WHERE id=:id");
+	req->bind(":id",id);
+	req->fetch();
+	groupe=req->getColumn_int(0);
+	req->closeCursor();
+	
+	if(groupe==0) groupe=1;
+	else groupe=0;
+	
+	req=bdd->prepare("UPDATE eleves SET groupe=:groupe WHERE id=:id");
+	req->bind(":id",id);
+	req->bind(":groupe",groupe);
+	req->fetch();
+	req->closeCursor();
+	
+	this->afficher_liste(true);
+}
+
+void Frame_editer_groupes::afficher_liste(bool detacher)
+{
+	if(detacher==true) grille->Clear(true);
+	
+	wxBoxSizer 		*sizer_interne=new wxBoxSizer(wxVERTICAL);
+	grille 						  = new wxGridSizer(3,0,0);
+	
 	wxStaticText	*texte_vide, *texte_nom_prenom;
 	wxButton 		*bouton_central;
-	wxBoxSizer 		*sizer_interne=new wxBoxSizer(wxVERTICAL);
-    wxGridSizer	 	*grille= new wxGridSizer(3,0,0);
+	
+	
+	correspondance.clear();
 	
 	requete_sql* req=bdd->prepare("SELECT id, nom, prenom,groupe FROM eleves WHERE classe=:id_classe");
 	req->bind(":id_classe",classe);
@@ -476,10 +520,12 @@ Frame_editer_groupes::Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& 
 			grille->Add(bouton_central,1,wxALIGN_CENTER);
 			grille->Add(texte_vide,1,wxALIGN_CENTER);
 		}
+		correspondance[bouton_central]=req->getColumn_int(0);
 		
 		bouton_central->Bind(wxEVT_BUTTON,   &Frame_editer_groupes::onClick,this);
 	}
 	
+	req->closeCursor();
 	
 	sizer_interne->Add(grille,0,wxEXPAND);
 	fenetre->SetSizer(sizer_interne);
@@ -487,18 +533,5 @@ Frame_editer_groupes::Frame_editer_groupes(wxWindow* parent_arg,connexion_bdd*& 
 	fenetre->FitInside();
 	fenetre->SetScrollRate(5, 5);
 	
-	
-	// -------------------- 
-	
-	sizer->Add(conteneur_header,0, wxEXPAND|wxALL,5);
-	sizer->Add(fenetre, 1, wxEXPAND|wxALL,5);
-    this->SetSizer(sizer);
- 
-    this->ShowModal();
-
-}
-
-void Frame_editer_groupes::onClick(wxCommandEvent &evenement)
-{
-	
+	sizer_interne->Layout();
 }
