@@ -441,7 +441,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 		{
 			req=bdd->prepare("UPDATE login_centralise SET mdp=:mdp WHERE matricule=:matricule");
 			req->bind(":matricule",matricule);
-			req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
+			req->bind(":mdp",std::string(input_ajout_mdp->GetValue().mb_str()));
 			req->fetch();
 			req->closeCursor();
 		}
@@ -523,7 +523,7 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 	if(type_ajout==PROF && input_select_matiere_ajout->GetSelection()==wxNOT_FOUND)//si on as une nouvelle matière : on l'ajoute en BDD ! :p
 	{																		    	 //l'id de la matiere est texte_select.GetSelection()-1
 		req=bdd->prepare("INSERT INTO matieres (nom) VALUES (:nom_matiere)");
-		req->bind(":nom_matiere", string(input_select_matiere_ajout->GetValue().mb_str()));
+		req->bind(":nom_matiere",std::string(input_select_matiere_ajout->GetValue().mb_str()));
 		req->fetch();
 		req->closeCursor();
 		
@@ -552,8 +552,8 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			req->closeCursor();
 			
 			req=bdd->prepare("UPDATE profs SET id=:matricule,nom=:nom,prenom=:prenom WHERE id=:matricule_old");//met a jour le prénom/nom
-			req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
-			req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+			req->bind(":nom",std::string(input_ajout_nom->GetValue().mb_str()));
+			req->bind(":prenom",std::string(input_ajout_prenom->GetValue().mb_str()));
 			req->bind(":matricule",matricule_modif);
 			req->bind(":matricule_old",matricule_modif);
 			req->fetch();
@@ -565,8 +565,8 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 			req=bdd->prepare("INSERT INTO profs VALUES (:matricule,:nom,:prenom,:matiere,:classe)");
 			req->bind(":matiere",input_select_matiere_ajout->GetSelection());
 			req->bind(":classe",input_ajout_eleve__classe->GetSelection());
-			req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
-			req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+			req->bind(":nom",std::string(input_ajout_nom->GetValue().mb_str()));
+			req->bind(":prenom",std::string(input_ajout_prenom->GetValue().mb_str()));
 			req->bind(":matricule",matricule_modif);
 		
 			req->fetch();
@@ -587,19 +587,19 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 		req->bind(":sexe",  input_ajout_eleve__sexe->  GetSelection());
 		req->bind(":date_inscription",(int)time(NULL));
 
-		req->bind(":rue",string(input_ajout_eleve__rue->GetValue().mb_str()));
-		req->bind(":num_rue",string(input_ajout_eleve__num_rue->GetValue().mb_str()));
+		req->bind(":rue",std::string(input_ajout_eleve__rue->GetValue().mb_str()));
+		req->bind(":num_rue",std::string(input_ajout_eleve__num_rue->GetValue().mb_str()));
 		
 		req->bind(":code_postal",wxAtoi(input_ajout_eleve__code_postal->GetValue()));
 		req->bind(":classe",input_ajout_eleve__classe->GetSelection());
-		req->bind(":ville",string(input_ajout_eleve__ville->GetValue().mb_str()));
-		req->bind(":tel_mobile",string(input_ajout_eleve__tel_mobile->GetValue().mb_str()));
-		req->bind(":nom_responsable",string(input_ajout_eleve__nom_responsable->GetValue().mb_str()));
-		req->bind(":prenom_responsable",string(input_ajout_eleve__prenom_responsable->GetValue().mb_str()));
-		req->bind(":mail_responsable",string(input_ajout_eleve__mail_responsable->GetValue().mb_str()));
-		req->bind(":tel_responsable",string(input_ajout_eleve__tel_responsable->GetValue().mb_str()));
-		req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
-		req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+		req->bind(":ville",std::string(input_ajout_eleve__ville->GetValue().mb_str()));
+		req->bind(":tel_mobile",std::string(input_ajout_eleve__tel_mobile->GetValue().mb_str()));
+		req->bind(":nom_responsable",std::string(input_ajout_eleve__nom_responsable->GetValue().mb_str()));
+		req->bind(":prenom_responsable",std::string(input_ajout_eleve__prenom_responsable->GetValue().mb_str()));
+		req->bind(":mail_responsable",std::string(input_ajout_eleve__mail_responsable->GetValue().mb_str()));
+		req->bind(":tel_responsable",std::string(input_ajout_eleve__tel_responsable->GetValue().mb_str()));
+		req->bind(":nom",std::string(input_ajout_nom->GetValue().mb_str()));
+		req->bind(":prenom",std::string(input_ajout_prenom->GetValue().mb_str()));
 		req->bind(":matricule",matricule_modif);
 	
 		if(nessecite_update) req->bind(":matricule_old", matricule);
@@ -615,8 +615,8 @@ void Frame_ajout_modification_membre::onClick(wxCommandEvent &evenement)
 		
 		req=bdd->prepare(texte_req);
 		
-		req->bind(":nom",string(input_ajout_nom->GetValue().mb_str()));
-		req->bind(":prenom",string(input_ajout_prenom->GetValue().mb_str()));
+		req->bind(":nom",std::string(input_ajout_nom->GetValue().mb_str()));
+		req->bind(":prenom",std::string(input_ajout_prenom->GetValue().mb_str()));
 		req->bind(":matricule",matricule_modif);
 		
 		if(nessecite_update) req->bind(":matricule_old", matricule);
@@ -725,7 +725,7 @@ int Frame_ajout_modification_membre::valider_ajouter_login_centralise()
 	if(input_radio_matricule_oui->GetValue())// si on demande a associer le professeur a un matricule existant
 	{
 		req=bdd->prepare("SELECT count(*) AS nbr, type FROM login_centralise WHERE matricule=:matricule");
-		req->bind(":matricule",string(input_ajout_matricule->GetValue().mb_str()));
+		req->bind(":matricule",std::string(input_ajout_matricule->GetValue().mb_str()));
 		req->fetch();
 
 		if(req->getColumn_int(0)!=1)
@@ -756,7 +756,7 @@ int Frame_ajout_modification_membre::valider_ajouter_login_centralise()
 	else
 	{
 		req=bdd->prepare("INSERT INTO login_centralise (mdp, type) VALUES(:mdp,:type)");
-		req->bind(":mdp",string(input_ajout_mdp->GetValue().mb_str()));
+		req->bind(":mdp",std::string(input_ajout_mdp->GetValue().mb_str()));
 		req->bind(":type",type_ajout);
 
 		req->fetch();

@@ -388,7 +388,7 @@ void Frame_prof::afficher_liste()
 			}
 			liste_eleves[req->getColumn_int(0)]=liste_eleves.size()-1;
 			
-			ligne[0]=wxVariant(string(req->getColumn_text(2))+" "+string(req->getColumn_text(1)));//on effectue l'ajout de la ligne
+			ligne[0]=wxVariant(std::string(req->getColumn_text(2))+" "+std::string(req->getColumn_text(1)));//on effectue l'ajout de la ligne
 			liste_notes->AppendItem(ligne);	
 		}
 		

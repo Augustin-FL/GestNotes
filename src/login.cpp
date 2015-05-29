@@ -77,8 +77,8 @@ void Frame_login::onClick_valider(wxCommandEvent &evenement)
 {
     requete_sql* req=bdd->prepare("SELECT count(*),type FROM login_centralise WHERE matricule=:matricule and mdp=:mdp");//WHERE matricule=:matricule AND mdp=:mdp
 
-    req->bind(":matricule",string(input_login->GetValue().mb_str())); //si une erreur survient a ce niveau :
-    req->bind(":mdp",string(input_mdp->GetValue().mb_str()));//penser a utiliser le namespace std, ou a mettre std::string()
+    req->bind(":matricule",std::string(input_login->GetValue().mb_str())); //si une erreur survient a ce niveau :
+    req->bind(":mdp",std::string(input_mdp->GetValue().mb_str()));//penser a utiliser le namespace std, ou a mettre std::string()
 
     if(req->fetch() && req->getColumn_int(0)==1)
     {

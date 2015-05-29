@@ -1,5 +1,4 @@
 #include "main.h"
-
 /*
 ToDo :
 
@@ -11,10 +10,10 @@ connexion_bdd::connexion_bdd()//const string &infos)
 {
 	/*if(infos.find("sqlite:")!=string::npos)
 	{*/
-		string path_fichier=string(wxStandardPaths::Get().GetExecutablePath().mb_str());// le chemin de l'executable en cours
+		std::string path_fichier=std::string(wxStandardPaths::Get().GetExecutablePath().mb_str());// le chemin de l'executable en cours
 		bool fichier_existe=false;
 		size_t pos;
-		if(path_fichier.rfind("\\")!=string::npos)
+		if(path_fichier.rfind("\\")!=std::string::npos)
 			pos=path_fichier.rfind("\\")+1; //multiplateforme : windows
 		else pos=path_fichier.rfind("/")+1;//linux
 
@@ -145,7 +144,7 @@ connexion_bdd::~connexion_bdd()
 	sqlite3_close(bdd);
 }
 
-int connexion_bdd::exec(const string &texte)
+int connexion_bdd::exec(const std::string &texte)
 {
 	int resultat;//
 
@@ -181,7 +180,7 @@ int connexion_bdd::getColumn_int(int numero)
 	return req->getColumn_int(numero);
 }
 
-string connexion_bdd::getColumn_text(int numero)
+std::string connexion_bdd::getColumn_text(int numero)
 {
 	return req->getColumn_text(numero);
 }
@@ -195,25 +194,29 @@ void connexion_bdd::close()
 	sqlite3_close(bdd);
 }
 
-requete_sql* connexion_bdd::prepare(const string &texte)
+requete_sql* connexion_bdd::prepare(const std::string &texte)
 {
-
 	return new requete_sql(bdd,texte);
 }
 
-requete_sql::requete_sql(sqlite3*& bdd,const string& texte_requete)
+requete_sql* connexion_bdd::prepare(const char* texte)
+{
+	return new requete_sql(bdd,std::string(texte));
+}
+
+requete_sql::requete_sql(sqlite3*& bdd,const std::string& texte_requete)
 {
 	bdd_private=bdd;
 
 	sqlite3_prepare_v2(bdd,texte_requete.c_str(),-1,&requete, NULL);
 
-	string texte=string(sqlite3_errmsg(bdd_private));
+	std::string texte=std::string(sqlite3_errmsg(bdd_private));
 	if(texte.compare("not an error"))	wxMessageBox(texte,"Erreur SQL - Prepare");
 
 	// a faire : compter le onmbre de : et de ;
 }
 
-int requete_sql::bind(const string &cle,int valeur)
+int requete_sql::bind(const std::string &cle,int valeur)
 {
 
 	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
@@ -224,7 +227,7 @@ int requete_sql::bind(const string &cle,int valeur)
 	return sqlite3_bind_int(requete, sqlite3_bind_parameter_index(requete,cle.c_str()), valeur);
 }
 
-int requete_sql::bind(const string &cle,double valeur)
+int requete_sql::bind(const std::string &cle,double valeur)
 {
 
 	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
@@ -249,7 +252,7 @@ int requete_sql::bind(int cle,double valeur)
 }
 
 
-int requete_sql::bind(const string &cle,const string &valeur)
+int requete_sql::bind(const std::string &cle,const std::string &valeur)
 {
 	if(!sqlite3_bind_parameter_index(requete,cle.c_str()))
 	{
@@ -277,7 +280,7 @@ int requete_sql::bind(int cle,int valeur)
 	return 0;
 }
 
-int requete_sql::bind(int cle,const string &valeur)
+int requete_sql::bind(int cle,const std::string &valeur)
 {
 	return sqlite3_bind_text(requete,cle, valeur.c_str(),strlen(valeur.c_str()),SQLITE_STATIC);
 }
@@ -317,10 +320,10 @@ int requete_sql::getColumn_int(int numero)
 
 	return sqlite3_column_int(requete,numero);
 }
-string requete_sql::getColumn_text(int numero)
+std::string requete_sql::getColumn_text(int numero)
 {
 	if(numero>nb_colonnes-1 || numero<0  || types[numero]!=SQLITE_TEXT)return "erreur - GetColumn_text()";
-	return string((const char*)sqlite3_column_text(requete, numero));
+	return std::string((const char*)sqlite3_column_text(requete, numero));
 }
 double requete_sql::getColumn_float(int numero)
 {

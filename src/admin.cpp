@@ -449,10 +449,10 @@ void Frame_admin::Afficher_liste(wxDataViewEvent &evenement)
 			liste_eleve[bdd->getColumn_int(0)]=liste_appreciations->GetItemCount()-1;			
 		}
 	
-		liste_appreciations->SetTextValue(string(bdd->getColumn_text(2))+" "+string(bdd->getColumn_text(1)),liste_eleve[bdd->getColumn_int(0)],1);//le nom d'un élève
-		liste_appreciations->SetTextValue(string(bdd->getColumn_text(3)),liste_eleve[bdd->getColumn_int(0)],2);//La classe
+		liste_appreciations->SetTextValue(std::string(bdd->getColumn_text(2))+" "+std::string(bdd->getColumn_text(1)),liste_eleve[bdd->getColumn_int(0)],1);//le nom d'un élève
+		liste_appreciations->SetTextValue(std::string(bdd->getColumn_text(3)),liste_eleve[bdd->getColumn_int(0)],2);//La classe
 	
-		if(bdd->getColumn_int(4)==0) liste_appreciations->SetTextValue(string(bdd->getColumn_text(5)),liste_eleve[bdd->getColumn_int(0)],3);// l'appréciation, si il y en a une		
+		if(bdd->getColumn_int(4)==0) liste_appreciations->SetTextValue(std::string(bdd->getColumn_text(5)),liste_eleve[bdd->getColumn_int(0)],3);// l'appréciation, si il y en a une		
 	}
 }
 

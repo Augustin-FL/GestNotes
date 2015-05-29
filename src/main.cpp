@@ -223,7 +223,7 @@ void Frame_modifier_mdp::onClick(wxCommandEvent& evenement)
 {
 	requete_sql *req=bdd->prepare("UPDATE login_centralise SET mdp=:mdp WHERE matricule=:matricule");
 	req->bind(":matricule",matricule);
-	req->bind(":mdp",string(input_mdp->GetValue().mb_str()));
+	req->bind(":mdp",std::string(input_mdp->GetValue().mb_str()));
 	req->fetch();
 	req->closeCursor();
 	

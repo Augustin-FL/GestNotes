@@ -4,22 +4,30 @@
 	#include <map>
 	
 	#include <wx/wx.h>
-	#include <wx/statline.h>
-	#include <wx/stdpaths.h>
-	#include <wx/hyperlink.h>
-	#include <wx/regex.h>
-	#include <wx/filename.h>
-	#include <wx/listctrl.h>
-	#include <wx/dataview.h>
-	#include <wx/notebook.h>
-	#include <wx/srchctrl.h>
+	#include <wx/statline.h>	// Ajout d'un membre :séparations
+	#include <wx/hyperlink.h>	// liens dans le about
+	#include <wx/regex.h>		//regexp
 	
-
-	#include <SQLite/sqlite3.h>
+	#include <wx/filename.h>	
+	#include <wx/stdpaths.h>	//accès aux répertoires
+	#include <wx/filesys.h>
+	
+	#include <wx/listctrl.h> 	//listcrl et dataviewListCtrl
+	#include <wx/dataview.h>
+	
+	#include <wx/notebook.h> 	//listing des membres : onglets
+	#include <wx/srchctrl.h>	//listing des membres : champ de recherche
+	
+	#include <wx/webview.h>		//affichage du buletin: ressources web
+	#include <wx/webviewfshandler.h> 
+	
+	#include <wx/wfstream.h> 	//dialogue : imprimer
+	#include <wx/fs_mem.h>		//dialogue : enregistrer sous
+	
+	#include <SQLite/sqlite3.h>// moteur SQLITE.
 	
 	#define VERSION "0.0.8-beta"
 
-	using namespace std;
 	
 	class requete_sql;
 	class connexion_bdd;
@@ -65,27 +73,33 @@
 		public:
 			Frame_imprimer_buletins(wxWindow* parent_arg, connexion_bdd*& bdd_arg);
 			~Frame_imprimer_buletins(){}
+			wxString generer_html1();
+			wxString generer_html5();
+			
+			void onEnregistrer(wxCommandEvent& evenement);
+			void onImprimer(wxCommandEvent& evenement);
 			
 		private:
 			wxWindow* parent;
 			connexion_bdd* bdd;
+			wxWebView* fenetre_html;
 	};
 	
 	
 	class requete_sql : public wxString //connexion a la BDD
 	{
 		public:
-			requete_sql(sqlite3 *&bdd,const string& texte);
-			int bind(const string &cle,const string &valeur);
-			int bind(const string &cle,int valeur);
-			int bind(const string &cle,double valeur);
+			requete_sql(sqlite3 *&bdd,const std::string& texte);
+			int bind(const std::string &cle,const std::string &valeur);
+			int bind(const std::string &cle,int valeur);
+			int bind(const std::string &cle,double valeur);
 			int bind(int cle,int valeur);
-			int bind(int cle,const string &valeur);
+			int bind(int cle,const std::string &valeur);
 			int bind(int cle,double valeur);
 			
 			int fetch();
 			int getColumn_int(int numero);
-			string getColumn_text(int numero);
+			std::string getColumn_text(int numero);
 			double getColumn_float(int numero);
 			void closeCursor();
 
@@ -102,16 +116,17 @@
 	{
 		private:
 			sqlite3* bdd;
-			string requete_precedente;
+			std::string requete_precedente;
 			requete_sql* req;
 
 		public:
 			connexion_bdd();
 			~connexion_bdd();
-			int exec(const string &texte);
-			requete_sql* prepare(const string &texte);
+			int exec(const std::string &texte);
+			requete_sql* prepare(const std::string &texte);
+			requete_sql* prepare(const char *texte);
 			int getColumn_int(int numero);
-			string getColumn_text(int numero);
+			std::string getColumn_text(int numero);
 			double getColumn_float(int numero);
 			void close();
 

@@ -228,7 +228,7 @@ void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 	
 	requete_sql *req=bdd->prepare(string_req);
 	
-	if(!rechercher->IsEmpty()) req->bind(":rechercher","%"+string(rechercher->GetValue().mb_str())+"%");
+	if(!rechercher->IsEmpty()) req->bind(":rechercher","%"+std::string(rechercher->GetValue().mb_str())+"%");
 	
 	int ligne=0;
 	while(req->fetch())

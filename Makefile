@@ -1,6 +1,6 @@
 PROGRAMME=GestNotes
 CC=g++
-ARGS_COMPILATION=-Wall -g
+ARGS_COMPILATION=-Wall
 INCLUDE=-I "./include" -I"C:\include"
 
 # note : si vous avez comme erreur 'wx/msw/hand.cur': No such file or directory
