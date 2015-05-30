@@ -8,6 +8,7 @@
 
 Frame_imprimer_buletins::Frame_imprimer_buletins(wxWindow* parent_arg, connexion_bdd*& bdd_arg) : wxFrame(parent_arg, wxID_ANY,_T("GestNotes - Buletin scolaire"),wxDefaultPosition,wxSize(610,510))
 {
+	SetIcon(wxICON(icone));
 	parent=parent_arg;
 	bdd=bdd_arg;
 	wxPanel *fenetre=new wxPanel(this);
@@ -20,12 +21,16 @@ Frame_imprimer_buletins::Frame_imprimer_buletins(wxWindow* parent_arg, connexion
 	wxButton *imprimer=new wxButton(fenetre, -1, _T("Imprimer"));
 	wxButton *enregistrer=new wxButton(fenetre, -1, _T("Enregistrer Sous"));
 	
-	this->generer_html5();
 	
-	fenetre_html = wxWebView::New(fenetre, wxID_ANY, wxWebViewDefaultURLStr,wxDefaultPosition, wxSize(50,50));
-	fenetre_html->RegisterHandler( wxSharedPtr<wxWebViewHandler>(new wxWebViewFSHandler( "memory" )));
-	fenetre_html->LoadURL("memory:dialog.html");
-	 wxMemoryFSHandler::RemoveFile( "dialog.html" );
+	//fenetre_html = wxWebView::New(fenetre, wxID_ANY, wxWebViewDefaultURLStr,wxDefaultPosition, wxSize(50,50));
+	//fenetre_html->RegisterHandler( wxSharedPtr<wxWebViewHandler>(new wxWebViewFSHandler( "memory" )));
+	//fenetre_html->LoadURL("memory:dialog.html");
+	//wxMemoryFSHandler::RemoveFile( "dialog.html" );
+	
+	wxString html=this->generer_html5();
+	
+	fenetre_html = new wxHtmlWindow(fenetre);
+	fenetre_html->AppendToPage(html);
 	
 	sizer_haut_doite->Add(enregistrer);
 	sizer_haut_centre->Add(imprimer);
@@ -35,7 +40,7 @@ Frame_imprimer_buletins::Frame_imprimer_buletins(wxWindow* parent_arg, connexion
 	
 	sizer_haut->Add(sizer_haut_doite,1,wxALIGN_LEFT);
 	sizer_haut->Add(sizer_haut_centre,1,wxALIGN_CENTER);
-	sizer_bas->Add(fenetre_html,1),
+	sizer_bas->Add(fenetre_html,1,wxEXPAND|wxALL,6);
 	
 	sizer_principal->Add(sizer_haut,0,wxEXPAND|wxTOP, 5);
 	sizer_principal->Add(sizer_bas,1,wxEXPAND|wxTOP, 10);
@@ -45,7 +50,10 @@ Frame_imprimer_buletins::Frame_imprimer_buletins(wxWindow* parent_arg, connexion
 }
 void Frame_imprimer_buletins::onImprimer(wxCommandEvent& evenement)
 {
-	fenetre_html->Print();
+	// fenetre_html->Print();
+	
+	 wxHtmlEasyPrinting *imprimer=new wxHtmlEasyPrinting("Impression",this);
+	 imprimer->PrintText(this->generer_html5());
 }
 
 void Frame_imprimer_buletins::onEnregistrer(wxCommandEvent& evenement)
@@ -70,6 +78,13 @@ void Frame_imprimer_buletins::onEnregistrer(wxCommandEvent& evenement)
 
 wxString Frame_imprimer_buletins::generer_html5()
 {
+	// - nom prenom responsable
+	// - nom prenom
+	// - date d'inscription 
+	// - classe
+	// - effectif de la classe
+	// - adresse (rue, nom_rue, ville, code postal)
+	
 	wxString html=
 	"<html>																															\
 \n	<head>																															\
@@ -261,13 +276,21 @@ wxString Frame_imprimer_buletins::generer_html5()
 \n																																	\
 \n			<!--matiere : -->																										\
 \n	";
+	
+	
 	bool a=true;
 			
 	while(a)
 	{
 		a=false;	
-			
-			html+=
+		
+		// - Matiere 
+		// - Nom Prof
+		// - Moyenne
+		// - Moyenne classe (+/moy/-)
+		// - Appréciation du prof
+		
+		html+=
 			"<tr>																													\
 				<td class=\"entete_nouvelle_ligne\">																				\
 \n					<p class=\"nom_matiere\">																						\
@@ -311,6 +334,8 @@ wxString Frame_imprimer_buletins::generer_html5()
 \n		";
 	}
 	
+	// moyenne generale :
+	// appreciation generale
 	html+=
 	"<tr class=\"moyenne_generale\">																								\
 \n				<td style=\"vertical-align:top;padding:1.9pt 4.75pt 0 0;\">															\
@@ -367,6 +392,6 @@ wxString Frame_imprimer_buletins::generer_html5()
 \n	</body>																															\
 \n</html>																															\
 ";	
-	wxMemoryFSHandler::AddFile("dialog.html",html);
-	return html;
+//	wxMemoryFSHandler::AddFile("dialog.html",html);
+	return wxString::FromUTF8(html);
 }

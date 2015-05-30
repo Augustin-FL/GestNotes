@@ -58,12 +58,16 @@ pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or direc
 - si vous compilez à l'aide de codeblocks, la procédure est expliquée dans le fichier ressources.rc
 
 ## Bugs connus  : 
-* Eleves :L'affichage/impression du bulletin ne fonctionne pas
-* Admins : Lors de l'ajout d'un élève, la liste des appréciations générales ne se met pas à jour (le nouvel élève n'est pas ajouté)
-* Profs/Admins : Le tri (clic sur l'en-tête d'une colonne) ne fonctionne pas pour les administrateurs (appréciations générales) ni pour les professeurs(l'interface des notes)
+* Eleves :L'affichage/impression du bulletin ne fonctionne pas correctement (Cause : le HTML est mal interprété par wxHtmlWindow)
+* Admins : Lors de l'ajout d'un élève, la liste des appréciations générales ne se met pas à jour (le nouvel élève n'est pas ajouté. Cause : le wxDataViewList buge)
+* Profs/Admins : Le tri (clic sur l'en-tête d'une colonne) ne fonctionne pas pour les administrateurs (appréciations générales) ni pour les professeurs(l'interface des notes. Cause : le wxDataViewList buge)
 
------
 ## Fonctionnalités futures : 
 * Ajout de la notion de professeur "principal" (affectation à une classe, accès à toutes les notes de toutes les matières pour cette classe, etc)
 * Ajouter un chiffrement des mots de passes à l'aide de la librairie crypto d'OpenSSL
+* Améliorer les performances de la Frame de gestion des Groupes
+
+## Fonctionnalités futures (lointaines) : 
+* Proposer au professeurs d'ajouter un nombre illimité de notes (d'ajouter une colonne), si le wxDataViewList le permet
+* Effectuer les sauvegardes des buletins au format PDF et non HTML, à l'aide de la librairie externe wxPdfDocument
 * Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale, à l'aide d'une icone d'aide sur l'interface de login.

@@ -18,8 +18,9 @@
 	#include <wx/notebook.h> 	//listing des membres : onglets
 	#include <wx/srchctrl.h>	//listing des membres : champ de recherche
 	
-	#include <wx/webview.h>		//affichage du buletin: ressources web
-	#include <wx/webviewfshandler.h> 
+	//#include <wx/webview.h>		//affichage du buletin: ressources web
+	//#include <wx/webviewfshandler.h> 
+	#include <wx/wxhtml.h>
 	
 	#include <wx/wfstream.h> 	//dialogue : imprimer
 	#include <wx/fs_mem.h>		//dialogue : enregistrer sous
@@ -82,7 +83,8 @@
 		private:
 			wxWindow* parent;
 			connexion_bdd* bdd;
-			wxWebView* fenetre_html;
+			//wxWebView* fenetre_html;
+			 wxHtmlWindow* fenetre_html;
 	};
 	
 	
