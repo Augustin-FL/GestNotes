@@ -14,7 +14,7 @@
 	#endif
 #endif
 
-Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, connexion_bdd*& bdd_arg,int acces_arg=0) : wxFrame(parent_arg, wxID_ANY,_T("GestNotes - Liste Des Utilisateurs"),wxDefaultPosition,wxSize(600,500))
+Frame_afficher_liste_membres::Frame_afficher_liste_membres(Frame_principale* parent_arg, connexion_bdd*& bdd_arg,int acces_arg=0) : wxFrame(parent_arg, wxID_ANY,_T("GestNotes - Liste Des Utilisateurs"),wxDefaultPosition,wxSize(600,500))
 {
 	SetIcon(wxICON(icone));
 	this->parent=parent_arg;
@@ -70,12 +70,12 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	sizer_principal->Add(sizer_haut,0,wxEXPAND|wxALL,8);
 	sizer_principal->Add(onglets,1,wxEXPAND);
 	
-	onglets->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &Afficher_liste_membres::changer_onglet,this);
-	rechercher->Bind(wxEVT_TEXT, &Afficher_liste_membres::afficher_liste,this);
+	onglets->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &Frame_afficher_liste_membres::changer_onglet,this);
+	rechercher->Bind(wxEVT_TEXT, &Frame_afficher_liste_membres::afficher_liste,this);
 	
-	liste_profs->Bind(wxEVT_LIST_COL_CLICK, &Afficher_liste_membres::changer_ordre,this);
-	liste_eleves->Bind(wxEVT_LIST_COL_CLICK, &Afficher_liste_membres::changer_ordre,this);
-	liste_admins->Bind(wxEVT_LIST_COL_CLICK, &Afficher_liste_membres::changer_ordre,this);
+	liste_profs->Bind(wxEVT_LIST_COL_CLICK, &Frame_afficher_liste_membres::changer_ordre,this);
+	liste_eleves->Bind(wxEVT_LIST_COL_CLICK, &Frame_afficher_liste_membres::changer_ordre,this);
+	liste_admins->Bind(wxEVT_LIST_COL_CLICK, &Frame_afficher_liste_membres::changer_ordre,this);
 	
 	if(acces==1)
 	{
@@ -90,7 +90,7 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 		liste_admins->Bind(wxEVT_LIST_ITEM_ACTIVATED, &Frame_admin::onSupprimer_id_selectionne, (Frame_admin*)parent);
 
 	}
-	this->Bind(wxEVT_CLOSE_WINDOW, &Afficher_liste_membres::onClose,this);
+	this->Bind(wxEVT_CLOSE_WINDOW, &Frame_afficher_liste_membres::onClose,this);
 	
 	fenetre->SetSizer(sizer_principal);
 	this->Show();
@@ -98,7 +98,7 @@ Afficher_liste_membres::Afficher_liste_membres(Frame_principale* parent_arg, con
 	
 }
 
-void Afficher_liste_membres::changer_onglet(wxCommandEvent &evenement)
+void Frame_afficher_liste_membres::changer_onglet(wxCommandEvent &evenement)
 {
 	ordre_colonne1=1;
 	ordre_colonne2=0;
@@ -107,7 +107,7 @@ void Afficher_liste_membres::changer_onglet(wxCommandEvent &evenement)
 	this->afficher_liste(*new wxCommandEvent());
 }
 
-void Afficher_liste_membres::changer_ordre(wxListEvent &evenement)
+void Frame_afficher_liste_membres::changer_ordre(wxListEvent &evenement)
 {
 	int col = evenement.GetColumn();
 	
@@ -179,7 +179,7 @@ void Afficher_liste_membres::changer_ordre(wxListEvent &evenement)
 	this->afficher_liste(*new wxCommandEvent());
 }
  
-void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
+void Frame_afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 {
 	wxListCtrl *liste=liste_eleves;
 	
@@ -253,30 +253,30 @@ void Afficher_liste_membres::afficher_liste(wxCommandEvent &evenement)
 	
 }
 
-void Afficher_liste_membres::onChange_onglet(wxCommandEvent &evenement)
+void Frame_afficher_liste_membres::onChange_onglet(wxCommandEvent &evenement)
 {
 	rechercher->SetValue("");
 	this->Ajouter_curseur(-1,true);
 	this->afficher_liste(*new wxCommandEvent());
 }
 
-bool Afficher_liste_membres::ongletProfs_selected()
+bool Frame_afficher_liste_membres::ongletProfs_selected()
 {
 	if(onglets->GetSelection()==1) return true;
 	else return false;
 }
 
-bool Afficher_liste_membres::ongletEleves_selected()
+bool Frame_afficher_liste_membres::ongletEleves_selected()
 {
 	if(onglets->GetSelection()==0) return true;
 	else return false;
 }
-wxListCtrl*  Afficher_liste_membres::getListCtrl()
+wxListCtrl*  Frame_afficher_liste_membres::getListCtrl()
 {
 	return liste_profs;
 }
 
-void Afficher_liste_membres::onClose(wxCloseEvent &evenement)
+void Frame_afficher_liste_membres::onClose(wxCloseEvent &evenement)
 {
 	parent->Enable();
 	this->Destroy();
@@ -284,7 +284,7 @@ void Afficher_liste_membres::onClose(wxCloseEvent &evenement)
 
 
 
-void Afficher_liste_membres::Ajouter_curseur(int colonne, bool haut)
+void Frame_afficher_liste_membres::Ajouter_curseur(int colonne, bool haut)
 {
 	#ifdef __WXMSW__	
 		wxListCtrl *liste=liste_eleves;

@@ -31,15 +31,16 @@
 	
 	class requete_sql;
 	class connexion_bdd;
+	class wxTextRegexpValidator;
+	
+	
 	class App_GestNotes;
 	
 	class Frame_principale;
 	class Frame_admin;
 	class Frame_ajout_modification_membre;
 	class Frame_login;
-	class wxTextRegexpValidator;
-	class wxComboBoxValidator;
-	class Afficher_liste_membres;
+	class Frame_afficher_liste_membres;
 	class Frame_editer_groupes;
 	class Frame_imprimer_buletins;
 
@@ -73,7 +74,6 @@
 		public:
 			Frame_imprimer_buletins(wxWindow* parent_arg, connexion_bdd*& bdd_arg);
 			~Frame_imprimer_buletins(){}
-			wxString generer_html1();
 			wxString generer_html5();
 			
 			void onEnregistrer(wxCommandEvent& evenement);
@@ -153,21 +153,6 @@
 	};
 	
 		
-	class wxComboBoxValidator : public wxValidator//Classe permettant un wxValidator via regexp
-	{
-		protected:
-		    wxString* m_pointeur;
-
-		public:
-		   wxComboBoxValidator(wxString* valeur=NULL);
-		   ~wxComboBoxValidator(){}
-
-		   wxObject* Clone() const;
-
-		   virtual bool TransferToWindow();
-		   virtual bool TransferFromWindow();
-	};
-	
 	
 	class App_GestNotes : public wxApp
 	{
@@ -348,7 +333,7 @@
 						  *input_radio__arrondi_dix,
 						  *input_radio__arrondi_demi,
 						  *input_radio__arrondi_un;
-			Afficher_liste_membres *liste_membres;
+			Frame_afficher_liste_membres *liste_membres;
 			wxDataViewListCtrl *liste_appreciations;
 			
 			int ordre_colonne1,ordre_colonne2,ordre_colonne3,ordre_colonne4;
@@ -377,11 +362,11 @@
 	};
 	
 	
-	class Afficher_liste_membres : public wxFrame
+	class Frame_afficher_liste_membres : public wxFrame
 	{
 		public:
-			Afficher_liste_membres(Frame_principale*,connexion_bdd*&, int);
-			~Afficher_liste_membres(){};
+			Frame_afficher_liste_membres(Frame_principale*,connexion_bdd*&, int);
+			~Frame_afficher_liste_membres(){};
 			void afficher_liste(wxCommandEvent &evenement);
 			void onChange_onglet(wxCommandEvent &evenement);
 			void onClose(wxCloseEvent &evenement);

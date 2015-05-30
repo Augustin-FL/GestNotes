@@ -382,10 +382,6 @@ void Frame_prof::afficher_liste()
 		it=liste_eleves.find(req->getColumn_int(0));//si la valeur n'est pas trouvée, it sera = a liste_eleves.end()
 		if(it== liste_eleves.end())//if(l'id de l'éleve n'est pas dans le vector) vector[id] = la_position_ou_on_ajoute_cette_matiere
 		{
-			if(id_classe_en_cours!=0 && id_matiere_en_cours!=0)
-			{
-				wxMessageBox(wxString::Format("%d",req->getColumn_int(0)));
-			}
 			liste_eleves[req->getColumn_int(0)]=liste_eleves.size()-1;
 			
 			ligne[0]=wxVariant(std::string(req->getColumn_text(2))+" "+std::string(req->getColumn_text(1)));//on effectue l'ajout de la ligne

@@ -57,10 +57,13 @@ pour windows : Si vous avez une erreur `'wx/msw/hand.cur': No such file or direc
 - si vous compilez à l'aide du makefile, la procédure pour déjouer ce problème est expliquéee dedans
 - si vous compilez à l'aide de codeblocks, la procédure est expliquée dans le fichier ressources.rc
 
-## ToDo list : 
+## Bugs connus  : 
+* Eleves :L'affichage/impression du bulletin ne fonctionne pas
+* Admins : Lors de l'ajout d'un élève, la liste des appréciations générales ne se met pas à jour (le nouvel élève n'est pas ajouté)
+* Profs/Admins : Le tri (clic sur l'en-tête d'une colonne) ne fonctionne pas pour les administrateurs (appréciations générales) ni pour les professeurs(l'interface des notes)
 
-futur proche :
-* Administrateurs : 
-	* Mettre a jour la liste des appréciations après la mise à jour d'un membre de GestNotes
-* Ajouter un chiffrement de la base de donnée à l'aide de la librairie crypto d'OpenSSL
-* Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale 
+-----
+## Fonctionnalités futures : 
+* Ajout de la notion de professeur "principal" (affectation à une classe, accès à toutes les notes de toutes les matières pour cette classe, etc)
+* Ajouter un chiffrement des mots de passes à l'aide de la librairie crypto d'OpenSSL
+* Utiliser une base de donnée distante(MySQL?) plutot qu'une base locale, à l'aide d'une icone d'aide sur l'interface de login.

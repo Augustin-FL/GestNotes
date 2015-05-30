@@ -153,17 +153,17 @@ void Frame_admin::onCheck_Modif_notes(wxCommandEvent &evenement)
 
 void Frame_admin::onAfficherMembres(wxCommandEvent &evenement)
 {
-	liste_membres=new Afficher_liste_membres(this,bdd,0);
+	liste_membres=new Frame_afficher_liste_membres(this,bdd,0);
 }
 
 void Frame_admin::onSupprimer(wxCommandEvent &evenement)
 {
-	liste_membres=new Afficher_liste_membres(this,bdd,2);	
+	liste_membres=new Frame_afficher_liste_membres(this,bdd,2);	
 }
 
 void Frame_admin::onModifier(wxCommandEvent &evenement)
 {
-	liste_membres=new Afficher_liste_membres(this,bdd,1);
+	liste_membres=new Frame_afficher_liste_membres(this,bdd,1);
 }
 
 void Frame_admin::onModifier_id_selectionne(wxListEvent &evenement)
