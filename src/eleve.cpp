@@ -122,7 +122,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 		double moyenne=-1,double_note_en_cours;
 		wxString note_en_cours;
 		
-		for(int i=1;i<4;i++)
+		for(int i=1;i<5;i++)
 		{
 			note_en_cours=liste_notes->GetItemText(it->second,i);
 			if(note_en_cours!="" && note_en_cours.ToDouble(&double_note_en_cours))
