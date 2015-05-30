@@ -115,9 +115,9 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO login_centralise VALUES (4,'test',1)");
 			this->exec("INSERT INTO login_centralise VALUES (5,'test',0)");
 			this->exec("INSERT INTO admins VALUES (1,'FL','Augustin')");
-			this->exec("INSERT INTO profs VALUES (2,'Drouin','Fran\xE7ois',0,0)");
-			this->exec("INSERT INTO profs VALUES (2,'Drouin','Fran\xE7ois',1,0)");
-			this->exec("INSERT INTO profs VALUES (4,'Karim','Lahlou',2,1)");
+			this->exec("INSERT INTO profs VALUES (2,'Drouin','Fran\xE7ois',0,1)");
+			this->exec("INSERT INTO profs VALUES (2,'Drouin','Fran\xE7ois',1,1)");
+			this->exec("INSERT INTO profs VALUES (4,'Karim','Lahlou',2,0)");
 			this->exec("INSERT INTO classes VALUES (0,'Promo 2017','')");
 			this->exec("INSERT INTO classes VALUES (1,'Promo 2018','')");
 
@@ -129,7 +129,7 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO matieres VALUES (1,'Informatique')");
 			this->exec("INSERT INTO matieres VALUES (2,'UML')");
 			this->exec("INSERT INTO reglages VALUES (0,100,0,1)");
-			this->exec("INSERT INTO commentaires VALUES (0,3,'Un diagrame dans l''\xC0me')");
+			this->exec("INSERT INTO commentaires VALUES (0,3,'Un diagrame dans l''Ame')");
 			this->exec("INSERT INTO commentaires VALUES (-1,3,'Meilleure \xE9l\xE8ve de tous les temps')");
 		}
 	/*}

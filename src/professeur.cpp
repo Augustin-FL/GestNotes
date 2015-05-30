@@ -255,9 +255,6 @@ void Frame_prof::preparer_matieres_classes()
 	id_classe_en_cours=it->first;
 
 	req->closeCursor();
-
-	id_classe_en_cours=0;
-	id_matiere_en_cours=0;
 }
 
 void Frame_prof::onChange_matiere(wxCommandEvent &evenement)

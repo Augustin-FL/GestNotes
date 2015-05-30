@@ -119,7 +119,7 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	
 	for(it=liste_matiere.begin();it!=liste_matiere.end();it++)
 	{
-		double moyenne=-1,double_note_en_cours;
+		double moyenne=0,double_note_en_cours,compteur=0;
 		wxString note_en_cours;
 		
 		for(int i=1;i<5;i++)
@@ -127,10 +127,16 @@ Frame_eleve::Frame_eleve(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 			note_en_cours=liste_notes->GetItemText(it->second,i);
 			if(note_en_cours!="" && note_en_cours.ToDouble(&double_note_en_cours))
 			{
-				moyenne=(moyenne==-1)?double_note_en_cours:(moyenne+double_note_en_cours)/2;
+				moyenne+=double_note_en_cours;
+				compteur++;
 			}
 		}
-		if(moyenne!=-1) liste_notes->SetItem(it->second,5,wxString::Format("%g",arrondi(arrondi_affichage_notes,moyenne)));
+		if(compteur!=0) 
+		{
+			moyenne/=compteur;
+			liste_notes->SetItem(it->second,5,wxString::Format("%g",arrondi(arrondi_affichage_notes,moyenne)));
+		}
+		
 	}
 	
 		liste_notes->SetColumnWidth(0,wxLIST_AUTOSIZE_USEHEADER);
