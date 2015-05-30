@@ -115,21 +115,22 @@ connexion_bdd::connexion_bdd()//const string &infos)
 			this->exec("INSERT INTO login_centralise VALUES (4,'test',1)");
 			this->exec("INSERT INTO login_centralise VALUES (5,'test',0)");
 			this->exec("INSERT INTO admins VALUES (1,'FL','Augustin')");
-			this->exec("INSERT INTO profs VALUES (2,'Obiwan','Kenobi',0,0)");
-			this->exec("INSERT INTO profs VALUES (2,'Obiwan','Kenobi',1,0)");
-			this->exec("INSERT INTO profs VALUES (4,'banan','krn',2,1)");
-			this->exec("INSERT INTO classes VALUES (0,'1\xe8\x72\x65 S 1','')");
-			this->exec("INSERT INTO classes VALUES (1,'1\xe8\x72\x65 S 2','')");
+			this->exec("INSERT INTO profs VALUES (2,'Drouin','Fran\xE7ois',0,0)");
+			this->exec("INSERT INTO profs VALUES (2,'Drouin','Fran\xE7ois',1,0)");
+			this->exec("INSERT INTO profs VALUES (4,'Karim','Lahlou',2,1)");
+			this->exec("INSERT INTO classes VALUES (0,'Promo 2017','')");
+			this->exec("INSERT INTO classes VALUES (1,'Promo 2018','')");
+
 		
-			this->exec("INSERT INTO notes VALUES (3,0,8,1)");
-			this->exec("INSERT INTO eleves VALUES (3,'Camille','Sunaara',0,0,0,1432282509,'Rue qui n''existe pas',12,75001,'Paris','0601020304','Boiseck','Colombette','0102030405','howyouloveme@yopmail.com')");
-			this->exec("INSERT INTO eleves VALUES (5,'gomar','rock',1,0,0,1432282509,'test',2,94800,'Villejuif','0604020304','yolo','swagg','0102130405','he@yopmail.com')");
-			this->exec("INSERT INTO matieres VALUES (0,'maths')");
-			this->exec("INSERT INTO matieres VALUES (1,'physique')");
-			this->exec("INSERT INTO matieres VALUES (2,'anglais')");
+			this->exec("INSERT INTO notes VALUES (3,0,16,1)");
+			this->exec("INSERT INTO eleves VALUES (3,'Mari\xE8me','BA',1,0,0,1432282509,'Rue des Mesanges',3,94800,'Villejuif','0601020304','Bertrand','Colombet','0102030405','howyouloveme@yopmail.com')");
+			this->exec("INSERT INTO eleves VALUES (5,'Phillipe','Zou ',0,0,0,1432282509,'Avenue de Paris',104,94800,'La Courneuve','0604020304','Karen','Hayoun','0102130405','he@yopmail.com')");
+			this->exec("INSERT INTO matieres VALUES (0,'Math\xE9matiques')");
+			this->exec("INSERT INTO matieres VALUES (1,'Informatique')");
+			this->exec("INSERT INTO matieres VALUES (2,'UML')");
 			this->exec("INSERT INTO reglages VALUES (0,100,0,1)");
-			this->exec("INSERT INTO commentaires VALUES (0,3,'test commentaire')");
-			this->exec("INSERT INTO commentaires VALUES (-1,3,'rien a ajouter')");
+			this->exec("INSERT INTO commentaires VALUES (0,3,'Un diagrame dans l''\xC0me')");
+			this->exec("INSERT INTO commentaires VALUES (-1,3,'Meilleure \xE9l\xE8ve de tous les temps')");
 		}
 	/*}
 	else
