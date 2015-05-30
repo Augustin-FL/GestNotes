@@ -13,7 +13,7 @@ bool App_GestNotes::OnInit()
 
 
 	bdd=new connexion_bdd();
-	
+
 	Frame_login* login=new Frame_login(bdd);
 	login->Show();//pour éviter un warning "unused variable"
 
@@ -35,7 +35,7 @@ Frame_principale::Frame_principale(Frame_login *parent_arg,int& matricule_arg,co
 	this->parent=parent_arg;
 	this->bdd=bdd_arg;
 	this->matricule=matricule_arg;
-	
+
 	wxMenuBar *barre_menu= new wxMenuBar();
 
 	menu_fichier = new wxMenu();
@@ -83,7 +83,7 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 {
 	wxDialog *frame_about	= new wxDialog(this, wxID_ANY,_T("A propos..."),wxDefaultPosition,wxSize(490,225));
 	wxPanel  *fenetre 		= new wxPanel(frame_about, -1);
-	
+
 	wxBoxSizer *sizer_droite 		= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer_horisontal 	= new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer_twitter 		= new wxBoxSizer(wxHORIZONTAL);
@@ -91,7 +91,7 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	wxBoxSizer *sizer_github 		= new wxBoxSizer(wxHORIZONTAL);
 
 	wxStaticText *texte_version		= new wxStaticText(fenetre,wxID_ANY,_T("GestNotes ")+(std::string)VERSION);
-  	wxStaticText *texte_haut 		= new wxStaticText(fenetre,wxID_ANY, _T("\nAuteurs : gusfl et krnruth\nProgramme sous licence Apache.\n\nContact :"));
+  	wxStaticText *texte_haut 		= new wxStaticText(fenetre,wxID_ANY, _T("\nAuteurs : gusfl,krnruth et mariemeba\nProgramme sous licence Apache.\n\nContact :"));
 	wxStaticText *texte_bas 		= new wxStaticText(fenetre,wxID_ANY, _T("\nVous avez trouvé un bug?"));
 	wxStaticText *label_github 		= new wxStaticText(fenetre,wxID_ANY, _T("N'hésitez pas à nous en faire part sur "));
 	wxStaticText *label_github_2 	= new wxStaticText(fenetre,wxID_ANY, _T(" !"));
@@ -106,12 +106,12 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	wxHyperlinkCtrl* lien_email_krnruth 	= new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("krnruth91@gmail.com"), _T("mailto:krnruth91@gmail.com"));
 	wxHyperlinkCtrl* lien_github			= new wxHyperlinkCtrl(fenetre,wxID_ANY, _T("github"), _T("https://github.com/gusfl/GestNotes/issues"));
 
-	
+
 	wxStaticBitmap *image			= new wxStaticBitmap( fenetre, wxID_ANY, wxBITMAP_PNG(logo_ressource));//on récuère l'image depuis les ressources
-	
+
 	sizer_horisontal->Add(image,1, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT, 15 );
 	sizer_horisontal->Add(sizer_droite, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT, 15);
-	
+
 	sizer_droite->Add(texte_version);
 	sizer_droite->Add(texte_haut);
 	sizer_droite->Add(sizer_twitter);
@@ -123,16 +123,16 @@ void Frame_principale::onAbout(wxCommandEvent &evenement)
 	sizer_twitter->Add(lien_twitter_gusfl);
 	sizer_twitter->Add(label_virgule_1);
 	sizer_twitter->Add(lien_twitter_krnruth);
-	
+
 	sizer_email->Add(label_email);
 	sizer_email->Add(lien_email_gusfl);
 	sizer_email->Add(label_virgule_2);
 	sizer_email->Add(lien_email_krnruth);
-	
+
 	sizer_github->Add(label_github);
 	sizer_github->Add(lien_github);
 	sizer_github->Add(label_github_2);
-	
+
 	fenetre->SetSizer(sizer_horisontal);
 	frame_about->ShowModal();
 }
@@ -152,48 +152,48 @@ Frame_modifier_mdp::Frame_modifier_mdp(Frame_principale* parent,connexion_bdd*& 
 	wxStaticBoxSizer*sizer_mdp				= new wxStaticBoxSizer(wxVERTICAL, fenetre, _T("Nouveau Mot de Passe"));
 	wxFlexGridSizer *conteneur_mdp			= new wxFlexGridSizer(2,2,5,0);
 	wxBoxSizer		*sizer_message			= new wxBoxSizer(wxVERTICAL);
-	
+
 	wxStaticText	*texte_explicatif		= new wxStaticText(fenetre, -1, _T("\n\nVeuillez saisir votre nouveau Mot de Passe.\n"));
 	wxStaticText	*label_mdp				= new wxStaticText(fenetre, -1, _T("Mot de Passe :                 "));
 	wxStaticText	*label_mdp_confirmation	= new wxStaticText(fenetre, -1, _T("Confirmation du Mot de Passe : "));
-	
+
 	message_mdp				= new wxStaticText(fenetre, -1, _T("Le mot de passe est trop court (minimum : 4 carractères)"));
 	message_confirmation	= new wxStaticText(fenetre, -1, _T("Les 2 mots de passes ne correspondent pas."));
-	
+
 	input_mdp				= new wxTextCtrl(fenetre, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 	input_mdp_confirmation	= new wxTextCtrl(fenetre, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
-	
+
 	bouton_valider			= new wxButton(  fenetre, -1, _T("Valider"));// Des champs d'input
-    
+
 	conteneur_mdp->Add(label_mdp);
 	conteneur_mdp->Add(input_mdp);
-	
+
 	conteneur_mdp->Add(label_mdp_confirmation);
 	conteneur_mdp->Add(input_mdp_confirmation);
-	
+
 	sizer_mdp->Add(conteneur_mdp);
 
 	sizer_message->Add(message_mdp);
 	sizer_message->Add(message_confirmation);
-	
+
 	message_mdp->SetForegroundColour(wxColour(255, 0, 0));
 	message_confirmation->SetForegroundColour (wxColour(255, 0, 0));
-	
+
 	message_mdp->Hide();
 	message_confirmation->Hide();
 	bouton_valider->Disable();
-	
+
 	sizer_horisontal->Add(texte_explicatif,0,wxALIGN_CENTER);
 	sizer_horisontal->Add(sizer_mdp,0,wxALIGN_CENTER|wxLEFT|wxRIGHT,5);
 	sizer_horisontal->Add(sizer_message,0,wxALIGN_CENTER|wxTOP,5);
 	sizer_horisontal->Add(bouton_valider,0,wxALIGN_CENTER|wxTOP,20);
-	
+
 	bouton_valider->Bind(		 wxEVT_BUTTON, &Frame_modifier_mdp::onClick, this);
 	input_mdp->Bind(    		 wxEVT_TEXT,   &Frame_modifier_mdp::onChange,this);
 	input_mdp_confirmation->Bind(wxEVT_TEXT,   &Frame_modifier_mdp::onChange,this);
-	
+
 	fenetre->SetSizer(sizer_horisontal);
-	this->ShowModal();	
+	this->ShowModal();
 }
 
 void Frame_modifier_mdp::onChange(wxCommandEvent& evenement)
@@ -201,13 +201,13 @@ void Frame_modifier_mdp::onChange(wxCommandEvent& evenement)
 	message_mdp->Hide();
 	message_confirmation->Hide();
 	bouton_valider->Disable();
-	
+
 	if(input_mdp->IsEmpty() && input_mdp_confirmation->IsEmpty())
 	{
 		return ;
 	}
 	else if(input_mdp->GetValue().length()<4 || input_mdp_confirmation->GetValue().length()<4)
-	{	
+	{
 		message_mdp->Move(50,138);
 		message_mdp->Show();
 	}
@@ -226,7 +226,7 @@ void Frame_modifier_mdp::onClick(wxCommandEvent& evenement)
 	req->bind(":mdp",std::string(input_mdp->GetValue().mb_str()));
 	req->fetch();
 	req->closeCursor();
-	
+
 	wxMessageBox(_T("Le Mot de Passe à bien été modifié !"));
 	this->Close();
 }
