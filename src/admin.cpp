@@ -27,7 +27,7 @@ Frame_admin::Frame_admin(Frame_login* parent,int& matricule,connexion_bdd*& bdd)
 	wxButton *button_supprimer			 = new wxButton(	fenetre, -1, _T("Supprimer"));
 
 	input_checkbox__notes_hors_bareme	 =new wxCheckBox(	fenetre, -1, _T("Autoriser les notes hors barème\n(au dessus de 20)\n\n"));
-	input_checkbox__afficher_buletins	 =new wxCheckBox(	fenetre, -1, _T("Autoriser l'affichage/impression des buletins"));
+	input_checkbox__afficher_buletins	 =new wxCheckBox(	fenetre, -1, _T("Autoriser l'affichage/impression des bulletins"));
 	input_checkbox__autoriser_modif_notes=new wxCheckBox(	fenetre, -1, _T("Autoriser l'éditions des notes par les professeurs"));
 	
 	//Arrondi des moyennes (n'affecte pas les calculs)
