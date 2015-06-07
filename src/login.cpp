@@ -1,4 +1,4 @@
-#include "main.h"
+#include "login.h"
 
 #ifndef __WXMSW__
 #include "ressources.xpm"// ressources pour linux (le logo etc...)

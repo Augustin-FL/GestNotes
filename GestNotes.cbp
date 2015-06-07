@@ -14,7 +14,7 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="include" />
+					<Add directory="./include" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="./src" />
@@ -46,21 +46,30 @@
 			<Add library="libwsock32.a" />
 			<Add library="libodbc32.a" />
 		</Linker>
+		<Unit filename="include/admin.h" />
+		<Unit filename="include/afficher_liste_membres.h" />
+		<Unit filename="include/ajout_modification_membre.h" />
+		<Unit filename="include/bdd.h" />
+		<Unit filename="include/eleve.h" />
+		<Unit filename="include/imprimer_bulletin.h" />
+		<Unit filename="include/login.h" />
 		<Unit filename="include/main.h" />
+		<Unit filename="include/professeur.h" />
 		<Unit filename="include/ressources.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="include/ressources.xpm" />
+		<Unit filename="include/validateurs.h" />
 		<Unit filename="src/admin.cpp" />
 		<Unit filename="src/afficher_liste_membres.cpp" />
+		<Unit filename="src/ajout_modification_membre.cpp" />
 		<Unit filename="src/bdd.cpp" />
 		<Unit filename="src/eleve.cpp" />
+		<Unit filename="src/imprimer_bulletin.cpp" />
 		<Unit filename="src/login.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/professeur.cpp" />
 		<Unit filename="src/validateurs.cpp" />
-		<Unit filename="src/ajout_modification_membre.cpp" />
-		<Unit filename="src/imprimer_buletin.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

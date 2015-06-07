@@ -1,4 +1,4 @@
-#include "main.h"
+#include "validateurs.h"
 
 
 wxTextRegexpValidator::wxTextRegexpValidator(wxString regexp, wxString* pointeur) : m_regEx(regexp)//constructeur : création d'un wxValidator

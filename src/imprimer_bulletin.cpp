@@ -1,4 +1,4 @@
-#include "main.h"
+#include "imprimer_bulletin.h"
 
 #ifndef __WXMSW__
 	#include "ressources.xpm"//ressources linux

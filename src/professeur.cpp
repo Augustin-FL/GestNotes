@@ -1,4 +1,4 @@
-#include "main.h"
+#include "professeur.h"
 
 /*
 ToDo :
@@ -415,7 +415,7 @@ void Frame_prof::afficher_liste()
 
 void Frame_prof::onEditer_Groupe(wxCommandEvent &evenement)
 {
-	Frame_editer_groupes(parent,bdd,id_classe_en_cours);
+	Frame_editer_groupes(this,bdd,id_classe_en_cours);
 }
 
 

@@ -1,4 +1,4 @@
-#include "main.h"
+#include "afficher_liste_membres.h"
 
 #ifndef __WXMSW__
 	#include "ressources.xpm"//ressources linux
