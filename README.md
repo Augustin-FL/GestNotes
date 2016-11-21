@@ -1,7 +1,7 @@
 # GestNotes
 GestNotes est un logiciel de gestion de notes écrit en C++ !
 
-[![Build Status](https://travis-ci.org/gusfl/GestNotes.svg)](https://travis-ci.org/gusfl/GestNotes) [![Licence](https://img.shields.io/hexpm/l/plug.svg)](https://fr.wikipedia.org/wiki/Licence_Apache)
+[![Build Status](https://travis-ci.org/Augustin-FL/GestNotes.svg)](https://travis-ci.org/Augustin-FL/GestNotes) [![Licence](https://img.shields.io/hexpm/l/plug.svg)](https://fr.wikipedia.org/wiki/Licence_Apache)
 
 ## Comment utiliser le programme : 
 
