@@ -11,22 +11,9 @@ sudo : required
 
 before_script: 
   - sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
-  - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0.2/ubuntu/ precise universe'
-  - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.1.0/ubuntu/ trusty universe'
   - sudo apt-get update
-
-  - sudo apt-get install -y liblzma5 
-  - sudo apt-get install -y libjbig0
-  - sudo apt-get install -y libpango1.0-0
-  - sudo apt-get install -y libwxbase3.0-0-unofficial
-  - sudo apt-get install -y libwxbase3.0-dev
-  - sudo apt-get install -y libwxgtk3.0-0-unofficial
-  - sudo apt-get install -y libwxgtk3.0-dev
-  - sudo apt-get install -y wx3.0-headers
-  - sudo apt-get install -y wx-common
-  - sudo apt-get install -y wx3.0-i18n    
-  - sudo apt-get install -y libcppunit-dev
-  - sudo mv /usr/include/wx-3.0-unofficial/wx /usr/include/wx 
+  - sudo apt-get install -y libwxbase3.1-0-unofficial libwxbase3.1-dev libwxgtk3.1-0-unofficial libwxgtk3.1-dev wx3.1-headers wx-common libwxgtk-webview3.1-0-unofficial libwxgtk-webview3.1-dev libwxgtk-media3.1-0-unofficial libwxgtk-media3.1-dev libwxbase3.1-0-unofficial-dbg libwxgtk3.1-0-unofficial-dbg libwxgtk-webview3.1-0-unofficial-dbg libwxgtk-media3.1-0-unofficial-dbg wx3.1-i18n wx3.1-examples
   - sudo mkdir /usr/include/SQLite && sudo mv /usr/include/sqlite3.h /usr/include/SQLite/sqlite3.h
   
 script:
